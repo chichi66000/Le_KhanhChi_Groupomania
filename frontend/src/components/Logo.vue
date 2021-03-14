@@ -1,7 +1,6 @@
 <template>
-    <div>
-    <img class="img w-25 float-left" src="../assets/images/icon-above-font.png"/>
-    <p class = "bg-primary fw-bold fx-1">ce cui </p>
+    <div class="">
+        <img class = "img-fluid" src="../assets/images/icon1.png" alt="logo Groupomania"/>
     </div>
 </template>
     
@@ -13,5 +12,8 @@ export default {
 </script>
 
 <style scoped>
-
+img{
+    width: 50%;
+    background: none;
+}
 </style>

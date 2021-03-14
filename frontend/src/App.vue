@@ -1,14 +1,29 @@
-<template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About </router-link> |
-
+<template >
+  <div id="app" class="app d-flex row justify-between h-100">
+    <div class="container d-flex">
+      <div class="col align-self-center">
+        <connexion/>
+      </div>
     </div>
-    <router-view/>
   </div>
 </template>>
 
-<style lang="scss">
- 
+<script>
+import connexion from './components/connexion'
+export default {
+  name: 'App',
+  components: {
+    connexion
+  }
+}
+</script>
+<style scope lang="scss">
+text-right {
+  text-align: right!important;
+}
+.app {
+  background: url(./assets/images/background_1.jpg) no-repeat;
+  background-size: cover;
+  height: auto;
+}
 </style>

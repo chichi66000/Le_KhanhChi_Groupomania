@@ -1,20 +1,14 @@
 <template>
-  <div class="home">
-    <div>
-      <h1 class="bg-primary">Mon titre</h1>
-    </div>
-    <Logo/>
-  </div>
+    <Navbar/>
+
 </template>
 
 <script>
-// @ is an alias to /src
-import Logo from '../components/Logo.vue'
-
+import Navbar from "../components/Navbar"
 export default {
-  name: 'Home',
-  components: {
-    Logo
-  }
+    name: "Home",
+    components: {
+      Navbar
+    }
 }
 </script>
