@@ -1,7 +1,8 @@
 <template>
     <div id="inscription" class="container mt-5 m-auto text-center">
-        <div class="col-md-6 col-lg-6 mt-5 m-auto col">
-            <Logo />
+
+        <div class="col-md-6 col-lg-6 mt-5 m-auto col justify-content-center">
+                <Logo />
         </div>
 
         <h5 class="pink mb-5 fw-bold fs-3 m-auto text-center">Inscription</h5>
@@ -28,11 +29,11 @@
             </div>
 
             <div class="form-group row ">
-                <input type="text" class="form-control" id="password" placeholder="password">
+                <input type=password class="form-control" id="password" placeholder="password">
             </div>
 
             <div class="form-group row ">
-                <input type="text" class="form-control" id="re_password" placeholder="confirmer passeword">
+                <input type="password" class="form-control" id="re_password" placeholder="confirmer password">
             </div>
       
             <div class="form-group row ">
@@ -40,19 +41,19 @@
                 <input type="file" class="form-control-file pink">
 
             </div>
-            <button type="submit" class="btn btn-primary text-center" id="button">Valider</button>
+            <button type="submit" class="btn btn-primary text-center mb-5" id="button">Valider</button>
     
         </form>
     </div>
 </template>
 
 <script>
-import Logo from "../components/Logo"
+import Logo from "../components/Logo";
 export default {
     name: "Inscription",
     components: {
         Logo
-    }
+    },
 }
 </script>
 

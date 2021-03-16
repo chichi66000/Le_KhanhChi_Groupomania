@@ -1,5 +1,5 @@
 <template >
-  <div id="app" class="app d-flex row justify-between h-100">
+  <div id="app" class=" d-flex row justify-between h-100">
     <div class="container d-flex">
       <div class="col align-self-center">
         <connexion/>
@@ -21,9 +21,9 @@ export default {
 text-right {
   text-align: right!important;
 }
-.app {
+#app {
   background: url(./assets/images/background_1.jpg) no-repeat;
   background-size: cover;
-  height: auto;
+  height: 100vh;
 }
 </style>

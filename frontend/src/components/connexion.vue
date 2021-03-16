@@ -25,12 +25,18 @@
             </form>
             <div class="mt-3">
                 <p class="pink font-weight-bolder">Vous n'avez pas encore de compte?</p>
-                <a class="pink font-weight-bolder mt-2 fs-3" href="#"><u>S'incrire</u></a>
+                <button class="btn pink font-weight-bolder mt-2 fs-3 mb-5" @click="switchToggle">S'incrire</button>
             </div>
         </div>
 
-        <div v-else>
-            <Inscription/>
+        <div v-else >
+            <div>
+                <button class="btn d-flex col-1 col-md-1 col-lg-1 justify-content-end pink align-self-center" @click="switchToggle">Login</button>
+            </div>
+            <div>
+                <Inscription/> 
+            </div>
+            
         </div>
     </div> 
 </template>
@@ -46,6 +52,12 @@ export default {
     data () {
         return {
             toggle: false,
+        }
+    },
+    methods: {
+        switchToggle () {
+            if (this.toggle) { return this.toggle=false}
+            if(this.toggle ==false) { return this.toggle = true}
         }
     }
 }
