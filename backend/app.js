@@ -1,6 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require('path');
+const app = express();
+
+const userRoutes = require('./routes/user');
 
 // pour une protection api
 const cors = require("cors");
@@ -12,8 +15,6 @@ const limiter = rateLimit({
 });
 require('dotenv').config(); // load .env file pour garder secret les infos confidentiels
 const expressSanitizer = require('express-sanitizer');
-
-const app = express();
 
 // setHeader
 app.use((req, res, next) => {
@@ -33,19 +34,9 @@ app.use(cors({origin: 'http://localhost:8080'}));
 app.use(limiter);
 app.use (expressSanitizer());
 
-// Créer connexion avec mysql
-// var mysql = require('mysql')
-// var connection = mysql.createConnection({
-// host: 'localhost',
-// user: 'utilisateurdb',
-// password: 'secret',
-// database: 'ma_db' })
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use('./api/auth', userRoutes);
 
-// connection.connect()
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
-});
 
 module.exports = app;

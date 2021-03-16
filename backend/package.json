@@ -9,15 +9,19 @@
   "author": "KhanhChi",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",
     "express-sanitizer": "^1.0.5",
+    "express-validator": "^6.10.0",
     "helmet": "^4.4.1",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
+    "password-validator": "^5.1.1",
     "sequelize": "^6.5.1"
   }
 }
