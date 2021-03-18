@@ -6,7 +6,7 @@ module.exports = {
       nom: 'Le',
       prenom: 'Chi',
       email: 'le.khanhchi@yahoo.fr',
-      password: '0123',
+      password: 'Azerty0123',
       fonction: 'secretaire',
       pseudo: 'lechi',
       avatar:'',
