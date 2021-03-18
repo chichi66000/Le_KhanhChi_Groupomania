@@ -1,10 +1,9 @@
 <template >
-  <div id="app" class=" d-flex row justify-between h-100">
-    <div class="container d-flex">
+  <div id="app" class="container-fluid d-flex justify-between align-content-center">
       <div class="col align-self-center">
         <connexion/>
       </div>
-    </div>
+    
   </div>
 </template>>
 
@@ -21,9 +20,10 @@ export default {
 text-right {
   text-align: right!important;
 }
-#app {
-  background: url(./assets/images/background_1.jpg) no-repeat;
+#app{
+  background: url(./assets/images/background_1.jpg);
   background-size: cover;
-  height: 100vh;
+  // height: 100vh;
 }
+
 </style>

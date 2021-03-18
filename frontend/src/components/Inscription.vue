@@ -9,15 +9,15 @@
 
         <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center">
             <div class="form-group row ">
-                <input type="text" class="form-control" id="nom" placeholder="nom">
+                <input type="text" class="form-control" id="nom" placeholder="nom" required>
             </div>
 
             <div class="form-group row ">
-                <input type="text" class="form-control" id="prenom" placeholder="prénom">
+                <input type="text" class="form-control" id="prenom" placeholder="prénom" required>
             </div>
 
             <div class="form-group row ">
-                <input type="text" class="form-control" id="pseudo" placeholder="Votre pseudo">
+                <input type="text" class="form-control" id="pseudo" placeholder="Votre pseudo" required>
             </div>
 
             <div class="form-group row ">
@@ -25,15 +25,15 @@
             </div>
 
             <div class="form-group row ">
-                <input type="email" class="form-control" id="email" placeholder="email">
+                <input type="email" class="form-control" id="email" placeholder="email" required>
             </div>
 
             <div class="form-group row ">
-                <input type=password class="form-control" id="password" placeholder="password">
+                <input type=password class="form-control" id="password" placeholder="password" required>
             </div>
 
             <div class="form-group row ">
-                <input type="password" class="form-control" id="re_password" placeholder="confirmer password">
+                <input type="password" class="form-control" id="re_password" placeholder="confirmer password" required>
             </div>
       
             <div class="form-group row ">
