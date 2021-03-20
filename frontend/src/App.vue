@@ -1,6 +1,6 @@
 <template >
-  <div id="app" class="container-fluid d-flex justify-between align-content-center">
-      <div class="col align-self-center">
+  <div id="app" class="container-fluid d-flex">
+      <div class="col justify-content-center">
         <connexion/>
       </div>
     
@@ -21,9 +21,9 @@ text-right {
   text-align: right!important;
 }
 #app{
-  background: url(./assets/images/background_1.jpg);
+  background: url(./assets/images/background_2.jpg);
   background-size: cover;
-  // height: 100vh;
+  min-height: 100vh;
 }
 
 </style>
