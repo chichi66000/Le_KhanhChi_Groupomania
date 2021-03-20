@@ -1,10 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const models = require('../models');
+const db = require('../models');
 
 const {body, validationResult, check} = require('express-validator');
 
+// valider avec validator-password
 // var passwordValidator = require('password-validator');
 // Create a schema
 // var schema = new passwordValidator();
@@ -57,7 +58,7 @@ exports.signup = (
             }     
         else {
            
-            models.Users.findOne({
+            db.Users.findOne({
                 attributes: ['email', 'pseudo'],
                 where: {email : email, pseudo: pseudo}
             }) // si pas error, chercher les users
@@ -79,7 +80,7 @@ exports.signup = (
 
                             userObject.id===1? userObject.isAdmin= true : userObject.isAdmin=false; // 1er user est admin
 
-                            const newUser = models.Users.create({ // crer user dans BDD
+                            const newUser = db.Users.create({ // crer user dans BDD
                                 email: email,
                                 password: hash ,
                                 nom: nom,
@@ -108,7 +109,7 @@ exports.signup = (
 
 //une route pour login
 exports.login = (req, res, next) => {
-    models.Users.findOne( {
+    db.Users.findOne( {
         attributes: ['email'],
         where: {email: req.body.email}})// trouver utilisateur avec email unique
         .then( (user) => {
@@ -132,4 +133,42 @@ exports.login = (req, res, next) => {
                 .catch((error) => res.status(500).json({error}))
         })
         .catch((error) => res.status(500).json({error})) // erreur de serveur pour la requete
+}
+
+//route pour supprimer un user
+exports.deleteUser = (req, res, next) => {
+    db.Users.findOne({id: req.params.id})
+        .then((user) => {
+            const filename = user.avater.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                db.Users.deleteOne({email: req.body.email})
+                    .then(() => res.status(200).json({message: 'User deleted'}))
+                    .catch((error) => res.status(404).json({error}))
+            })
+        })
+        .catch((error) => res.status(500).json({error}))
+}
+
+// route pour update user
+exports.updateUser = (req, res, next) => {
+    let userObject = {};
+    req.file? // condition si upadate avec photo ou non
+        (db.Users.findOne({id:req.params.id}) // update avec photo avatar
+            .then( (user) => {
+            const filename = user.avater.split('/images/')[1];
+            fs.unlinkSync(`images/${filename}`);
+            })
+            .catch((error) => res.status(500).json({error})))
+            (userObject = {
+            ... JSON.parse(req.body.user),
+            avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+            })
+    :   (userObject = {...req.body});  // update sans photo
+    db.Users.updateOne (
+        {id: req.params.id},
+        {...userObject, id: req.params.id, updatedAt: new Date()}
+    )
+        .then(() => res.status(200).json({message: 'User modified ! '}))
+        .catch((error) => res.status(404).json({error}))
+    
 }

@@ -36,12 +36,17 @@ const normalizePort = val => {
   };
   
   const server = http.createServer(app);
-  
-  server.on('error', errorHandler);
-  server.on('listening', () => {
+
+  // connecter avec BDD sequelize
+const models = require("./models");
+models.sequelize
+  .sync()
+  .then(server.on('listening', () => {
     const address = server.address();
     const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
     console.log('Listening on ' + bind);
-  });
+  }))
+  .catch((error) => console.log(error));
+  server.on('error', errorHandler);
   
   server.listen(port);
