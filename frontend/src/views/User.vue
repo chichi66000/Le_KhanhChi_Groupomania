@@ -1,0 +1,75 @@
+<template>
+    <div class="container">
+<!-- Navbar -->
+        <div>
+            <Navbar/>
+        </div>
+
+    
+        
+        <div class="container mx-auto mt-5 mb-5 col-11 col-sm-11 col-md-10 col-lg-10 col-xl-10">
+            
+    <!-- Profil user-->
+            <button class="btn btn-primary mb-3 text-center float-right">MODIFIER</button>
+
+            <div class="row shadow rounded col d-flex mx-5 px-5 float-none">
+                <img class="logo" src="icon_1612778546480.png"/>
+                <p class="align-self-center m-auto">Nom et prenom</p>
+
+            </div>
+
+            <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+                <h3 class="">A propos de moi</h3>
+                <p class="">Nom et prenom : </p>
+                <p class="">Pseudo : </p>
+                <p class="">Fonction : </p>
+
+
+            </div>
+    <!-- Mes publications -->
+            <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+                <h3> Mes publications </h3>
+
+                <div class="border text-justify p-5">
+                    <div class="d-flex justify-content-between mt-1 mb-1">
+                        <h4>Titre du publication</h4><span>Icon crayon</span>
+                    </div>
+
+                    <div class=" ">
+                        <p>
+                        </p>
+                    </div>
+                    <div>
+                        <a class="btn btn-dark">Photo/vidéo
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+    <!-- Supprimer le compte user -->
+            <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+                <h3 class="text-danger">Supprimer le compte</h3>
+                <p>Si vous souhaitez supprimer votre compte, cliquez sur le button et confirmer</p>
+                <button class="btn btn-danger">Supprimer mon compte</button>
+
+            </div>
+        </div>
+
+    <!-- Footer -->
+        <div>
+            <Footer/>
+        </div>
+
+    </div>
+</template>
+
+<script>
+export default {
+    
+}
+</script>
+
+<style scoped>
+
+</style>

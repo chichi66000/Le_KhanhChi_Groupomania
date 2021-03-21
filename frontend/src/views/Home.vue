@@ -1,14 +1,29 @@
 <template>
-    <Navbar/>
+    <div class="container">
 
+      <div>
+        <Navbar/>
+      </div>
+
+      <!-- Afficher les actualités des postes -->
+      <div>
+
+      </div>
+
+      <div>
+        <Footer/>
+      </div>
+      
+    </div>
 </template>
 
 <script>
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 export default {
     name: "Home",
     components: {
-      Navbar
+      Navbar, Footer
     }
 }
 </script>

@@ -29,6 +29,7 @@
                 <p class="pink font-weight-bolder">Vous n'avez pas encore de compte?</p>
                 <button class="btn pink font-weight-bolder mt-2 fs-3 mb-5" @click="switchToggle">S'incrire</button>
             </div>
+
         </div>
 
         <!-- Afficher template Inscription quand toggle = off -->
@@ -46,11 +47,11 @@
 
                 <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="http://localhost:3000/api/signup">
                     <div class="form-group row ">
-                        <input type="text" class="form-control" id="nom" name="nom" placeholder="nom" v-model="nom" required>
+                        <input type="text" class="form-control" id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z][A-Za-z' -]+">
                     </div>
 
                     <div class="form-group row ">
-                        <input type="text" class="form-control" id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required>
+                        <input type="text" class="form-control" id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required pattern="[A-Za-z][A-Za-z' -]+">
                     </div>
 
                     <div class="form-group row ">
@@ -58,7 +59,7 @@
                     </div>
 
                     <div class="form-group row ">
-                        <input type="text" class="form-control" id="fonction" name="fonction" v-model="fonction" placeholder="fonction">
+                        <input type="text" class="form-control" id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z][A-Za-z' -]+">
                     </div>
 
                     <div class="form-group row ">
@@ -66,21 +67,23 @@
                     </div>
 
                     <div class="form-group row ">
-                        <input type=password class="form-control" id="password" name="password" v-model="password" placeholder="password" required>
+                        <input type="password" class="form-control" id="password" name="password" v-model="password" placeholder="password" required min="8" max="20">
                     </div>
 
                     <div class="form-group row ">
-                        <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" v-model="passwordCheck" placeholder="confirmer password" required>
+                        <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" v-model="passwordCheck" placeholder="confirmer password" min="8" max="20" required>
                     </div>
             
                     <div class="form-group row ">
-                        <label class="form-text pink" for="avatar">Image profil</label>
+                        <label class="form-text pink" for="avatar">Image profil (jpg, png, jpeg) </label>
                         <input type="file" class="form-control-file pink" id="avatar" accept=".jpg, .png, .jpeg" name="avatar" @input="loadAvatar">
+                        <span id="error_file" class="text-center text-danger fw-bold"></span>
 
                     </div>
                     <button type="submit" class="btn btn-primary text-center mb-5" id="button" @submit="inscriptionSubmit">Valider</button>
             
                 </form>
+
             </div>
                 
         </div>
@@ -116,48 +119,46 @@ export default {
         },
 
         // fonction pour envoyer le formulaire et signup
-        inscriptionSubmit () {
+        inscriptionSubmit (e) {
             // si les champs required sont vide 
-            if( this.nom==null || this.prenom == null || this.email==null || this.password == null || this.pseudo == null || this.passwordCheck == null) {
+            if(this.nom==null || this.prenom == null || this.email==null || this.password == null || this.pseudo == null || this.passwordCheck == null) {
+                e.preventDefault();
                 window.alert('Veuillez remplir les informations manquantes')
             } 
             // si password n'est pas le même dans 2 champs
-            if(this.password!== this.passwordCheck) {
+            else if(this.password!== this.passwordCheck) {
+                e.preventDefault();
+                e.stopPropagation();
+
                 window.alert('Votre mot de passe doit être le même pour les 2 champs')
             }
             // si tout est OK, créer user
             else {
-                const user = {
+                let user = {
                     nom: this.nom,
                     prenom: this.prenom,
                     email: this.email,
                     password: this.password,
                     fonction: this.fonction,
-                    avatar: ''
-                };
-                // s'il user n'a pas photo pour avatar
-                if(this.avatar==null) {
-                    console.log('Avatar absent')
-                }
-                // s'il user a fourni photo pour avatar
-                else { return user.avatar = this.avatar}
-
-                //envoyer le formulaire
+                    avatar: this.avatar
+                    };
                 let form = new FormData();
                 form.append("user", JSON.stringify(user));
-                
-                let optionFetch = {
+
+                //envoyer le formulaire
+            
+                    let optionFetch = {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'},
                     body:form
-                };
-                let response = fetch('http://localhost:3000/api/signup', optionFetch); 
-
-                response.then(() => {
-                    // reécuperer token et aller sur la page Home???
-                })
-                        .catch((error) => console.log(error))
+                    };
+                    let response = fetch('http://localhost:3000/api/signup', optionFetch); 
+                    response.then(() => {
+                                        // reécuperer token et aller sur la page Home???
+                                    })
+                            .catch((error) => console.log(error))
+                
             }
         },
 
@@ -165,7 +166,17 @@ export default {
         login() {},
 
         // fonction pour upload file pour avatar
-        loadAvatar() {}
+        loadAvatar(e) {
+            let error_file = document.getElementById('error_file');
+            let avatar = document.getElementById('avatar').files[0];
+            if(avatar.type!==("png" ||"jpg" || "jpeg")) { 
+                e.stopPropagation();
+                error_file.innerHTML = "Veuillez choisir le bon format de l'image"
+            }
+            else { 
+                this.avatar = avatar
+            }
+        }
     }
 }
 </script>
