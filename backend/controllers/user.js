@@ -27,7 +27,7 @@ exports.signup = (
         .bail()
         .normalizeEmail(),
     body('password', 'Password invalid')    //valider password
-        .isLength({min: 8})                 // min 8 characters
+        .isLength({min: 8}, {max:20})                 // min 8 characters
         .isUppercase({min:1})               // min 1 majuscule
         .isLowercase({min:1})               // min 1 minuscule
         .isNumeric({min:1}),                // min 1 chiffre
