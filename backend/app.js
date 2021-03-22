@@ -1,11 +1,11 @@
+// import les modules nécessaires pour serveur
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require('path');
 const app = express();
 
-const userRoutes = require('./routes/user');
 
-// pour une protection api
+//import les modules pour une protection api
 const cors = require("cors");
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit'); 
@@ -13,8 +13,9 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100  // limit each IP to 100 requests per windowMs
 });
-require('dotenv').config(); // load .env file pour garder secret les infos confidentiels
 const expressSanitizer = require('express-sanitizer');
+
+require('dotenv').config(); // load .env file pour garder secret les infos confidentiels
 
 // setHeader
 app.use((req, res, next) => {
@@ -34,11 +35,14 @@ app.use(cors({origin: 'http://localhost:8080'}));
 app.use(limiter);
 app.use (expressSanitizer());
 
+// imports les routes 
+const userRoutes = require('./routes/user');
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use('./api/auth', userRoutes);
 
+app.get('/test', userRoutes)
 
 
 module.exports = app;
