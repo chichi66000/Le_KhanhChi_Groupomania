@@ -1,9 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const {body, validationResult, check} = require('express-validator');
 
+const sequelize = require('sequelize');
 const db = require('../models');
 
-const {body, validationResult, check} = require('express-validator');
 
 // valider avec validator-password
 // var passwordValidator = require('password-validator');
@@ -26,11 +27,11 @@ exports.signup = (
         .isEmail()
         .bail()
         .normalizeEmail(),
-    body('password', 'Password invalid')    //valider password
-        .isLength({min: 8}, {max:20})                 // min 8 characters
-        .isUppercase({min:1})               // min 1 majuscule
-        .isLowercase({min:1})               // min 1 minuscule
-        .isNumeric({min:1}),                // min 1 chiffre
+    body('password', 'Password invalid')        //valider password
+        .isLength({min: 8}, {max:20})                 // min 8, max 20 characters
+        .isUppercase({min:1})                   // min 1 majuscule
+        .isLowercase({min:1})                   // min 1 minuscule
+        .isNumeric({min:1}),                    // min 1 chiffre
     body('nom', 'nom invalid')
         .isString(),
     body('prenom', 'prenom invalid')
@@ -42,6 +43,7 @@ exports.signup = (
 
     (req, res, next) => {
         const errors = validationResult(req); //si error, afficher error
+
         const userObject = JSON.parse(req.body.Users);
 
         const nom =  userObject.nom;
@@ -51,7 +53,7 @@ exports.signup = (
         const fonction = userObject.fonction;
         const pseudo = userObject.pseudo;
         const avatar = userObject.avatar;
-        const isAdmin = "";
+        const isAdmin = 0;
 
         if(!errors.isEmpty()) { 
         return res.status(400).json({errors: errors.array()})
@@ -66,8 +68,7 @@ exports.signup = (
                     if(userFound) {
                         return res.status(400).json({message : "Email déjà utilisé"})
                     }
-                    
-                        
+                // si user n'est pas dans BDD, hash passsword..  
                     bcrypt.hash(password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
                         .then( (hash) => {
                             req.file? { // condition pour upload file avatar
@@ -78,7 +79,7 @@ exports.signup = (
                             avatar: "http://localhost:3000/images/avatar_default.png"   // utiliser avatar default
                             };
 
-                            userObject.id===1? userObject.isAdmin= true : userObject.isAdmin=false; // 1er user est admin
+                            userObject.id===1? userObject.isAdmin= true : userObject.isAdmin=0; // 1er user est admin
 
                             const newUser = db.Users.create({ // crer user dans BDD
                                 email: email,
@@ -89,8 +90,7 @@ exports.signup = (
                                 fonction: fonction,
                                 avatar: avatar,
                                 isAdmin: isAdmin,
-                                createdAt: new Date(),
-                                updatedAt: ''
+                                
                             });
                             newUser.save() // enregistrer user
                                 .then(() => res.status(201).json({message: "utilisateur crée"}))
@@ -98,12 +98,9 @@ exports.signup = (
                                    res.status(400).json({error}); console.log(error) 
                                 } )
                         })
-                        .catch((error) => {res.status(400).json({error}); console.log(error)} )
-                        
-                    
+                        .catch((error) => {res.status(400).json({error}); console.log(error)})                          
                 })
                 .catch((error) => res.status(500).json({error}))
-        
         }
 })
 
@@ -122,9 +119,9 @@ exports.login = (req, res, next) => {
                         return res.status(401).json({ error: 'Mot de passe incorrect'})
                     }
                     res.status(200).json({ // si mdp correct, renvoyer id
-                        userId: user.id,
+                        id: user.id,
                         token: jwt.sign(
-                            {userId: user.id},
+                            {id: user.id},
                             'RANDOM_TOKEN_SECRET',
                             {expiresIn: '24h'}
                         )// un token permet la connexion
@@ -152,18 +149,22 @@ exports.deleteUser = (req, res, next) => {
 // route pour update user
 exports.updateUser = (req, res, next) => {
     let userObject = {};
-    req.file? // condition si upadate avec photo ou non
-        (db.Users.findOne({id:req.params.id}) // update avec photo avatar
-            .then( (user) => {
+    req.file?       // condition si update avec photo ou non
+        (db.Users.findOne({id:req.params.id}) 
+        //avec photo => chercher user, split image, et changer nouvel avatar
+            .then( (user) => {                
             const filename = user.avater.split('/images/')[1];
-            fs.unlinkSync(`images/${filename}`);
-            })
+            
+                fs.unlinkSync(`images/${filename}`);
+                userObject = { 
+                    ... JSON.parse(req.body.user),
+                    avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`  
+                }  
+        })
             .catch((error) => res.status(500).json({error})))
-            (userObject = {
-            ... JSON.parse(req.body.user),
-            avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-            })
-    :   (userObject = {...req.body});  // update sans photo
+
+    : (userObject = {...req.body})       // update sans photo => update les infos données
+
     db.Users.updateOne (
         {id: req.params.id},
         {...userObject, id: req.params.id, updatedAt: new Date()}
