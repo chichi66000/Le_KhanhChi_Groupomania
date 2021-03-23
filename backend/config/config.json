@@ -1,24 +1,24 @@
 
 {
   "development": {
-    "username": "chi",
+    "username": "khanh",
     "password": "mypass",
     "database": "groupomania",
     "host": "127.0.0.1",
-    "dialect": "mariadb"
+    "dialect": "mysql"
   },
   "test": {
-    "username": "chi",
+    "username": "khanh",
     "password": "mypass",
     "database": "groupomania_test",
     "host": "127.0.0.1",
-    "dialect": "mariadb"
+    "dialect": "mysql"
   },
   "production": {
-    "username": "chi",
+    "username": "khanh",
     "password": "mypass",
     "database": "groupomania_production",
     "host": "127.0.0.1",
-    "dialect": "mariadb"
+    "dialect": "mysql"
   }
 }
