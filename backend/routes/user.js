@@ -2,13 +2,19 @@ const express = require('express');
 const router = express.Router();
 const multer = require('../middlewares/multer_config');
 const auth = require('../middlewares/auth');
-const db = require('../models/users');
-const sequelize = require('sequelize')
+
+const Users = require('../models/users');
+const sequelize = require('sequelize');
+const db = require('../server');
 
 const userCtrl = require('../controllers/user');
 
-router.get("/test", (req, res) => res.send("testok")
-)
+router.get("/test", (req, res) => {
+    Users.findAll()
+        .then((user) => console.log(user))
+        .catch((error) => consolr.log(error))
+})
+
 
 // Incription user
 router.post("/signup", multer, userCtrl.signup);

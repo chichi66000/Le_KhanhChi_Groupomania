@@ -37,9 +37,9 @@ app.use (expressSanitizer());
 
 // imports les routes 
 const userRoutes = require('./routes/user');
-
+// route pour stocker les images
 app.use("/images", express.static(path.join(__dirname, "images")));
-
+//route authentification
 app.use('./api/auth', userRoutes);
 
 app.get('/test', userRoutes)

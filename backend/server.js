@@ -1,3 +1,4 @@
+// Créer server, utiliser port 5000, utiliser app comment fichier d'entrée
 const http = require('http');
 const app = require ('./app');
 
@@ -36,20 +37,18 @@ const normalizePort = val => {
   };
   
   const server = http.createServer(app);
+  
+  server.on('listening', () => {
+    const address = server.address();
+    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+    console.log('Listening on ' + bind);
+  })
+  // .catch((error) => console.log(error));
+server.on('error', errorHandler);
+
+server.listen(port);
 
   // connecter avec BDD sequelize
-// const models = require("./models");
-// models.sequelize
-//   .sync()
-//   .then(server.on('listening', () => {
-//     const address = server.address();
-//     const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-//     console.log('Listening on ' + bind);
-//   }))
-//   .catch((error) => console.log(error));
-//   server.on('error', errorHandler);
-  
-//   server.listen(port);
 
   const { Sequelize } = require('sequelize');
   const db = new Sequelize(process.env.DATABASE, process.env.NAME, process.env.PASSWORD, {
@@ -58,27 +57,11 @@ const normalizePort = val => {
     dialectOptions: {
       "ssl": false
     }
-  });
+  })
+
 db.authenticate()
   .then(() => console.log('Sequelize connecté'))
   .catch((error) => console.log({error}))
 
-  
-//   (async() => {
-  
-//     await sequelize.authenticate();
-//     console.log('Connection Sequelize has been established successfully.');
-//     return sequelize;
-   
-// })()
-//   .catch (console.error)
+module.exports = db;
 
-  server.on('listening', () => {
-        const address = server.address();
-        const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-        console.log('Listening on ' + bind);
-      })
-      // .catch((error) => console.log(error));
-  server.on('error', errorHandler);
-  
-  server.listen(port);

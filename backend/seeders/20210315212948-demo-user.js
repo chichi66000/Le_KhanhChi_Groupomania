@@ -11,8 +11,7 @@ module.exports = {
       pseudo: 'lechi',
       avatar:'',
       isAdmin: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      
     }]);
   },
 
