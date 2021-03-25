@@ -72,6 +72,7 @@ module.exports = function (sequelize, DataTypes) {
       }, {
         sequelize,
         tableName: "users",
+        timeStamps: true,
         indexes: [
           {name: "PRIMARY",
           unique: true,

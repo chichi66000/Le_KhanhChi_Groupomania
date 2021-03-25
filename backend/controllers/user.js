@@ -27,11 +27,12 @@ exports.signup = (
         .isEmail()
         .bail()
         .normalizeEmail(),
-    body('password', 'Password invalid')        //valider password
+    body('password')        //valider password
         .isLength({min: 8}, {max:20})                 // min 8, max 20 characters
         .isUppercase({min:1})                   // min 1 majuscule
         .isLowercase({min:1})                   // min 1 minuscule
-        .isNumeric({min:1}),                    // min 1 chiffre
+        .isNumeric({min:1})                     //min 1 chiffre
+        .withMessage("Password doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et comprendre entre 8 et 20 charactères"),                    
     body('nom', 'nom invalid')
         .isString(),
     body('prenom', 'prenom invalid')
@@ -44,63 +45,73 @@ exports.signup = (
     (req, res, next) => {
         const errors = validationResult(req); //si error, afficher error
 
-        const userObject = JSON.parse(req.body.Users);
+        // const userObject = req.body.Users;
 
-        const nom =  userObject.nom;
-        const prenom= userObject.prenom;
-        const email= userObject.email;
-        const password = userObject.password;
-        const fonction = userObject.fonction;
-        const pseudo = userObject.pseudo;
-        const avatar = userObject.avatar;
-        const isAdmin = 0;
+        // const nom =  userObject.nom;
+        // const prenom= userObject.prenom;
+        // const email= userObject.email;
+        // const password = userObject.password;
+        // const fonction = userObject.fonction;
+        // const pseudo = userObject.pseudo;
+        // const avatar = userObject.avatar;
+        // const isAdmin = 0;
 
         if(!errors.isEmpty()) { 
         return res.status(400).json({errors: errors.array()})
             }     
         else {
            
-            db.Users.findOne({
-                attributes: ['email', 'pseudo'],
-                where: {email : email, pseudo: pseudo}
+            db.Users.findAll({
+                attributes: ['email', 'pseudo']
             }) // si pas error, chercher les users
-                .then((userFound) => {
-                    if(userFound) {
+                .then((email, pseudo) => {
+                    if(email===req.body.email) {
                         return res.status(400).json({message : "Email déjà utilisé"})
                     }
+                    else if(pseudo === req.body.pseudo) {
+                        return res.status(400).json({message: "pseudo déjà utilisé"})
+                    }
+                    else{
                 // si user n'est pas dans BDD, hash passsword..  
-                    bcrypt.hash(password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
+                    bcrypt.hash(req.body.password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
                         .then( (hash) => {
+                            // let userObject = req.body.Users
                             req.file? { // condition pour upload file avatar
-                            ...userObject,
+                            ...req.body.user,
                             avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // ajouter image pour avater
                             } : {
-                            ...userObject,
+                            ...req.body.user,
                             avatar: "http://localhost:3000/images/avatar_default.png"   // utiliser avatar default
                             };
 
-                            userObject.id===1? userObject.isAdmin= true : userObject.isAdmin=0; // 1er user est admin
+                            // userObject.id===1? userObject.isAdmin= true : userObject.isAdmin=0; // 1er user est admin
 
                             const newUser = db.Users.create({ // crer user dans BDD
-                                email: email,
+                                email: req.body.email,
                                 password: hash ,
-                                nom: nom,
-                                prenom: prenom,
-                                pseudo: pseudo,
-                                fonction: fonction,
-                                avatar: avatar,
-                                isAdmin: isAdmin,
+                                nom: req.body.nom,
+                                prenom: req.body.prenom,
+                                pseudo: req.body.pseudo,
+                                fonction: req.body.fonction,
+                                avatar: req.body.avatar,
+                                isAdmin: 0,
                                 
                             });
-                            newUser.save() // enregistrer user
-                                .then(() => res.status(201).json({message: "utilisateur crée"}))
-                                .catch((error) => {
-                                   res.status(400).json({error}); console.log(error) 
-                                } )
-                        })
-                        .catch((error) => {res.status(400).json({error}); console.log(error)})                          
+                            console.log("Utilisateur crée");
+                            console.log(newUser);
+
+                            // newUser.save() // enregistrer user
+                                // .then(() => res.status(201).json({message: "utilisateur crée"}))
+                                // .catch((error) => {
+                                //    res.status(400).json({error}); console.log(error) 
+                                // } )
+                            })
+                        .catch((error) => res.status(400).json({error}))
+                    }                         
                 })
+            
                 .catch((error) => res.status(500).json({error}))
+            // .catch((error) => console.log(error))
         }
 })
 
