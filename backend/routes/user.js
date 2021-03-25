@@ -22,6 +22,12 @@ router.post("/login", userCtrl.login);
 router.put('/:id',auth, multer, userCtrl.updateUser);
 
 //delete user
-router.post('/:id', auth, userCtrl.deleteUser)
+router.delete('/:id', auth, userCtrl.deleteUser)
+
+// récupérer utilisateur connecté ( pour page profil d'utilisateur )
+router.get('/:id', auth, userCtrl.getOneUser)
+
+// récupérer tous les utilisateur ( pour Admin)
+router.get('/', auth, userCtrl.getAllUser)
 
 module.exports = router;

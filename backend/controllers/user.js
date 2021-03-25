@@ -115,14 +115,21 @@ exports.login = (req, res, next) => {
 
 //route pour supprimer un user
 exports.deleteUser = (req, res, next) => {
-    db.Users.findOne({id: req.params.id})
+    db.Users.findOne({where: {id: req.params.id}})
         .then((user) => {
             const filename = user.avater.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                db.Users.deleteOne({email: req.body.email})
-                    .then(() => res.status(200).json({message: 'User deleted'}))
-                    .catch((error) => res.status(404).json({error}))
-            })
+            if (!filename.includes("avatar_default.png")) {
+                fs.unlink(`images/${filename}`, () => {
+                    db.Users.destroy ({where: {id:req.params.id}})
+                        .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+                        .catch((error) => res.status(400).json({error}))
+                })
+            }
+            else {
+                db.Users.destroy({where: {id: req.params.id}})
+                    .then(() => res.status(200).json({message: "Utilisateur supprimé"}))
+                    .catch((error) => res.status(400).json({error}))
+            }
         })
         .catch((error) => res.status(500).json({error}))
 }
@@ -152,4 +159,23 @@ exports.updateUser = (req, res, next) => {
         .then(() => res.status(200).json({message: 'User modified ! '}))
         .catch((error) => res.status(404).json({error}))
     
+}
+
+// route pour récupérer utilisateur (pour page profil)
+exports.getOneUser = (req, res, next) => {
+    db.Users.findOne( {where: { id: req.params.id}})
+        .then((user) => {
+            if(! user) { res.status(404).json({message: "Utilisateur non trouvé"})}
+            res.status(200).json(user)
+        })
+        .catch((error) => res.status(500).json({error}))
+}
+
+// route pour récupéer tous les utilisateurs (pour admin par expemple)
+exports.getAllUser = (req, res, next) => {
+    db.Users.findAll()
+        .then((users) => {
+            if (! users) { res.status(404).json({ message:"Utilisateur non trouvé" })}
+            res.status(200).json(users)})
+        .catch((error) => res.status(404).json({error}))
 }
