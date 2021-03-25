@@ -5,22 +5,6 @@ const {body, validationResult, check} = require('express-validator');
 const sequelize = require('sequelize');
 const db = require('../models');
 
-
-// valider avec validator-password
-// var passwordValidator = require('password-validator');
-// Create a schema
-// var schema = new passwordValidator();
- 
-// // Add properties to schema password
-// schema
-// .is().min(8)                            // Minimum length 8
-// .is().max(100)                          // Maximum length 100
-// .has().uppercase()                      // Must have uppercase letters
-// .has().lowercase()                      // Must have lowercase letters
-// .has().digits(1)                        // Must have at least 1 digits
-// .has().not().spaces()                           // Should not have spaces
-// .is().not().oneOf(['Passw0rd', 'Password123']); // Blacklist these values
-
 // créer une route pour enregistrer nouvel utilisateur
 exports.signup = (
     body ('email', 'Email is not valid') // valider email et password avant créer nouvel user
@@ -45,34 +29,24 @@ exports.signup = (
     (req, res, next) => {
         const errors = validationResult(req); //si error, afficher error
 
-        // const userObject = req.body.Users;
-
-        // const nom =  userObject.nom;
-        // const prenom= userObject.prenom;
-        // const email= userObject.email;
-        // const password = userObject.password;
-        // const fonction = userObject.fonction;
-        // const pseudo = userObject.pseudo;
-        // const avatar = userObject.avatar;
-        // const isAdmin = 0;
-
         if(!errors.isEmpty()) { 
         return res.status(400).json({errors: errors.array()})
-            }     
-        else {
-           
-            db.Users.findAll({
+            }   
+        // s'il n'y a pas d'erreur pour la vérification email, password, on va chercher dans BDD pour voir si email ou pseudo est déjà utilisé ou pas?
+
+        else {  
+            db.Users.findAll({      // chercher email, pseudo dans BDD user
                 attributes: ['email', 'pseudo']
-            }) // si pas error, chercher les users
+            }) 
                 .then((email, pseudo) => {
-                    if(email===req.body.email) {
+                    if(email===req.body.email) { // si email trouvé dans BDD
                         return res.status(400).json({message : "Email déjà utilisé"})
                     }
-                    else if(pseudo === req.body.pseudo) {
+                    else if(pseudo === req.body.pseudo) { // si pseudo déjà dans BDD
                         return res.status(400).json({message: "pseudo déjà utilisé"})
                     }
                     else{
-                // si user n'est pas dans BDD, hash passsword..  
+                    // si user n'est pas dans BDD, hash passsword..  
                     bcrypt.hash(req.body.password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
                         .then( (hash) => {
                             // let userObject = req.body.Users
@@ -83,8 +57,6 @@ exports.signup = (
                             ...req.body.user,
                             avatar: "http://localhost:3000/images/avatar_default.png"   // utiliser avatar default
                             };
-
-                            // userObject.id===1? userObject.isAdmin= true : userObject.isAdmin=0; // 1er user est admin
 
                             const newUser = db.Users.create({ // crer user dans BDD
                                 email: req.body.email,
@@ -99,44 +71,42 @@ exports.signup = (
                             });
                             console.log("Utilisateur crée");
                             console.log(newUser);
-
-                            // newUser.save() // enregistrer user
-                                // .then(() => res.status(201).json({message: "utilisateur crée"}))
-                                // .catch((error) => {
-                                //    res.status(400).json({error}); console.log(error) 
-                                // } )
-                            })
+                        })
                         .catch((error) => res.status(400).json({error}))
                     }                         
                 })
-            
                 .catch((error) => res.status(500).json({error}))
-            // .catch((error) => console.log(error))
         }
 })
 
 //une route pour login
 exports.login = (req, res, next) => {
     db.Users.findOne( {
-        attributes: ['email'],
+        // attributes: ['email'],
         where: {email: req.body.email}})// trouver utilisateur avec email unique
         .then( (user) => {
             if(!user) { // si user n'existe pas dans bdd
+                console.log('Utilisateur non trouvé');
                 return res.status(401).json({error: 'Utilisateur non trouvé'}) // renvoyer message erreur
             }
             bcrypt.compare(req.body.password, user.password) // si user est trouvé, comparer le mot de passe entrée avec celui dans bdd
                 .then((valid) => {
                     if(!valid) {// si mdp n'est pas valid, renvoyer error
+                        console.log('Mot de passe incorrect')
                         return res.status(401).json({ error: 'Mot de passe incorrect'})
                     }
+                    else {
                     res.status(200).json({ // si mdp correct, renvoyer id
                         id: user.id,
                         token: jwt.sign(
                             {id: user.id},
                             'RANDOM_TOKEN_SECRET',
                             {expiresIn: '24h'}
-                        )// un token permet la connexion
-                    })
+                        ),// un token permet la connexion
+                        
+                    });
+                    console.log("Utilisateur login réussi")
+                    }
                 })
                 .catch((error) => res.status(500).json({error}))
         })
@@ -165,16 +135,15 @@ exports.updateUser = (req, res, next) => {
         //avec photo => chercher user, split image, et changer nouvel avatar
             .then( (user) => {                
             const filename = user.avater.split('/images/')[1];
-            
                 fs.unlinkSync(`images/${filename}`);
-                userObject = { 
-                    ... JSON.parse(req.body.user),
-                    avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`  
-                }  
         })
-            .catch((error) => res.status(500).json({error})))
+            .catch((error) => res.status(500).json({error}))
+            (userObject = { 
+                ... JSON.parse(req.body.user),
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`  
+            } ))
 
-    : (userObject = {...req.body})       // update sans photo => update les infos données
+    : (userObject = {...req.body.user})       // update sans photo => update les infos données
 
     db.Users.updateOne (
         {id: req.params.id},
