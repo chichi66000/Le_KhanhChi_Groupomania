@@ -55,7 +55,7 @@ exports.signup = (
                             avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // ajouter image pour avater
                             } : {
                             ...req.body.user,
-                            avatar: "http://localhost:3000/images/avatar_default.png"   // utiliser avatar default
+                            avatar: "http://localhost:5000/images/avatar_default.png"   // utiliser avatar default
                             };
 
                             const newUser = db.Users.create({ // crer user dans BDD

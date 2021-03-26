@@ -4,7 +4,7 @@
         <Navbar/>
 
         <!-- Formulaire pour modifier profil -->
-        <form class="form-group  mt-5 mb-5 col col-sm-12 col-md-8 col-lg-6 mx-auto text-center" method="post" enctype="multipart/form-data" action="http://localhost:3000/api/signup">
+        <form class="form-group  mt-5 mb-5 col col-sm-12 col-md-8 col-lg-6 mx-auto text-center" method="post" enctype="multipart/form-data" action="http://localhost:5000/api/auth/signup">
             <div class="form-group row ">
                 <label for="nom" class="col-form-label col-sm-2">Nom</label>
                 <input type="text" class="form-control col-sm-10" id="nom" name="nom" placeholder="nom" v-model="nom" pattern="[A-Za-z][A-Za-z' -]+">
