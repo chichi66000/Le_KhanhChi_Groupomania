@@ -94,7 +94,7 @@
 
                      <div class="form-group form-check">
                         <input type="checkbox" v-model="accept" id="accept" required class="form-check-input">
-                        <label class="form-check-label" for="accept">Accept terms &nbsp; conditions</label>
+                        <label class="form-check-label" for="accept">Accept conditions d'utilisation; </label>
                     </div>
 
                     <button type="submit" class="btn btn-primary text-center mb-5" id="button" >Valider</button>
@@ -123,20 +123,16 @@ export default {
         return {
             nom:'',
             prenom:'',
-            // email:'',
             pseudo:'',
             fonction:'',
-            // password:'',
-            // passwordCheck:'',
             avatar:'',
-            // errors: [],
             toggle: false,
         }
     },
     setup () {
         // Define a validation schema
         const errors = ref([])
-        const toggle = ref(false);
+        // const toggle = ref(false);
 
         const schema = yup.object({
         email: yup.string()
@@ -145,7 +141,8 @@ export default {
         password: yup.string()
                 .min(8, 'Password doit avoir au minimum 8 characters')
                 .max(20, 'Password doit avoir au maximum 20 characters')
-                .required('Password is required'),
+                .required('Password is required')
+                ,
         passwordCheck: yup.string()
                 .oneOf([yup.ref('password'), null], 'Passwords must match')
                 .required('Confirm Password is required'),
@@ -161,10 +158,10 @@ export default {
         const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
 
     // methode switch Toggle pour switcher entre login et signup
-        const switchToggle = () => {
-            if (toggle.value) { return toggle.value=false}
-            if(toggle.value ==false) { return toggle.value == true}
-        }
+        // const switchToggle = () => {
+        //     if (toggle.value) { return toggle.value=false}
+        //     if(toggle.value ==false) { return toggle.value == true}
+        // }
         
         return {
             errors,
@@ -174,19 +171,20 @@ export default {
             passwordError,
             passwordCheck,
             passwordCheckError,
-            switchToggle
+            // switchToggle
         };
     },
 
     methods: {
         // fonction pour switcher entre template login et signup
-        // switchToggle () {
-        //     if (this.toggle) { return this.toggle=false}
-        //     if(this.toggle ==false) { return this.toggle = true}
-        // },
+        switchToggle () {
+            if (this.toggle) { return this.toggle=false}
+            if(this.toggle ==false) { return this.toggle = true}
+        },
 
         // fonction pour envoyer le formulaire et signup
         inscriptionSubmit: function () {
+                // créer utilisateur
                 let user = {
                     nom: this.nom,
                     prenom: this.prenom,
@@ -195,6 +193,7 @@ export default {
                     fonction: this.fonction,
                     avatar: this.avatar
                     };
+
                 let form = new FormData();
                 form.append("user", JSON.stringify(user));
 
@@ -204,62 +203,67 @@ export default {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'},
-                    body:form
+                    body: form
                     };
-                let promise = fetch('http://localhost:5000/api/auth/signup', optionFetch); 
-                promise.then((response) => {  
-                        console.log(response);
+                fetch('http://localhost:5000/api/auth/signup', optionFetch) 
+                    .then((user) => {                            // récupérer user créé 
                         console.log("Utilisateur crée")
+                        let email = user.email; 
+                        let password = user.password;
+                        this.login(email, password)              //login avec email, password 
                         })
-                        .catch((error) => console.log(error))
-                    // faire login pour utilisateur
-                let that = this;
-                let response = promise;
-                    return (response,
-                        setTimeout(function() {
-                            that.login();
-                        }, 500))
+                    .catch((error) => console.log(error))
+                    
         },
 
         // fonction gérer le login
-        // login: function () {
-        //     if(this.email && this.password) {
-        //         let user = {
-        //             email: this.email,
-        //             password: this.password
-        //         };
+        login() {
+            if(this.email && this.password) {
+                let user = {
+                    email: this.email,
+                    password: this.password
+                };
 
-        //         let option = {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'},
-        //             body:JSON.stringify(user)
-        //             };
-        //         fetch (("http://localhost:5000/api/auth/login"), option)
-        //             .then(response => handleResponse(response)) // function pour gérer les cas d'erreur 400 ou 500
+                let option = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'},
+                    body:JSON.stringify(user)
+                    };
+                fetch (("http://localhost:5000/api/auth/login"), option)
+                    .then( () => {
+
+                    } )  
                              
-        //             .catch((error) => console.log(error))
+                    .catch((response) => {
+                        if( !response.ok || response.status == 401) {
+                            this.error = [];
+                            this.error.push("Email ou password incorrect");
+                            let err = response.text();
+                            console.log(err)
+                        }
+                    })
 
-        //             function handleResponse(response) {
-        //                 return response.text()          // prendre le texte du response
-        //                     .then((text) => {
-        //                         const data = text;
-        //                         if ( !response.ok) {        // si la response pas OK, on envoie message d'erreur email(401), sinon reject error 
-        //                             if (response.status ==401) {
-        //                                 this.error = [];
-        //                                 this.error.push("Email ou password incorrect")
-        //                             }
-        //                             const error = text || response.statusText();
-        //                             return new Promise.reject(error)
-        //                         }
-        //                         else {          // si le response est OK, on renvoie la response => data = text et traiter dans une promesse suivante
-        //                             return data
-        //                         }
-        //                     })
-        //                     .catch((error) => response.status(500).json({error}))
-        //             }
-        //     }
-        // },
+                    // function handleResponse(response) {
+                    //     return response.text()          // prendre le texte du response
+                    //         .then((text) => {
+                    //             const data = text;
+                    //             if ( !response.ok) {        // si la response pas OK, on envoie message d'erreur email(401), sinon reject error 
+                    //                 if (response.status ==401) {
+                    //                     this.error = [];
+                    //                     this.error.push("Email ou password incorrect")
+                    //                 }
+                    //                 const error = text || response.statusText();
+                    //                 return new Promise.reject(error)
+                    //             }
+                    //             else {          // si le response est OK, on renvoie la response => data = text et traiter dans une promesse suivante
+                    //                 return data
+                    //             }
+                    //         })
+                    //         .catch((error) => response.status(500).json({error}))
+                    // }
+            }
+        },
 
         // fonction pour upload file pour avatar
         // loadAvatar(e) {
