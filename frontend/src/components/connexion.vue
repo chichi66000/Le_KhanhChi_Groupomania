@@ -142,6 +142,8 @@ export default {
                 .min(8, 'Password doit avoir au minimum 8 characters')
                 .max(20, 'Password doit avoir au maximum 20 characters')
                 .required('Password is required')
+                .matches(
+                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
                 ,
         passwordCheck: yup.string()
                 .oneOf([yup.ref('password'), null], 'Passwords must match')
@@ -210,7 +212,8 @@ export default {
                         console.log("Utilisateur crée")
                         let email = user.email; 
                         let password = user.password;
-                        this.login(email, password)              //login avec email, password 
+                        console.log(email, password)
+                        // this.login(email, password)              //login avec email, password 
                         })
                     .catch((error) => console.log(error))
                     

@@ -15,7 +15,8 @@ exports.signup = (
         .isLength({min: 8}, {max:20})                 // min 8, max 20 characters
         .isUppercase({min:1})                   // min 1 majuscule
         .isLowercase({min:1})                   // min 1 minuscule
-        .isNumeric({min:1})                     //min 1 chiffre
+        .isNumeric({min:1})                     
+        .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)                     
         .withMessage("Password doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et comprendre entre 8 et 20 charactères"),                    
     body('nom', 'nom invalid')
         .isString(),
