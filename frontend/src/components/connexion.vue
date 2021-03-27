@@ -230,7 +230,31 @@ export default {
         },
 
         // fonction gérer le login
-        login: function () {},
+        login: function () {
+            if(this.email && this.password) {
+                let user = {
+                    email: this.email,
+                    password: this.password
+                };
+
+                let option = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'},
+                    body:JSON.stringify(user)
+                    };
+                let promise = await fetch (("http://localhost:5000/api/auth/login"), option)
+                    .then(response => handleResponse(response))
+                    .catch((error) => res.status(500).json({error}))
+
+                    function handleResponse(response) {
+                        return response.text()
+                            .then()
+                            .catch()
+                        if(!response.ok) {}
+                    }
+            }
+        },
 
         // fonction pour upload file pour avatar
         loadAvatar(e) {
