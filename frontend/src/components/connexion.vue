@@ -110,6 +110,8 @@
 <script>
 import Logo from '../components/Logo.vue';
 import {  useField, useForm } from 'vee-validate';
+import { ref, } from 'vue'
+
 import * as yup from 'yup';
 
 export default {
@@ -121,11 +123,11 @@ export default {
         return {
             nom:'',
             prenom:'',
-            email:'',
+            // email:'',
             pseudo:'',
             fonction:'',
-            password:'',
-            passwordCheck:'',
+            // password:'',
+            // passwordCheck:'',
             avatar:'',
             // errors: [],
             toggle: false,
@@ -133,6 +135,9 @@ export default {
     },
     setup () {
         // Define a validation schema
+        const errors = ref([])
+        const toggle = ref(false);
+
         const schema = yup.object({
         email: yup.string()
                 .required('Veuillez remplir votre email')
@@ -155,46 +160,33 @@ export default {
         const { value: password, errorMessage: passwordError } = useField('password');
         const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
 
+    // methode switch Toggle pour switcher entre login et signup
+        const switchToggle = () => {
+            if (toggle.value) { return toggle.value=false}
+            if(toggle.value ==false) { return toggle.value == true}
+        }
+        
         return {
-        email,
-        emailError,
-        password,
-        passwordError,
-        passwordCheck,
-        passwordCheckError
+            errors,
+            email,
+            emailError,
+            password,
+            passwordError,
+            passwordCheck,
+            passwordCheckError,
+            switchToggle
         };
     },
 
     methods: {
         // fonction pour switcher entre template login et signup
-        switchToggle () {
-            if (this.toggle) { return this.toggle=false}
-            if(this.toggle ==false) { return this.toggle = true}
-        },
+        // switchToggle () {
+        //     if (this.toggle) { return this.toggle=false}
+        //     if(this.toggle ==false) { return this.toggle = true}
+        // },
 
         // fonction pour envoyer le formulaire et signup
         inscriptionSubmit: function () {
-            // si les champs required sont vide 
-            // if(this.nom==null || this.prenom == null || this.email==null || this.password == null || this.pseudo == null || this.passwordCheck == null) {
-            //     e.preventDefault();
-            //     this.errors.push("Veuillez remplir les informations manquantes")
-            // } 
-            // si password n'est pas le même dans 2 champs
-            //     e.preventDefault();
-            //     this.errors = []
-            // if(this.password!== this.passwordCheck) {
-            //     e.preventDefault();
-            //     e.stopPropagation();
-            //     this.errors.push("Votre mot de passe doit être le même pour les 2 champs")
-            //     console.log("Votre mot de passe doit être le même pour les 2 champs")
-            // }
-            // else if () {
-            //     e.preventDefault();
-            //     e.stopPropagation();
-            //     this.errors.push("Password doit comprendre entre 8 et 20 charactères")
-            // }
-            // si tout est OK, créer user
-
                 let user = {
                     nom: this.nom,
                     prenom: this.prenom,
@@ -230,50 +222,63 @@ export default {
         },
 
         // fonction gérer le login
-        login: function () {
-            if(this.email && this.password) {
-                let user = {
-                    email: this.email,
-                    password: this.password
-                };
+        // login: function () {
+        //     if(this.email && this.password) {
+        //         let user = {
+        //             email: this.email,
+        //             password: this.password
+        //         };
 
-                let option = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'},
-                    body:JSON.stringify(user)
-                    };
-                let promise = await fetch (("http://localhost:5000/api/auth/login"), option)
-                    .then(response => handleResponse(response))
-                    .catch((error) => res.status(500).json({error}))
+        //         let option = {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json'},
+        //             body:JSON.stringify(user)
+        //             };
+        //         fetch (("http://localhost:5000/api/auth/login"), option)
+        //             .then(response => handleResponse(response)) // function pour gérer les cas d'erreur 400 ou 500
+                             
+        //             .catch((error) => console.log(error))
 
-                    function handleResponse(response) {
-                        return response.text()
-                            .then()
-                            .catch()
-                        if(!response.ok) {}
-                    }
-            }
-        },
+        //             function handleResponse(response) {
+        //                 return response.text()          // prendre le texte du response
+        //                     .then((text) => {
+        //                         const data = text;
+        //                         if ( !response.ok) {        // si la response pas OK, on envoie message d'erreur email(401), sinon reject error 
+        //                             if (response.status ==401) {
+        //                                 this.error = [];
+        //                                 this.error.push("Email ou password incorrect")
+        //                             }
+        //                             const error = text || response.statusText();
+        //                             return new Promise.reject(error)
+        //                         }
+        //                         else {          // si le response est OK, on renvoie la response => data = text et traiter dans une promesse suivante
+        //                             return data
+        //                         }
+        //                     })
+        //                     .catch((error) => response.status(500).json({error}))
+        //             }
+        //     }
+        // },
 
         // fonction pour upload file pour avatar
-        loadAvatar(e) {
-            let error_file = document.getElementById('error_file');
-            let avatar = document.getElementById('avatar').files[0];
-            if(this.avatar.type!=("png" ||"jpg" || "jpeg")) { 
-                e.preventDefault();
-                error_file.innerHTML = "Veuillez choisir le bon format de l'image"
-            }
-            else { 
-                this.avatar = avatar;
-                error_file.innerHTML=""
-            }
-        }
+        // loadAvatar(e) {
+        //     let error_file = document.getElementById('error_file');
+        //     let avatar = document.getElementById('avatar').files[0];
+        //     if(this.avatar.type!=("png" ||"jpg" || "jpeg")) { 
+        //         e.preventDefault();
+        //         error_file.innerHTML = "Veuillez choisir le bon format de l'image"
+        //     }
+        //     else { 
+        //         this.avatar = avatar;
+        //         error_file.innerHTML=""
+        //     }
+        // }
     }
 }
 </script>
 
-<style scope>
+<style scoped>
 
 .pink {
     color: #16265e!important;
