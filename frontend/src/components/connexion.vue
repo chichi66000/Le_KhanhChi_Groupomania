@@ -52,7 +52,7 @@
 
                 <h5 class="pink pb-5 fw-bold fs-3 m-auto text-center">Inscription</h5>
 
-                <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="/signup" @submit.prevent = "inscriptionSubmit">
+                <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="signup" @submit.prevent = "inscriptionSubmit">
 
                     <div class="form-group row">
                         <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
@@ -108,12 +108,16 @@
 </template>
 
 <script>
+// les components
 import Logo from '../components/Logo.vue';
+
+// pour valider formulaire
 import {  useField, useForm } from 'vee-validate';
 import { ref, } from 'vue'
-
 import * as yup from 'yup';
 
+// pour connexion avec backend et serveur
+import axios from 'axios'
 export default {
     name: "connexion",
     components: {
@@ -159,12 +163,6 @@ export default {
         const { value: password, errorMessage: passwordError } = useField('password');
         const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
 
-    // methode switch Toggle pour switcher entre login et signup
-        // const switchToggle = () => {
-        //     if (toggle.value) { return toggle.value=false}
-        //     if(toggle.value ==false) { return toggle.value == true}
-        // }
-        
         return {
             errors,
             email,
@@ -185,7 +183,7 @@ export default {
         },
 
         // fonction pour envoyer le formulaire et signup
-        inscriptionSubmit: function () {
+        async inscriptionSubmit () {
                 // créer utilisateur
                 let user = {
                     nom: this.nom,
@@ -207,66 +205,33 @@ export default {
                         'Content-Type': 'application/json'},
                     body: form
                     };
-                fetch('http://localhost:5000/api/auth/signup', optionFetch) 
+                await axios.post('http://localhost:5000/auth/signup', optionFetch) 
                     .then((user) => {                            // récupérer user créé 
-                        console.log("Utilisateur crée")
+                        console.log("Utilisateur crée");
+                        console.log(user)
                         let email = user.email; 
                         let password = user.password;
                         console.log(email, password)
-                        // this.login(email, password)              //login avec email, password 
+                        this.$router.push("login")              //login  
                         })
                     .catch((error) => console.log(error))
                     
         },
 
         // fonction gérer le login
-        login() {
-            if(this.email && this.password) {
-                let user = {
+        async login() {
+           const response = await axios.post('login', {
+               user :{
                     email: this.email,
                     password: this.password
-                };
+               }
+               
+           });
+           localStorage.setItem('token', response.user.token);
+           this.$router.push('Home')
 
-                let option = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'},
-                    body:JSON.stringify(user)
-                    };
-                fetch (("http://localhost:5000/api/auth/login"), option)
-                    .then( () => {
-
-                    } )  
-                             
-                    .catch((response) => {
-                        if( !response.ok || response.status == 401) {
-                            this.error = [];
-                            this.error.push("Email ou password incorrect");
-                            let err = response.text();
-                            console.log(err)
-                        }
-                    })
-
-                    // function handleResponse(response) {
-                    //     return response.text()          // prendre le texte du response
-                    //         .then((text) => {
-                    //             const data = text;
-                    //             if ( !response.ok) {        // si la response pas OK, on envoie message d'erreur email(401), sinon reject error 
-                    //                 if (response.status ==401) {
-                    //                     this.error = [];
-                    //                     this.error.push("Email ou password incorrect")
-                    //                 }
-                    //                 const error = text || response.statusText();
-                    //                 return new Promise.reject(error)
-                    //             }
-                    //             else {          // si le response est OK, on renvoie la response => data = text et traiter dans une promesse suivante
-                    //                 return data
-                    //             }
-                    //         })
-                    //         .catch((error) => response.status(500).json({error}))
-                    // }
-            }
-        },
+        }
+    },
 
         // fonction pour upload file pour avatar
         // loadAvatar(e) {
@@ -281,8 +246,8 @@ export default {
         //         error_file.innerHTML=""
         //     }
         // }
-    }
 }
+
 </script>
 
 <style scoped>
