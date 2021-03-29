@@ -2,12 +2,12 @@
     <div class="container">
 
       <div>
-        <Navbar/>
+        <!-- <Navbar/> -->
       </div>
 
       <!-- Afficher les actualités des postes -->
       <div>
-
+          <p>Voici la page Home</p>
       </div>
 
       <div>
@@ -18,12 +18,13 @@
 </template>
 
 <script>
-import Navbar from "../components/Navbar"
+// import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 export default {
     name: "Home",
     components: {
-      Navbar, Footer
+      // Navbar,
+      Footer
     }
 }
 </script>

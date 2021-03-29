@@ -103,7 +103,8 @@ exports.login = (req, res, next) => {
                     }
                     else {
                     res.status(200).json({ // si mdp correct, renvoyer id
-                        id: user.id,
+                        currentUser: user.nom,
+                        userId: user.id,
                         token: jwt.sign(
                             {id: user.id},
                             'RANDOM_TOKEN_SECRET',
