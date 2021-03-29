@@ -1,18 +1,24 @@
 <template >
   <div id="app" class="container-fluid d-flex">
+
+      <Navbar/>
       <div class="col justify-content-center">
-        <connexion/>
+        <h3>Bonjour, bienvenue à Groupomania</h3>
+        <!-- <connexion/> -->
       </div>
     
   </div>
 </template>>
 
 <script>
-import connexion from './components/connexion'
+// import connexion from './components/connexion'
+import Navbar from './components/Navbar'
+
 export default {
   name: 'App',
   components: {
-    connexion
+    // connexion
+    Navbar
   }
 }
 </script>

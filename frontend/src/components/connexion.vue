@@ -16,7 +16,7 @@
 
             <h5 class="mb-5 font-weight-bolder pink fs-3">Indentifiez-vous</h5>
 
-            <form class="form-group mt-5 mb-5 col col-md-8 col-lg-8 m-auto connexion text-center" method="post" action="http://localhost:5000/api/auth/login">
+            <form class="form-group mt-5 mb-5 col col-md-8 col-lg-8 m-auto connexion text-center"  @submit.prevent = "login">
                 <div class="form-group row ">
                     <label for="email" class="col col-form-label text-left pink font-weight-bolder fs-3">Email</label>
                     <div class="col-8">
@@ -191,27 +191,28 @@ export default {
                     email: this.email,
                     password: this.password,
                     fonction: this.fonction,
+                    pseudo: this.pseudo,
                     avatar: this.avatar
                     };
 
-                let form = new FormData();
-                form.append("user", JSON.stringify(user));
+                // let form = new FormData();
+                // form.append("user", JSON.stringify(user));
 
                 //envoyer le formulaire
             
-                let optionFetch = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'},
-                    body: form
-                    };
-                await axios.post('http://localhost:5000/auth/signup', optionFetch) 
+                // let optionFetch = {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'},
+                //     body: form
+                //     };
+                await axios.post('http://localhost:5000/api/auth/signup', user) 
                     .then((user) => {                            // récupérer user créé 
                         console.log("Utilisateur crée");
                         console.log(user)
                         let email = user.email; 
                         let password = user.password;
-                        console.log(email, password)
+                        console.log(email, password);
                         this.$router.push("login")              //login  
                         })
                     .catch((error) => console.log(error))
@@ -220,18 +221,20 @@ export default {
 
         // fonction gérer le login
         async login() {
-           const response = await axios.post('login', {
-               user :{
-                    email: this.email,
-                    password: this.password
-               }
-               
-           });
-           localStorage.setItem('token', response.user.token);
-           this.$router.push('Home')
+            let user = {
+                email: this.email,
+                password: this.password
+            }
 
+            await axios.post('http://localhost:5000/api/auth/login', user)
+               .then((response) => {
+                    console.log(response.data.token)
+                    // console.log(response.token)
+                    localStorage.setItem('token', response.data.token);
+                    this.$router.push('/')
+               } )
+               .catch(error => console.log(error))
         }
-    },
 
         // fonction pour upload file pour avatar
         // loadAvatar(e) {
@@ -246,6 +249,7 @@ export default {
         //         error_file.innerHTML=""
         //     }
         // }
+    }
 }
 
 </script>
