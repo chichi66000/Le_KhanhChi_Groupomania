@@ -12,7 +12,7 @@
 
                 <h5 class="pink pb-5 fw-bold fs-3 m-auto text-center">Inscription</h5>
 
-                <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="signup" @submit.prevent = "inscriptionSubmit">
+                <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="/signup" @submit.prevent = "inscriptionSubmit">
 
                     <div class="form-group row">
                         <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
@@ -47,7 +47,7 @@
             
                     <div class="form-group row ">
                         <label class="form-text pink" for="avatar">Image profil (jpg, png, jpeg) </label>
-                        <input type="file" class="form-control-file pink" id="avatar" accept=".jpg, .png, .jpeg" name="avatar" @input="loadAvatar">
+                        <input type="file" class="form-control-file pink" id="avatar" accept=".jpg, .png, .jpeg" name="image" @change="onChangeFile">
                         <span id="error_file" class="text-center text-danger fw-bold"></span>
 
                     </div>
@@ -132,6 +132,12 @@ export default {
         };
     },
     methods: {
+
+        // fonction pour upload photo dans avatar
+        onChangeFile(e) {
+            this.avatar = e.target.files[0];
+        },
+
         // fonction pour envoyer le formulaire et signup
         async inscriptionSubmit () {
                 // créer utilisateur
@@ -142,32 +148,26 @@ export default {
                     password: this.password,
                     fonction: this.fonction,
                     pseudo: this.pseudo,
-                    avatar: this.avatar
+                    // avatar: this.avatar
                     };
 
-                // let form = new FormData();
-                // form.append("user", JSON.stringify(user));
-
-                //envoyer le formulaire
-            
-                // let optionFetch = {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'},
-                //     body: form
-                //     };
-                await axios.post('http://localhost:5000/api/auth/signup', user) 
+                let form = new FormData();
+                form.append("user", JSON.stringify(user));
+                form.append("image", this.avatar, this.avatar.name)
+                
+                await axios.post('http://localhost:5000/api/auth/signup', form) 
                     .then((user) => {                            // récupérer user créé 
                         console.log("Utilisateur crée");
                         console.log(user)
                         let email = user.email; 
                         let password = user.password;
                         console.log(email, password);
-                        this.$router.push("login")              //login  
+                        this.$router.push("/home")              //login et aller au Home
                         })
                     .catch((error) => console.log(error))
                     
-        }
+        },
+        
     }
 }
 </script>

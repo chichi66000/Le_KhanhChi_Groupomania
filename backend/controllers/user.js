@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 const {body, validationResult, check} = require('express-validator');
 
 const sequelize = require('sequelize');
@@ -48,19 +49,23 @@ exports.signup = (
                     if(email===req.body.email) { // si email trouvé dans BDD
                         return res.status(400).json({message : "Email déjà utilisé"})
                     }
-                    else if(pseudo === req.body.pseudo) { // si pseudo déjà dans BDD
+                    if(pseudo === req.body.pseudo) { // si pseudo déjà dans BDD
                         return res.status(400).json({message: "pseudo déjà utilisé"})
                     }
                     else{
+                        console.log(req.body)
                     // si user n'est pas dans BDD, hash passsword..  
                     bcrypt.hash(req.body.password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
                         .then( (hash) => {
+                            
                             // let userObject = req.body.Users
                             req.file? { // condition pour upload file avatar
-                            ...req.body.user,
+                            ...req.body,
                             avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // ajouter image pour avater
-                            } : {
-                            ...req.body.user,
+                            }
+                            :
+                            {
+                            ...req.body,
                             avatar: "http://localhost:5000/images/avatar_default.png"   // utiliser avatar default
                             };
 
@@ -77,6 +82,7 @@ exports.signup = (
                             });
                             console.log("Utilisateur crée");
                             console.log(newUser);
+                            res.status(201).json({message: "Utilisateur crée"})
                         })
                         .catch((error) => res.status(400).json({error}))
                     }                         

@@ -4,7 +4,7 @@
       <router-view></router-view>
 
       <div class="col justify-content-center">
-        <h3 >Bonjour, bienvenue à Groupomania, c'est App. Veuillez connecter</h3>
+        <!-- <h3 >Bonjour, bienvenue à Groupomania, c'est App. Veuillez connecter</h3> -->
       </div>
   </div>
 </template>>
