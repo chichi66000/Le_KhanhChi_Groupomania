@@ -1,95 +1,140 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const {body, validationResult, check} = require('express-validator');
+// const {body, validationResult} = require('express-validator')
+const validator = require('validator')
+const passwordValidator = require("password-validator");
 
 const sequelize = require('sequelize');
 const db = require('../models');
 
+const schema = new passwordValidator();
+schema
+    .is().min(8)                                    // Longueur minimum 8
+    .is().max(20)                                   // Longueur maximum 100
+    .has().uppercase()                              // Doit contenir une majuscule
+    .has().lowercase()                              // Doit contenir une minuscule
+    .has().digits(1)                                // Doit contenir au moins 1 chiffres
+    .has().not().spaces()                           // Doit contenir aucun espace
+    .is().not().oneOf(["Passw0rd", "Password123"])  // Mot de passes blacklistés
+    .has(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)  // regex pour password fort
+
 // créer une route pour enregistrer nouvel utilisateur
-exports.signup = (
-    body ('email', 'Email is not valid') // valider email et password avant créer nouvel user
-        .isEmail()
-        .bail()
-        .normalizeEmail(),
-    body('password')        //valider password
-        .isLength({min: 8}, {max:20})
-        .withMessage("password doit avoir entre 8 et 20 characters")                 // min 8, max 20 characters
-        .isUppercase({min:1})
-        .withMessage("password doit avoir 1 majuscule")                   // min 1 majuscule
-        .isLowercase({min:1}) 
-        .withMessage("password doit avoir 1 minuscule")                  // min 1 minuscule
-        .isNumeric({min:1})
-        .withMessage("password doit avoir 1 chiffre")                     
-        .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)                     
-        .withMessage("Password doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et comprendre entre 8 et 20 charactères")
-        ,                    
-    body('nom', 'nom invalid')
-        .isString(),
-    body('prenom', 'prenom invalid')
-        .isString(),
-    body('pseudo', 'pseudo déjà choisi')
-        .isString(),
-    body('fonction')
-        .isString(),
 
-    (req, res, next) => {
-        const errors = validationResult(req); //si error, afficher error
+// exports.signup = 
+exports.signup = ((req, res) => {
+    const userData = req.body;
+    console.log(userData)       // OK
 
-        if(!errors.isEmpty()) { 
-        return res.status(400).json({errors: errors.array()})
-            }   
-        // s'il n'y a pas d'erreur pour la vérification email, password, on va chercher dans BDD pour voir si email ou pseudo est déjà utilisé ou pas?
-
-        else {  
-            db.Users.findAll({      // chercher email, pseudo dans BDD user
-                attributes: ['email', 'pseudo']
-            }) 
-                .then((email, pseudo) => {
-                    if(email===req.body.email) { // si email trouvé dans BDD
-                        return res.status(400).json({message : "Email déjà utilisé"})
-                    }
-                    if(pseudo === req.body.pseudo) { // si pseudo déjà dans BDD
-                        return res.status(400).json({message: "pseudo déjà utilisé"})
-                    }
-                    else{
-                        console.log(req.body)
-                    // si user n'est pas dans BDD, hash passsword..  
-                    bcrypt.hash(req.body.password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
-                        .then( (hash) => {
+        // Valider les données du email, nom, prénom, fonction
+    if( !validator.isEmail(userData.email)) { res.status(400).json({message: " Email invalid"})}
+    if(!validator.isAlpha(userData.nom, ["fr-FR"])) { res.status(400).json({message: " Nom invalid"})}
+    if ( !validator.isAlpha(userData.prenom, ["fr-FR"])) { res.status(400).json({message: " Prenom invalid"})}   
+    if ( !validator.isAlphanumeric(userData.fonction, ["fr-FR"]))  { res.status(400).json({message: " veuillez entrer un format valid"})}
+        
+    else { 
+            if(!schema.validate(userData.password))
+            { { res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})};}
+            else { 
+                db.Users.findOne({where: {email: req.body.email}})
+                    .then( user => { 
+                        if( user) {res.status(400).json({message: " email déjà utilisé"}) }
+                        else { 
+                            bcrypt.hash(req.body.password,10)
+                                .then( hash => {
+                                    let avatar = userData.avatar;
+                                    // console.log(req.file)
+                                    // req.file
+                                    // ? {
+                                    //     ...JSON.parse(req.body.user),
+                                    //     avatar: `${req.protocol}://${req.get("host")}/images/${
+                                    //     req.file.filename
+                                    //     }`,
+                                    // }
+                                    // : {
+                                    //     ...JSON.parse(req.body.user),
+                                    //     avatar: "http://localhost:5000/images/default_profile_pic.png",
+                                    // };
+                                    
+                                    // db.Users.create({
+                                    //     userObject: 
+                                    // })
+                                } 
+                                    
+                                )
+                                .catch()
                             
-                            // let userObject = req.body.Users
-                            req.file? { // condition pour upload file avatar
-                            ...req.body,
-                            avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // ajouter image pour avater
-                            }
-                            :
-                            {
-                            ...req.body,
-                            avatar: "http://localhost:5000/images/avatar_default.png"   // utiliser avatar default
-                            };
-
-                            const newUser = db.Users.create({ // crer user dans BDD
-                                email: req.body.email,
-                                password: hash ,
-                                nom: req.body.nom,
-                                prenom: req.body.prenom,
-                                pseudo: req.body.pseudo,
-                                fonction: req.body.fonction,
-                                avatar: req.body.avatar,
-                                isAdmin: 0,
-                                
-                            });
-                            console.log("Utilisateur crée");
-                            console.log(newUser);
-                            res.status(201).json({message: "Utilisateur crée"})
-                        })
-                        .catch((error) => res.status(400).json({error}))
-                    }                         
-                })
-                .catch((error) => res.status(500).json({error}))
+                            
+                        }
+                    })
+                        
+                    .catch()
+            }
         }
+    
+    
+
+    // db.Users.findAll()
+    //     .then( users => {
+
+    //     })
+    //     .catch( error => res.status(500).json({error}))
 })
+
+
+
+
+//         // s'il n'y a pas d'erreur pour la vérification email, password, on va chercher dans BDD pour voir si email ou pseudo est déjà utilisé ou pas?
+
+//         else {  
+//             db.Users.findAll({      // chercher email, pseudo dans BDD user
+//                 attributes: ['email', 'pseudo']
+//             }) 
+//                 .then((email, pseudo) => {
+//                     if(email===req.body.email) { // si email trouvé dans BDD
+//                         return res.status(400).json({message : "Email déjà utilisé"})
+//                     }
+//                     if(pseudo === req.body.pseudo) { // si pseudo déjà dans BDD
+//                         return res.status(400).json({message: "pseudo déjà utilisé"})
+//                     }
+//                     else{
+//                         console.log(req.body)
+//                     // si user n'est pas dans BDD, hash passsword..  
+//                     bcrypt.hash(req.body.password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
+//                         .then( (hash) => {
+                            
+//                             // let userObject = req.body.Users
+//                             req.file? { // condition pour upload file avatar
+//                             ...req.body,
+//                             avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // ajouter image pour avater
+//                             }
+//                             :
+//                             {
+//                             ...req.body,
+//                             avatar: "http://localhost:5000/images/avatar_default.png"   // utiliser avatar default
+//                             };
+
+//                             const newUser = db.Users.create({ // crer user dans BDD
+//                                 email: req.body.email,
+//                                 password: hash ,
+//                                 nom: req.body.nom,
+//                                 prenom: req.body.prenom,
+//                                 pseudo: req.body.pseudo,
+//                                 fonction: req.body.fonction,
+//                                 avatar: req.body.avatar,
+//                                 isAdmin: 0,
+                                
+//                             });
+//                             console.log("Utilisateur crée");
+//                             console.log(newUser);
+//                             res.status(201).json({message: "Utilisateur crée"})
+//                         })
+//                         .catch((error) => res.status(400).json({error}))
+//                     }                         
+//                 })
+//                 .catch((error) => res.status(500).json({error}))
+//         }
+// })
 
 //une route pour login
 exports.login = (req, res, next) => {
@@ -111,15 +156,13 @@ exports.login = (req, res, next) => {
                     res.status(200).json({ // si mdp correct, renvoyer id
                         currentUser: user.nom,
                         userId: user.id,
-                        token: jwt.sign(
-                            {id: user.id},
-                            'RANDOM_TOKEN_SECRET',
-                            {expiresIn: '24h'}
-                        ),// un token permet la connexion
-                        
-                    });
-                    console.log("Utilisateur login réussi")
-                    }
+                        token: jwt.sign(            // un token permet la connexion
+                            {userId: user.id },
+                            "RANDOM_TOKEN_SECRET", 
+                            {expiresIn: "24h",})
+                            });
+                            console.log("Utilisateur login réussi")
+                    };
                 })
                 .catch((error) => res.status(500).json({error}))
         })
@@ -178,8 +221,17 @@ exports.updateUser = (req, res, next) => {
 exports.getOneUser = (req, res, next) => {
     db.Users.findOne( {where: { id: req.params.id}})
         .then((user) => {
-            if(! user) { res.status(404).json({message: "Utilisateur non trouvé"})}
-            res.status(200).json(user)
+            if(! user) {res.status(404).json({message: "Utilisateur non trouvé"}
+                )}
+            else {
+                let currentUser = {
+                    userNom: user.nom,
+                    userId: user.id,
+                    userPseudo: user.pseudo,
+                    email: user.email
+                }
+                res.status(200).json({currentUser});
+            }
         })
         .catch((error) => res.status(500).json({error}))
 }

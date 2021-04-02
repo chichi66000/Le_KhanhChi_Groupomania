@@ -68,12 +68,12 @@
 <script>
 import Logo from "../components/Logo";
 // pour valider formulaire
-import {  useField, useForm } from 'vee-validate';
-import { ref, } from 'vue'
-import * as yup from 'yup';
+// import {  useField, useForm } from 'vee-validate';
+// import { ref, } from 'vue'
+// import * as yup from 'yup';
 
 // pour connexion avec backend et serveur
-import axios from 'axios'
+import axios from '../axios'
 
 export default {
     name: "Signup",
@@ -87,55 +87,59 @@ export default {
             pseudo:'',
             fonction:'',
             avatar:'',
+            email: '',
+            password: '',
+            passwordCheck: '',
             // toggle: false,
         }
     },
-    setup () {
-        // Define a validation schema
-        const errors = ref([])
-        // const toggle = ref(false);
+    // setup () {
+    //     // Define a validation schema
+    //     const errors = ref([])
+    //     // const toggle = ref(false);
 
-        const schema = yup.object({
-        email: yup.string()
-                .required('Veuillez remplir votre email')
-                .email('Email invalid'),
-        password: yup.string()
-                .min(8, 'Password doit avoir au minimum 8 characters')
-                .max(20, 'Password doit avoir au maximum 20 characters')
-                .required('Password is required')
-                .matches(
-                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
-                ,
-        passwordCheck: yup.string()
-                .oneOf([yup.ref('password'), null], 'Passwords must match')
-                .required('Confirm Password is required'),
-        });
+    //     const schema = yup.object({
+    //     email: yup.string()
+    //             .required('Veuillez remplir votre email')
+    //             .email('Email invalid'),
+    //     password: yup.string()
+    //             .min(8, 'Password doit avoir au minimum 8 characters')
+    //             .max(20, 'Password doit avoir au maximum 20 characters')
+    //             .required('Password is required')
+    //             .matches(
+    //                 /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
+    //             ,
+    //     passwordCheck: yup.string()
+    //             .oneOf([yup.ref('password'), null], 'Passwords must match')
+    //             .required('Confirm Password is required'),
+    //     });
 
-    // Create a form context with the validation schema
-        useForm({
-        validationSchema: schema,
-        });
-        // No need to define rules for fields
-        const { value: email, errorMessage: emailError } = useField('email');
-        const { value: password, errorMessage: passwordError } = useField('password');
-        const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
+    // // Create a form context with the validation schema
+    //     useForm({
+    //     validationSchema: schema,
+    //     });
+    //     // No need to define rules for fields
+    //     const { value: email, errorMessage: emailError } = useField('email');
+    //     const { value: password, errorMessage: passwordError } = useField('password');
+    //     const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
 
-        return {
-            errors,
-            email,
-            emailError,
-            password,
-            passwordError,
-            passwordCheck,
-            passwordCheckError,
-            // switchToggle
-        };
-    },
+    //     return {
+    //         errors,
+    //         email,
+    //         emailError,
+    //         password,
+    //         passwordError,
+    //         passwordCheck,
+    //         passwordCheckError,
+    //         // switchToggle
+    //     };
+    // },
     methods: {
 
         // fonction pour upload photo dans avatar
         onChangeFile(e) {
             this.avatar = e.target.files[0];
+
         },
 
         // fonction pour envoyer le formulaire et signup
@@ -150,19 +154,21 @@ export default {
                     pseudo: this.pseudo,
                     // avatar: this.avatar
                     };
-
+                console.log(user);
                 let form = new FormData();
                 form.append("user", JSON.stringify(user));
-                form.append("image", this.avatar, this.avatar.name)
-                
-                await axios.post('http://localhost:5000/api/auth/signup', form) 
+                form.append("image", this.avatar)
+
+                console.log(this.avatar);   // OK
+                console.log(form)
+                await axios.post('api/auth/signup', form) 
                     .then((user) => {                            // récupérer user créé 
-                        console.log("Utilisateur crée");
+                        window.alert("Utilisateur crée, veuillez login avec votre email");
                         console.log(user)
-                        let email = user.email; 
-                        let password = user.password;
-                        console.log(email, password);
-                        this.$router.push("/home")              //login et aller au Home
+                        // let email = user.email; 
+                        // let password = user.password;
+                        // console.log(email, password);
+                        this.$router.push("/login")              //login et aller au Home
                         })
                     .catch((error) => console.log(error))
                     

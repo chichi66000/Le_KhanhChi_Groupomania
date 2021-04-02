@@ -46,9 +46,11 @@
 <script>
 // les components
 import Logo from '../components/Logo';
+// import user from '../store/user'
 
 // pour connexion avec backend et serveur
-import axios from 'axios'
+import axios from '../axios'
+
 export default {
     name: "Login",
     components: {
@@ -58,16 +60,12 @@ export default {
         return {
             email:"",
             password: "",
-            errors: []
+            errors: [],
+            // store
         }
     },
 
     methods: {
-        // fonction pour switcher entre template login et signup
-        // switchToggle () {
-        //     if (this.toggle) { return this.toggle=false}
-        //     if(this.toggle ==false) { return this.toggle = true}
-        // },
 
         // fonction gérer le login
         async login() {
@@ -75,31 +73,26 @@ export default {
                 email: this.email,
                 password: this.password
             }
-            await axios.post('http://localhost:5000/api/auth/login', user)   // post au serveur
+            await axios.post('api/auth/login', user)   // post au serveur
                .then((response) => {
                     // récupérer token dans localStorage pour maintenir la session
-                    localStorage.setItem('token', response.data.token); 
-                    console.log(response)
+                    localStorage.setItem('token', response.data.token);
+                    // console.log(this.$store.userId) 
+
+                    // this.$store.commit('user/getToken', response.data.token)    // mettre user dans store
+                    // this.$store.commit('user/getUserId', response.data.userId)
+                    // this.$store.commit('user/getCurrentUser', response.data.currentUser)
                     // aller sur la page Home une fois connecté
                     this.$router.push('/home')
                } )
                .catch(error => console.log(error))
         }
-
-        // fonction pour upload file pour avatar
-        // loadAvatar(e) {
-        //     let error_file = document.getElementById('error_file');
-        //     let avatar = document.getElementById('avatar').files[0];
-        //     if(this.avatar.type!=("png" ||"jpg" || "jpeg")) { 
-        //         e.preventDefault();
-        //         error_file.innerHTML = "Veuillez choisir le bon format de l'image"
-        //     }
-        //     else { 
-        //         this.avatar = avatar;
-        //         error_file.innerHTML=""
-        //     }
-        // }
-    }
+    },
+    // computed: {
+    //     currentUser() {
+    //         console.log($store.state.currentUser)
+    //     }
+    // }
 }
 
 </script>

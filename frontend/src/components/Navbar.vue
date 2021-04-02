@@ -10,8 +10,8 @@
                 </button>
 
                 <div id="navbarContent" class="collapse navbar-collapse col col-sm-8 col-md-8 col-lg-8 mx-auto text-center font-weight-bolder justify-self-center dropdown-menu-lg-right justify-content-between text-light">
-                    <a href="/login">Login</a>
-                    <a href="/signup">Signup</a>
+                    <router-link to="/login">Login</router-link>
+                    <router-link to="/signup">Signup</router-link>
 
                     <!-- <router-link to="/">Home  </router-link> 
                     <router-link to="/help">FAQ  </router-link> 
