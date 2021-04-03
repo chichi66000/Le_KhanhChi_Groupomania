@@ -68,9 +68,9 @@
 <script>
 import Logo from "../components/Logo";
 // pour valider formulaire
-// import {  useField, useForm } from 'vee-validate';
-// import { ref, } from 'vue'
-// import * as yup from 'yup';
+import {  useField, useForm } from 'vee-validate';
+import { ref, } from 'vue'
+import * as yup from 'yup';
 
 // pour connexion avec backend et serveur
 import axios from '../axios'
@@ -87,53 +87,48 @@ export default {
             pseudo:'',
             fonction:'',
             avatar:'',
-            email: '',
-            password: '',
-            passwordCheck: '',
-            // toggle: false,
         }
     },
-    // setup () {
-    //     // Define a validation schema
-    //     const errors = ref([])
-    //     // const toggle = ref(false);
+    setup () {
+        // Define a validation schema
+        const errors = ref([])
+        // const toggle = ref(false);
 
-    //     const schema = yup.object({
-    //     email: yup.string()
-    //             .required('Veuillez remplir votre email')
-    //             .email('Email invalid'),
-    //     password: yup.string()
-    //             .min(8, 'Password doit avoir au minimum 8 characters')
-    //             .max(20, 'Password doit avoir au maximum 20 characters')
-    //             .required('Password is required')
-    //             .matches(
-    //                 /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
-    //             ,
-    //     passwordCheck: yup.string()
-    //             .oneOf([yup.ref('password'), null], 'Passwords must match')
-    //             .required('Confirm Password is required'),
-    //     });
+        const schema = yup.object({
+        email: yup.string()
+                .required('Veuillez remplir votre email')
+                .email('Email invalid'),
+        password: yup.string()
+                .min(8, 'Password doit avoir au minimum 8 characters')
+                .max(20, 'Password doit avoir au maximum 20 characters')
+                .required('Password is required')
+                .matches(
+                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
+                ,
+        passwordCheck: yup.string()
+                .oneOf([yup.ref('password'), null], 'Passwords must match')
+                .required('Confirm Password is required'),
+        });
 
-    // // Create a form context with the validation schema
-    //     useForm({
-    //     validationSchema: schema,
-    //     });
-    //     // No need to define rules for fields
-    //     const { value: email, errorMessage: emailError } = useField('email');
-    //     const { value: password, errorMessage: passwordError } = useField('password');
-    //     const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
+    // Create a form context with the validation schema
+        useForm({
+        validationSchema: schema,
+        });
+        // No need to define rules for fields
+        const { value: email, errorMessage: emailError } = useField('email');
+        const { value: password, errorMessage: passwordError } = useField('password');
+        const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
 
-    //     return {
-    //         errors,
-    //         email,
-    //         emailError,
-    //         password,
-    //         passwordError,
-    //         passwordCheck,
-    //         passwordCheckError,
-    //         // switchToggle
-    //     };
-    // },
+        return {
+            errors,
+            email,
+            emailError,
+            password,
+            passwordError,
+            passwordCheck,
+            passwordCheckError
+        };
+    },
     methods: {
 
         // fonction pour upload photo dans avatar

@@ -40,21 +40,11 @@ exports.signup = ((req, res) => {
                         else { 
                             bcrypt.hash(userData.password,10)
                                 .then( hash => {
+                                    let avatarName = "";
+                                    if ( req.file) { avatarName = req.file.filename}
+                                    else { avatarName = "avatar_default.png"} 
                                     
-                                    // console.log(req.file)                       // OK
-                                    // console.log(req.file.filename)              // OK
-                                    // let avatar = "";
-                                    // req.file
-                                    // ? {
-                                    //     // ...userData,
-                                    //     avatar: req.file.filename,
-                                    // }
-                                    // : {
-                                    //     // ...userData,
-                                    //     avatar: "default_profile_pic.png",
-                                    // };
 
-                                    // console.log("avatar" + avatar)
                                     const newUser = db.Users.create({
                                         email: userData.email,
                                         nom: userData.nom,
@@ -63,7 +53,7 @@ exports.signup = ((req, res) => {
                                         fonction: userData.fonction,
                                         pseudo: userData.pseudo,
                                         isAdmin: 0, 
-                                        avatar: req.file.filename
+                                        avatar: avatarName
                                     });
                                     console.log("newuser" + newUser);
                                     res.status(201).json( { message: "Utilisateur crée avec succès"})
@@ -81,61 +71,6 @@ exports.signup = ((req, res) => {
         }
 
 })
-
-
-
-
-//         // s'il n'y a pas d'erreur pour la vérification email, password, on va chercher dans BDD pour voir si email ou pseudo est déjà utilisé ou pas?
-
-//         else {  
-//             db.Users.findAll({      // chercher email, pseudo dans BDD user
-//                 attributes: ['email', 'pseudo']
-//             }) 
-//                 .then((email, pseudo) => {
-//                     if(email===req.body.email) { // si email trouvé dans BDD
-//                         return res.status(400).json({message : "Email déjà utilisé"})
-//                     }
-//                     if(pseudo === req.body.pseudo) { // si pseudo déjà dans BDD
-//                         return res.status(400).json({message: "pseudo déjà utilisé"})
-//                     }
-//                     else{
-//                         console.log(req.body)
-//                     // si user n'est pas dans BDD, hash passsword..  
-//                     bcrypt.hash(req.body.password, 10) // fonction asynchrone qui renvoie une promise avec hash comme response
-//                         .then( (hash) => {
-                            
-//                             // let userObject = req.body.Users
-//                             req.file? { // condition pour upload file avatar
-//                             ...req.body,
-//                             avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // ajouter image pour avater
-//                             }
-//                             :
-//                             {
-//                             ...req.body,
-//                             avatar: "http://localhost:5000/images/avatar_default.png"   // utiliser avatar default
-//                             };
-
-//                             const newUser = db.Users.create({ // crer user dans BDD
-//                                 email: req.body.email,
-//                                 password: hash ,
-//                                 nom: req.body.nom,
-//                                 prenom: req.body.prenom,
-//                                 pseudo: req.body.pseudo,
-//                                 fonction: req.body.fonction,
-//                                 avatar: req.body.avatar,
-//                                 isAdmin: 0,
-                                
-//                             });
-//                             console.log("Utilisateur crée");
-//                             console.log(newUser);
-//                             res.status(201).json({message: "Utilisateur crée"})
-//                         })
-//                         .catch((error) => res.status(400).json({error}))
-//                     }                         
-//                 })
-//                 .catch((error) => res.status(500).json({error}))
-//         }
-// })
 
 //une route pour login
 exports.login = (req, res, next) => {
