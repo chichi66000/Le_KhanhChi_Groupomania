@@ -41,19 +41,20 @@ exports.signup = ((req, res) => {
                             bcrypt.hash(userData.password,10)
                                 .then( hash => {
                                     
-                                    console.log(req.file)                       // OK
-                                    console.log(req.file.filename)              // OK
+                                    // console.log(req.file)                       // OK
+                                    // console.log(req.file.filename)              // OK
+                                    // let avatar = "";
+                                    // req.file
+                                    // ? {
+                                    //     // ...userData,
+                                    //     avatar: req.file.filename,
+                                    // }
+                                    // : {
+                                    //     // ...userData,
+                                    //     avatar: "default_profile_pic.png",
+                                    // };
 
-                                    req.file
-                                    ? {
-                                        ...userData,
-                                        avatar: req.file.filename,
-                                    }
-                                    : {
-                                        ...userData,
-                                        avatar: "default_profile_pic.png",
-                                    };
-                                    
+                                    // console.log("avatar" + avatar)
                                     const newUser = db.Users.create({
                                         email: userData.email,
                                         nom: userData.nom,
@@ -62,9 +63,9 @@ exports.signup = ((req, res) => {
                                         fonction: userData.fonction,
                                         pseudo: userData.pseudo,
                                         isAdmin: 0, 
-                                        // avatar: avatar
+                                        avatar: req.file.filename
                                     });
-                                    console.log(newUser);
+                                    console.log("newuser" + newUser);
                                     res.status(201).json( { message: "Utilisateur crée avec succès"})
                                 } 
                                     
@@ -74,8 +75,8 @@ exports.signup = ((req, res) => {
                             
                         }
                     })
-                        
-                
+                    .catch( () => res.status(500).json( { message: "Pb de server, impossible chercher email user"}))    
+                    
             
         }
 
