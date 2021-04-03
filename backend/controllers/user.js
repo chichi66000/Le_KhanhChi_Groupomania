@@ -24,61 +24,61 @@ schema
 // exports.signup = 
 exports.signup = ((req, res) => {
     const userData = req.body;
-    console.log(userData)       // OK
+    // console.log(userData)       // OK
 
         // Valider les données du email, nom, prénom, fonction
     if( !validator.isEmail(userData.email)) { res.status(400).json({message: " Email invalid"})}
     if(!validator.isAlpha(userData.nom, ["fr-FR"])) { res.status(400).json({message: " Nom invalid"})}
     if ( !validator.isAlpha(userData.prenom, ["fr-FR"])) { res.status(400).json({message: " Prenom invalid"})}   
     if ( !validator.isAlphanumeric(userData.fonction, ["fr-FR"]))  { res.status(400).json({message: " veuillez entrer un format valid"})}
+    if(!schema.validate(userData.password)) { res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
+       
+    else { db.Users.findOne ( { where : { email: userData.email}})
         
-    else { 
-            if(!schema.validate(userData.password))
-            { { res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})};}
-            else { 
-                db.Users.findOne({where: {email: req.body.email}})
                     .then( user => { 
                         if( user) {res.status(400).json({message: " email déjà utilisé"}) }
                         else { 
-                            bcrypt.hash(req.body.password,10)
+                            bcrypt.hash(userData.password,10)
                                 .then( hash => {
-                                    let avatar = userData.avatar;
-                                    // console.log(req.file)
-                                    // req.file
-                                    // ? {
-                                    //     ...JSON.parse(req.body.user),
-                                    //     avatar: `${req.protocol}://${req.get("host")}/images/${
-                                    //     req.file.filename
-                                    //     }`,
-                                    // }
-                                    // : {
-                                    //     ...JSON.parse(req.body.user),
-                                    //     avatar: "http://localhost:5000/images/default_profile_pic.png",
-                                    // };
                                     
-                                    // db.Users.create({
-                                    //     userObject: 
-                                    // })
+                                    console.log(req.file)                       // OK
+                                    console.log(req.file.filename)              // OK
+
+                                    req.file
+                                    ? {
+                                        ...userData,
+                                        avatar: req.file.filename,
+                                    }
+                                    : {
+                                        ...userData,
+                                        avatar: "default_profile_pic.png",
+                                    };
+                                    
+                                    const newUser = db.Users.create({
+                                        email: userData.email,
+                                        nom: userData.nom,
+                                        prenom: userData.prenom,
+                                        password: hash,
+                                        fonction: userData.fonction,
+                                        pseudo: userData.pseudo,
+                                        isAdmin: 0, 
+                                        // avatar: avatar
+                                    });
+                                    console.log(newUser);
+                                    res.status(201).json( { message: "Utilisateur crée avec succès"})
                                 } 
                                     
                                 )
-                                .catch()
+                                .catch( () => res.status(400).json( {messsage: " Problème pour crée utilisateur" }))
                             
                             
                         }
                     })
                         
-                    .catch()
-            }
+                
+            
         }
-    
-    
 
-    // db.Users.findAll()
-    //     .then( users => {
-
-    //     })
-    //     .catch( error => res.status(500).json({error}))
 })
 
 

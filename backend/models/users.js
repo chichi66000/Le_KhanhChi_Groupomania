@@ -55,7 +55,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         avatar: {
           allowNull: true,
-          type: DataTypes.TEXT
+          type: DataTypes.STRING
         },
         isAdmin: {
           allowNull: false,
