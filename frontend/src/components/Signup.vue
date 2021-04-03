@@ -159,8 +159,8 @@ export default {
                 form.append("image", this.avatar)
 
                 await axios.post('http://localhost:5000/api/auth/signup', form) 
-                    .then((response) => {                            // récupérer user créé 
-                        
+                    .then((response) => {                            // récupérer la response du server
+                        alert( " Signup réussi, veuillez login avec votre email et password")
                         console.log(response)
                         this.$router.push("/login")              //login et aller au Home
                         })

@@ -74,7 +74,7 @@ export default {
                 password: this.password
             }
             await axios.post('api/auth/login', user)   // post au serveur
-               .then((response) => {
+                .then((response) => {
                     // récupérer token dans localStorage pour maintenir la session
                     localStorage.setItem('token', response.data.token);
                     // console.log(this.$store.userId) 
@@ -84,8 +84,8 @@ export default {
                     // this.$store.commit('user/getCurrentUser', response.data.currentUser)
                     // aller sur la page Home une fois connecté
                     this.$router.push('/home')
-               } )
-               .catch(error => console.log(error))
+                } )
+                .catch(error => console.log(error))
         }
     },
     // computed: {
