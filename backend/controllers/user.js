@@ -24,15 +24,19 @@ schema
 // exports.signup = 
 exports.signup = ((req, res) => {
     const userData = req.body;
-    // console.log(userData)       // OK
+    console.log(userData)       // OK
+    console.log("fonction: " + userData.fonction);
 
-        // Valider les données du email, nom, prénom, fonction
+        // Valider les données du email, nom, prénom, fonction avec validator
     if( !validator.isEmail(userData.email)) { res.status(400).json({message: " Email invalid"})}
     if(!validator.isAlpha(userData.nom, ["fr-FR"])) { res.status(400).json({message: " Nom invalid"})}
-    if ( !validator.isAlpha(userData.prenom, ["fr-FR"])) { res.status(400).json({message: " Prenom invalid"})}   
-    if ( !validator.isAlphanumeric(userData.fonction, ["fr-FR"]))  { res.status(400).json({message: " veuillez entrer un format valid"})}
+    if ( !validator.isAlpha(userData.prenom, ["fr-FR"])) { res.status(400).json({message: " Prenom invalid"})}
+    if (userData.fonction.length > 0) {if ( !validator.isAlpha(userData.fonction, ["fr-FR"]))  { res.status(400).json({message: " veuillez entrer un format valid"})} }   
+    
+        // valider password avec password-validator
     if(!schema.validate(userData.password)) { res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
        
+        // après valider les donnée, chercher si email est déjà utilisé ; si non crée user
     else { db.Users.findOne ( { where : { email: userData.email}})
         
                     .then( user => { 
@@ -40,11 +44,18 @@ exports.signup = ((req, res) => {
                         else { 
                             bcrypt.hash(userData.password,10)
                                 .then( hash => {
+                                    // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
                                     let avatarName = "";
                                     if ( req.file) { avatarName = req.file.filename}
                                     else { avatarName = "avatar_default.png"} 
                                     
+                                    // console.log("fonction: " + userData.fonction);
+                                    // let fonctionData = "";
+                                    // if( userData.fonction) { fonctionData = userData.fonction}
+                                    // else { fonctionData = "null"}
+                                    // console.log("fonctionData: " + fonctionData);
 
+                                    // créer user
                                     const newUser = db.Users.create({
                                         email: userData.email,
                                         nom: userData.nom,
@@ -57,6 +68,7 @@ exports.signup = ((req, res) => {
                                     });
                                     console.log("newuser" + newUser);
                                     res.status(201).json( { message: "Utilisateur crée avec succès"})
+                                    return  newUser
                                 } 
                                     
                                 )

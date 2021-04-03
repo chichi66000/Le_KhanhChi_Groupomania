@@ -140,29 +140,28 @@ export default {
         // fonction pour envoyer le formulaire et signup
         async inscriptionSubmit () {
                 // créer utilisateur
-                let user = {
-                    nom: this.nom,
-                    prenom: this.prenom,
-                    email: this.email,
-                    password: this.password,
-                    fonction: this.fonction,
-                    pseudo: this.pseudo,
+                
+                    let nom = this.nom;
+                    let prenom= this.prenom
+                    let email= this.email;
+                    let password= this.password;
+                    let fonction = this.fonction
+                    let pseudo = this.pseudo
                     // avatar: this.avatar
-                    };
-                console.log(user);
+                
                 let form = new FormData();
-                form.append("user", JSON.stringify(user));
+                form.append("nom", nom);
+                form.append("prenom", prenom);
+                form.append("email", email);
+                form.append("password", password);
+                form.append("fonction", fonction);
+                form.append("pseudo", pseudo);
                 form.append("image", this.avatar)
 
-                console.log(this.avatar);   // OK
-                console.log(form)
-                await axios.post('api/auth/signup', form) 
-                    .then((user) => {                            // récupérer user créé 
-                        window.alert("Utilisateur crée, veuillez login avec votre email");
-                        console.log(user)
-                        // let email = user.email; 
-                        // let password = user.password;
-                        // console.log(email, password);
+                await axios.post('http://localhost:5000/api/auth/signup', form) 
+                    .then((response) => {                            // récupérer user créé 
+                        
+                        console.log(response)
                         this.$router.push("/login")              //login et aller au Home
                         })
                     .catch((error) => console.log(error))
