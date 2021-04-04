@@ -38,50 +38,34 @@ exports.signup = ((req, res) => {
        
         // après valider les donnée, chercher si email est déjà utilisé ; si non crée user
     else { db.Users.findOne ( { where : { email: userData.email}})
-        
-                    .then( user => { 
-                        if( user) {res.status(400).json({message: " email déjà utilisé"}) }
-                        else { 
-                            bcrypt.hash(userData.password,10)
-                                .then( hash => {
-                                    // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
-                                    let avatarName = "";
-                                    if ( req.file) { avatarName = req.file.filename}
-                                    else { avatarName = "avatar_default.png"} 
-                                    
-                                    // console.log("fonction: " + userData.fonction);
-                                    // let fonctionData = "";
-                                    // if( userData.fonction) { fonctionData = userData.fonction}
-                                    // else { fonctionData = "null"}
-                                    // console.log("fonctionData: " + fonctionData);
-
-                                    // créer user
-                                    const newUser = db.Users.create({
-                                        email: userData.email,
-                                        nom: userData.nom,
-                                        prenom: userData.prenom,
-                                        password: hash,
-                                        fonction: userData.fonction,
-                                        pseudo: userData.pseudo,
-                                        isAdmin: 0, 
-                                        avatar: avatarName
-                                    });
-                                    console.log("newuser" + newUser);
-                                    res.status(201).json( { message: "Utilisateur crée avec succès"})
-                                    return  newUser
-                                } 
-                                    
-                                )
-                                .catch( () => res.status(400).json( {messsage: " Problème pour crée utilisateur" }))
-                            
-                            
-                        }
-                    })
-                    .catch( () => res.status(500).json( { message: "Pb de server, impossible chercher email user"}))    
-                    
-            
+        .then( user => { 
+            if( user) {res.status(400).json({message: " email déjà utilisé"}) }
+            else { 
+                bcrypt.hash(userData.password,10)   // hash password, puis créer user
+                .then( hash => {
+                // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
+                    let avatarName = "";
+                    if ( req.file) { avatarName = req.file.filename}
+                    else { avatarName = "avatar_default.png"} 
+                        // créer user
+                    const newUser = db.Users.create({
+                        email: userData.email,
+                        nom: userData.nom,
+                        prenom: userData.prenom,
+                        password: hash,
+                        fonction: userData.fonction,
+                        pseudo: userData.pseudo,
+                        isAdmin: 0, 
+                        avatar: avatarName
+                    });
+                    console.log("newuser" + newUser);
+                    res.status(201).json( { message: "Utilisateur crée avec succès"})
+                })
+                .catch( () => res.status(400).json( {messsage: " Problème pour crée utilisateur" }))
+            }
+        })
+        .catch( () => res.status(500).json( { message: "Pb de server, impossible chercher email user"}))       
         }
-
 })
 
 //une route pour login
@@ -110,6 +94,7 @@ exports.login = (req, res, next) => {
                             {expiresIn: "24h",})
                             });
                             console.log("Utilisateur login réussi")
+                            next()
                     };
                 })
                 .catch((error) => res.status(500).json({error}))
@@ -167,21 +152,26 @@ exports.updateUser = (req, res, next) => {
 
 // route pour récupérer utilisateur (pour page profil)
 exports.getOneUser = (req, res, next) => {
+    let num = 18;
+    console.log(num);
     db.Users.findOne( {where: { id: req.params.id}})
         .then((user) => {
+            
             if(! user) {res.status(404).json({message: "Utilisateur non trouvé"}
                 )}
             else {
+                console.log("usernom" + user.nom)   //OK
                 let currentUser = {
                     userNom: user.nom,
                     userId: user.id,
                     userPseudo: user.pseudo,
                     email: user.email
                 }
+                // console.log(currentUser)    //OK
                 res.status(200).json({currentUser});
             }
         })
-        .catch((error) => res.status(500).json({error}))
+        .catch(() => res.status(500).json({message: "promblème connexion avec base de donnée"}))
 }
 
 // route pour récupéer tous les utilisateurs (pour admin par expemple)

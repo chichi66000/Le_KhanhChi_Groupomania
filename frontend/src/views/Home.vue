@@ -6,8 +6,11 @@
       </div>
 
       <!-- Afficher les actualités des postes -->
-      <div>
-          <p>Voici la page Home</p>
+      <div v-if="user">
+          <p>Bonjour {{user.userNom}} </p>
+      </div>
+      <div v-else>
+          <p>This is the page HOME </p>
       </div>
 
       <div>
@@ -29,13 +32,21 @@ export default {
       Footer
     },
     data() {
-      return {user:null}
+      return {
+        id: localStorage.getItem('id'),
+        user: null
+      }
         
     },
     async created() {
-      await axios.get('api/auth/:id')
+      // let id = localStorage.getItem('id');
+      await axios.get(`api/auth/${this.id}`,{
+        headers: { Authorization: "Bearer " + localStorage.getItem('token')}
+      })
         .then( response => {
-          this.user = response.data
+          this.user = response.data.currentUser
+          
+          console.log( this.user);   // OK
         })
         .catch(error => console.log(error))
 

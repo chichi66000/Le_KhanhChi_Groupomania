@@ -77,6 +77,8 @@ export default {
                 .then((response) => {
                     // récupérer token dans localStorage pour maintenir la session
                     localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('id', response.data.userId);
+
                     // console.log(this.$store.userId) 
 
                     // this.$store.commit('user/getToken', response.data.token)    // mettre user dans store
