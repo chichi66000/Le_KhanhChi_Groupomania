@@ -7,6 +7,8 @@ const passwordValidator = require("password-validator");
 
 const sequelize = require('sequelize');
 const db = require('../models');
+const Op = require( 'sequelize');
+
 
 const schema = new passwordValidator();
 schema
@@ -37,11 +39,15 @@ exports.signup = ((req, res) => {
     if(!schema.validate(userData.password)) { res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
        
         // après valider les donnée, chercher si email est déjà utilisé ; si non crée user
-    else { db.Users.findOne ( { where : { email: userData.email}})
+    else { db.Users.findOne ( {  where: { email: userData.email }})
         .then( user => { 
             if( user) {res.status(400).json({message: " email déjà utilisé"}) }
             else { 
-                bcrypt.hash(userData.password,10)   // hash password, puis créer user
+                db.Users.findOne ( { where: { pseudo : userData.pseudo}})
+                .then( user => { 
+                    if (user) { res.status(400).json({ message: " pseudo deja utilisé"})}
+                    else { 
+                        bcrypt.hash(userData.password,10)   // hash password, puis créer user
                 .then( hash => {
                 // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
                     let avatarName = "";
@@ -62,10 +68,15 @@ exports.signup = ((req, res) => {
                     res.status(201).json( { message: "Utilisateur crée avec succès"})
                 })
                 .catch( () => res.status(400).json( {messsage: " Problème pour crée utilisateur" }))
+                    }
+                })
+                // .catch( error => console.log(error))
+
+                
             }
         })
         .catch( () => res.status(500).json( { message: "Pb de server, impossible chercher email user"}))       
-        }
+    }
 })
 
 //une route pour login

@@ -1,3 +1,4 @@
+// import store from './index'
 
 export const user = ({
     namespaced: true,
@@ -24,6 +25,7 @@ export const user = ({
     },
     actions: {
         user (context, user) { context.commit('user', user)}
+        // getToken ( context, user) { context.commit ('user', user)}
     },
     modules: {
     }

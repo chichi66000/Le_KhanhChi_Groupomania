@@ -38,7 +38,7 @@ module.exports = function (sequelize, DataTypes) {
         email: {
           allowNull: false,
           type: DataTypes.STRING,
-          unique: "email"
+          primaryKey: true,
         },
         password: {
           allowNull: false,
@@ -51,7 +51,7 @@ module.exports = function (sequelize, DataTypes) {
         pseudo: {
           allowNull: false,
           type: DataTypes.STRING,
-          unique: "pseudo"
+          primaryKey: true,
         },
         avatar: {
           allowNull: true,

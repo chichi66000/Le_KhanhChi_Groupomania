@@ -50,6 +50,7 @@ import Logo from '../components/Logo';
 
 // pour connexion avec backend et serveur
 import axios from '../axios'
+import store from '../store'
 
 export default {
     name: "Login",
@@ -61,7 +62,7 @@ export default {
             email:"",
             password: "",
             errors: [],
-            // store
+            store
         }
     },
 
@@ -79,22 +80,19 @@ export default {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('id', response.data.userId);
 
-                    // console.log(this.$store.userId) 
-
-                    // this.$store.commit('user/getToken', response.data.token)    // mettre user dans store
-                    // this.$store.commit('user/getUserId', response.data.userId)
-                    // this.$store.commit('user/getCurrentUser', response.data.currentUser)
                     // aller sur la page Home une fois connecté
                     this.$router.push('/home')
                 } )
                 .catch(error => console.log(error))
         }
     },
-    // computed: {
-    //     currentUser() {
-    //         console.log($store.state.currentUser)
-    //     }
-    // }
+    computed: {
+        getToken() {
+            this.$store.user.commit('user/getToken', localStorage.getItem('token'))
+            console.log(this.$store.user)
+            return this.$store.user
+        }
+    }
 }
 
 </script>
