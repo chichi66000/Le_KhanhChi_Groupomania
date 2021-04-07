@@ -1,7 +1,5 @@
 <template>
     <div class="container-fluid">
-        <!-- Navbar -->
-        <Navbar/>
 
         <!-- Formulaire pour modifier profil -->
         <form class="form-group  mt-5 mb-5 col col-sm-12 col-md-8 col-lg-6 mx-auto text-center" method="post" enctype="multipart/form-data" action="http://localhost:5000/api/auth/signup">
@@ -64,13 +62,12 @@
 </template>
 
 <script>
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default {
     name: "ModiProfil",
     components: {
-        Navbar, Footer
+       Footer
     }
 }
 </script>

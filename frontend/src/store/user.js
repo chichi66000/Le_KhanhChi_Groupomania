@@ -1,32 +1,19 @@
-// import store from './index'
 
 export const user = ({
     namespaced: true,
-    state: {
-            token: "",
-            userId: "",
-            currentUser: ""
+    state: { user: null}
+,
+    getter: {
+        user: (state) => { return state.user}
     },
-    // getter: {
-    //     user: (state) => { return state.user}
-    // },
     mutations: {
-        getToken(state, token) {
-            state.user.token = token
-        },
-
-        getUserId(state, id) {
-            state.userId = id
-        },
-
-        getCurrentUser (state, user) {
-            state.currentUser = user
+        user ( state, user ) { 
+            state.user = user
         }
     },
     actions: {
-        user (context, user) { context.commit('user', user)}
-        // getToken ( context, user) { context.commit ('user', user)}
-    },
-    modules: {
+        user (context, user) { 
+            context.commit('user', user)
+        }
     }
   })

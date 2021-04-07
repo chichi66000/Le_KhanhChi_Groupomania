@@ -7,7 +7,7 @@
 
       <!-- Afficher les actualités des postes -->
       <div v-if="user">
-          <p>Bonjour {{user.userNom}} </p>
+          <p>Bonjour {{user}} </p>
       </div>
       <div v-else>
           <p>This is the page HOME </p>
@@ -23,7 +23,7 @@
 <script>
 // import Navbar from "../components/Navbar"
 import Footer from "../components/Footer";
-import axios from '../axios';
+import { mapGetters } from 'vuex'
 
 export default {
     name: "Home",
@@ -31,28 +31,9 @@ export default {
       // Navbar,
       Footer
     },
-    data() {
-      return {
-        id: localStorage.getItem('id'),
-        user: null
-      }
-        
-    },
-    async created() {
-      // let id = localStorage.getItem('id');
-      await axios.get(`api/auth/${this.id}`,{
-        headers: { Authorization: "Bearer " + localStorage.getItem('token')}
-      })
-        .then( response => {
-          this.user = response.data.currentUser
-          
-          console.log( this.user);   // OK
-        })
-        .catch(error => console.log(error))
-
-    },
-    methods: {
-      
+    // props: [ 'user'],
+    computed: {
+      ...mapGetters (["user/user"])
     }
 }
 </script>

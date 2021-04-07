@@ -39,12 +39,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // imports les routes user
 const userRoutes = require('./routes/user');
 
-// route pour stocker les images
-app.use("/images", express.static(path.join(__dirname, "images")));
-
 //route authentification
 app.use('/api/auth', userRoutes);
 
+// route pour stocker les images
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 
 

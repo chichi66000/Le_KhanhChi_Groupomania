@@ -9,6 +9,18 @@ const sequelize = require('sequelize');
 const db = require('../models');
 const Op = require( 'sequelize');
 
+let error ="";
+// function pour récupérer error
+exports.multerPrevent =( async (req, res, next) => {
+    try { await res.status
+    // console.log(res.status)
+    
+        if (error.length > 0) { console.log(error) ;res.status(400).json({ message: "rien va plus"})}
+        else {error = ""; next()}
+    // else { console.log ( "hiiii"); next() }
+    }
+    catch { err => console.log( "err"+ err)}
+} )
 
 const schema = new passwordValidator();
 schema
@@ -27,7 +39,6 @@ schema
 exports.signup = ((req, res) => {
     const userData = req.body;
     console.log(userData)       // OK
-    console.log("fonction: " + userData.fonction);
 
         // Valider les données du email, nom, prénom, fonction avec validator
     if( !validator.isEmail(userData.email)) { res.status(400).json({message: " Email invalid"})}
@@ -41,12 +52,20 @@ exports.signup = ((req, res) => {
         // après valider les donnée, chercher si email est déjà utilisé ; si non crée user
     else { db.Users.findOne ( {  where: { email: userData.email }})
         .then( user => { 
-            if( user) {res.status(400).json({message: " email déjà utilisé"}) }
-            else { 
+                    // error = "Problème pour crée utilisateur"
+            if( user) {
+                    res.status(400).json({message: " email déjà utilisé"}); 
+                    error=" Pb avec email"; }
+            else {
+                 
                 db.Users.findOne ( { where: { pseudo : userData.pseudo}})
                 .then( user => { 
-                    if (user) { res.status(400).json({ message: " pseudo deja utilisé"})}
-                    else { 
+                    if (user) {
+                        res.status(400).json({ message: " pseudo deja utilisé"});
+                        error=" Pb avec pseudo";  
+                    }
+                    else {
+                        error =""; 
                         bcrypt.hash(userData.password,10)   // hash password, puis créer user
                 .then( hash => {
                 // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
@@ -67,12 +86,12 @@ exports.signup = ((req, res) => {
                     console.log("newuser" + newUser);
                     res.status(201).json( { message: "Utilisateur crée avec succès"})
                 })
-                .catch( () => res.status(400).json( {messsage: " Problème pour crée utilisateur" }))
+                .catch( () => { 
+                    res.status(400).json( {messsage: " Problème pour crée utilisateur" });
+                    
+            } )
                     }
-                })
-                // .catch( error => console.log(error))
-
-                
+                })  
             }
         })
         .catch( () => res.status(500).json( { message: "Pb de server, impossible chercher email user"}))       
@@ -97,8 +116,13 @@ exports.login = (req, res, next) => {
                     }
                     else {
                     res.status(200).json({ // si mdp correct, renvoyer id
-                        currentUser: user.nom,
-                        userId: user.id,
+                        
+                        currentUser: {
+                            nom: user.nom,
+                            email: user.email, 
+                            pseudo: user.pseudo,
+                            userId: user.id},
+                        
                         token: jwt.sign(            // un token permet la connexion
                             {userId: user.id },
                             "RANDOM_TOKEN_SECRET", 

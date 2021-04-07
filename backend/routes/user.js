@@ -8,7 +8,7 @@ const userCtrl = require('../controllers/user');
 
 
 // Incription user
-router.post("/signup", multer, userCtrl.signup);
+router.post("/signup", userCtrl.multerPrevent,  multer, userCtrl.signup);
 
 // connexion user
 router.post("/login", userCtrl.login);

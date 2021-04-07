@@ -14,12 +14,24 @@
                         <router-link to="/home">HOME</router-link>
                     </div>
                     <div class=" collape navbar-collapse ">
-                        <ul class="navbar-nav ml-auto">
+                        <ul v-if="!user" class="navbar-nav ml-auto">
                             <li class="nav-item px-5">
                                 <router-link to="/login">Login</router-link>
                             </li>
                             <li class="nav-item px-5">
                                 <router-link to="/signup">Signup</router-link>
+                            </li>
+                        </ul>
+
+                        <ul v-if="user" class="navbar-nav ml-auto">
+                            <li class="nav-item px-5">
+                                <router-link to="/help">FAQ</router-link>
+                            </li>
+                            <li class="nav-item px-5">
+                                <router-link to="/user">Profile</router-link>
+                            </li>
+                            <li class="nav-item px-5">
+                                <a href= "javascript:void(0)" @click = "handleClick">Logout</a>
                             </li>
                         </ul>
 
@@ -39,9 +51,21 @@
 </template>
     
 <script>
-
+import { mapGetters } from 'vuex'
 export default {
-    name: "Navbar"
+    name: "Navbar",
+    // props: [ 'user'],
+
+    methods: {
+        handleClick (){
+            localStorage.removeItem('token');
+            this.$router.push('/home')
+        }
+    },
+
+    computed: {
+        ...mapGetters ( [ 'user/user'])
+    }
 }
 </script>
 
