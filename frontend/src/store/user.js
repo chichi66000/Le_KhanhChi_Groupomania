@@ -1,7 +1,7 @@
 
 export const user = ({
     namespaced: true,
-    state: { user: {}}
+    state: { user: { } }
 ,
     getter: {
         getCurrentUser: (state) => { return state.user}

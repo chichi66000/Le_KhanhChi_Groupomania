@@ -14,7 +14,7 @@
                         <router-link to="/home">HOME</router-link>
                     </div>
                     <div class=" collape navbar-collapse ">
-                        <ul v-if="!user" class="navbar-nav ml-auto">
+                        <ul v-if="!user.user" class="navbar-nav ml-auto">
                             <li class="nav-item px-5">
                                 <router-link to="/login">Login</router-link>
                             </li>
@@ -23,7 +23,7 @@
                             </li>
                         </ul>
 
-                        <ul v-if="user" class="navbar-nav ml-auto">
+                        <ul v-if="user.user" class="navbar-nav ml-auto">
                             <li class="nav-item px-5">
                                 <router-link to="/help">FAQ</router-link>
                             </li>
@@ -51,7 +51,8 @@
 </template>
     
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
+
 export default {
     name: "Navbar",
     // props: [ 'user'],
@@ -59,12 +60,13 @@ export default {
     methods: {
         handleClick (){
             localStorage.removeItem('token');
+            this.$store.dispatch('user/setCurrentUser', null)
             this.$router.push('/home')
         }
     },
 
     computed: {
-        ...mapGetters ( [ 'user/user'])
+      ...mapState ( { user: state => state.user} )
     }
 }
 </script>

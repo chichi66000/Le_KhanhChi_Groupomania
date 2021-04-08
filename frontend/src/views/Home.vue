@@ -6,7 +6,7 @@
       </div>
 
       <!-- Afficher les actualités des postes -->
-      <div v-if="user">
+      <div v-if="user.user">
           <p>Bonjour {{user.user.pseudo}} </p>
       </div>
       <div v-else>
