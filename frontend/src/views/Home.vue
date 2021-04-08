@@ -7,7 +7,7 @@
 
       <!-- Afficher les actualités des postes -->
       <div v-if="user">
-          <p>Bonjour {{user}} </p>
+          <p>Bonjour {{user.user.pseudo}} </p>
       </div>
       <div v-else>
           <p>This is the page HOME </p>
@@ -23,7 +23,7 @@
 <script>
 // import Navbar from "../components/Navbar"
 import Footer from "../components/Footer";
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
     name: "Home",
@@ -31,9 +31,8 @@ export default {
       // Navbar,
       Footer
     },
-    // props: [ 'user'],
     computed: {
-      ...mapGetters (["user/user"])
+      ...mapState ( { user: state => state.user} )
     }
 }
 </script>

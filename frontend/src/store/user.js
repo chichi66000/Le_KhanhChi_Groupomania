@@ -1,19 +1,19 @@
 
 export const user = ({
     namespaced: true,
-    state: { user: null}
+    state: { user: {}}
 ,
     getter: {
-        user: (state) => { return state.user}
+        getCurrentUser: (state) => { return state.user}
     },
     mutations: {
-        user ( state, user ) { 
+        currentUser ( state, user ) { 
             state.user = user
         }
     },
     actions: {
-        user (context, user) { 
-            context.commit('user', user)
+        async setCurrentUser (context, user) { 
+            context.commit('currentUser', user)
         }
     }
   })

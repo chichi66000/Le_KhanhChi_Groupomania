@@ -79,10 +79,11 @@ export default {
                     // récupérer token dans localStorage pour maintenir la session
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('id', response.data.currentUser.userId);
-                    console.log (response.data.currentUser.userId)
-                    console.log (response.data.currentUser)
+                    // console.log (response.data.currentUser.userId)
+                    console.log (response.data.currentUser)     //OK
 
-                    this.$store.commit ('user/user', response.data.currentUser)
+                    this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
+                    console.log(this.$store.state.user.user)
                     // aller sur la page Home une fois connecté
                     this.$router.push('/home')
                 } )

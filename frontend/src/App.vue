@@ -28,14 +28,16 @@ export default {
       }   
     },
     async created() {
-      await axios.get(`api/auth/${this.id}`,{
-        headers: { Authorization: "Bearer " + localStorage.getItem('token')}
-      })
+      await axios.get(`api/auth/${this.id}`,
+        // {
+        // headers: { Authorization: "Bearer " + localStorage.getItem('token')}
+        // }
+      )
         .then( response => {
           // this.user = response.data.currentUser
           console.log("nom" + response.data.currentUser.userNom)
-
-          this.$store.commit ( 'user/user', response.data.currentUser)
+          console.log("currentuser" + response.data.currentUser);
+          this.$store.dispatch ('user/getCurrentUser', response.data.currentUser)
           
         })
         .catch(error => console.log(error))

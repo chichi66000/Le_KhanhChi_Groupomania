@@ -10,14 +10,13 @@ const db = require('../models');
 const Op = require( 'sequelize');
 
 let error ="";
-// function pour récupérer error
+// function async pour récupérer error
 exports.multerPrevent =( async (req, res, next) => {
+    // attendre le status du response; si error a qq chose comme message, envoyer 400 
     try { await res.status
-    // console.log(res.status)
-    
+
         if (error.length > 0) { console.log(error) ;res.status(400).json({ message: "rien va plus"})}
-        else {error = ""; next()}
-    // else { console.log ( "hiiii"); next() }
+        else {error = ""; next()}       // s'il n'y pa pas message error, reset error pour la prochain requete et passer au fonction suivant
     }
     catch { err => console.log( "err"+ err)}
 } )
@@ -57,39 +56,38 @@ exports.signup = ((req, res) => {
                     res.status(400).json({message: " email déjà utilisé"}); 
                     error=" Pb avec email"; }
             else {
-                 
+                // vérifier si pseudo est déjà présente dans BDD 
                 db.Users.findOne ( { where: { pseudo : userData.pseudo}})
                 .then( user => { 
-                    if (user) {
+                    if (user) {     // pseudo trouvé dans BDD
                         res.status(400).json({ message: " pseudo deja utilisé"});
                         error=" Pb avec pseudo";  
                     }
-                    else {
+                    else {          // pas de pseudo
                         error =""; 
                         bcrypt.hash(userData.password,10)   // hash password, puis créer user
-                .then( hash => {
-                // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
-                    let avatarName = "";
-                    if ( req.file) { avatarName = req.file.filename}
-                    else { avatarName = "avatar_default.png"} 
-                        // créer user
-                    const newUser = db.Users.create({
-                        email: userData.email,
-                        nom: userData.nom,
-                        prenom: userData.prenom,
-                        password: hash,
-                        fonction: userData.fonction,
-                        pseudo: userData.pseudo,
-                        isAdmin: 0, 
-                        avatar: avatarName
-                    });
-                    console.log("newuser" + newUser);
-                    res.status(201).json( { message: "Utilisateur crée avec succès"})
-                })
-                .catch( () => { 
-                    res.status(400).json( {messsage: " Problème pour crée utilisateur" });
-                    
-            } )
+                            .then( hash => {
+                            // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
+                                let avatarName = "";
+                                if ( req.file) { avatarName = req.file.filename}
+                                else { avatarName = "avatar_default.png"} 
+                                    // créer user
+                                const newUser = db.Users.create({
+                                    email: userData.email,
+                                    nom: userData.nom,
+                                    prenom: userData.prenom,
+                                    password: hash,
+                                    fonction: userData.fonction,
+                                    pseudo: userData.pseudo,
+                                    isAdmin: 0, 
+                                    avatar: avatarName
+                                });
+                                console.log("newuser" + newUser);
+                                res.status(201).json( { message: "Utilisateur crée avec succès"})
+                            })
+                            .catch( () => { 
+                                res.status(400).json( {messsage: " Problème pour crée utilisateur" });   
+                        } )
                     }
                 })  
             }
