@@ -1,4 +1,5 @@
 'use strict';
+// const crypto = require ('crypto')
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Users', {
@@ -51,8 +52,21 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    // await queryInterface.addColumn( 
+    //   'Users', 
+    //   'createPasswordResetToken',
+    //   {
+    //     type: SEQUELIZE.STRING,
+    //     set () { 
+    //       const resetToken = crypto.randomBytes(32).toString('hex');
+    //       crypto.createHash('sha256').update(resetToken).digest('hex')
+    //     }
+    //   }
+      
+    // )
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Users');
+    // await queryInterface.removeColumn('User','createPasswordResetToken')
   }
 };

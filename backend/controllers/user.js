@@ -1,3 +1,5 @@
+
+const crypto = require ('crypto')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -215,3 +217,38 @@ exports.getAllUser = (req, res, next) => {
             res.status(200).json(users)})
         .catch((error) => res.status(404).json({error}))
 }
+
+// route pour forgot password
+exports.forgotPassword = async (req, res, next) => {
+    // 1) Get user based on email
+    const user = await db.Users.findOne ( { where: {email: req.body.email } })
+    try {
+        if ( ! user ) { res.status(404).json({ message: " Utilisateur non trouvé avec email "})}
+        // 2) Generate random reset token
+        else { const resetToken = crypto.randomBytes(32).toString('hex');
+        // Hash ce resetToken pour sauvegarder dans BDD
+            const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
+        // ce token est expired dans 2h
+            const expires = Date.now() + 2*60*60*1000;
+            console.log({resetToken}, { resetTokenHash}, expires);      //OK
+            let userObject= user
+            // console.log({user});    //OK
+        db.Users.update (
+            {...userObject,
+                email: req.body.email,
+                passwordResetExpires: expires,
+                createPasswordResetToken: resetTokenHash
+            },
+            {where: { email: req.body.email} }
+            )
+            .then( () => res.status(200).json( { message: " Reset Token réussi"}))
+            .catch( error => res.status(404).json({message: "Problème pour update token user"}))
+            
+        // 3) Send token to user email
+        }
+
+    } catch (err) { console.log(err) }
+}
+
+// route pour reset password
+exports.resetPassword = (req, res, next) => {}

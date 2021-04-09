@@ -8,7 +8,7 @@ const userCtrl = require('../controllers/user');
 
 
 // Incription user
-router.post("/signup", userCtrl.multerPrevent,  multer, userCtrl.signup);
+router.post("/signup", /*userCtrl.multerPrevent*/  multer, userCtrl.signup);
 
 // connexion user
 router.post("/login", userCtrl.login);
@@ -24,5 +24,11 @@ router.get('/:id', auth, userCtrl.getOneUser)
 
 // récupérer tous les utilisateur ( pour Admin)
 router.get('/', auth, userCtrl.getAllUser)
+
+// forgot password
+router.patch('/forgot', userCtrl.forgotPassword)
+
+// reset password
+router.patch('/reset', userCtrl.resetPassword)
 
 module.exports = router;

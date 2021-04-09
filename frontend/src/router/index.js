@@ -4,7 +4,6 @@ import Home from '../views/Home.vue'
 // import User from '../views/User.vue'
 import Login from '../components/Login.vue'
 import Signup from '../components/Signup.vue'
-import Logout from '../components/Logout.vue'
 
 
 
@@ -40,12 +39,6 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
-
-  },
-  {
-    path: '/logout',
-    name: 'Logout',
-    component: Logout
 
   }
 ]
