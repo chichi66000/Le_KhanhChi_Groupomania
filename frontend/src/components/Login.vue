@@ -1,13 +1,8 @@
 <template>
     <div class="container mt-5 m-auto text-center">
         <!-- Afficher les erreurs -->
-        <div class="text-danger mx-auto mt-5 mb-5" v-if="errors.length">
-            <ul>
-                <li v-for= "error in errors" :key="error">{{error}}</li>
-            </ul>
-        </div>
+        <error v-if="error" :error = "error"/>
 
-        <!-- Afficher template signup avec toggle = on -->
         <div> 
             
             <div class="col-md-6 col-lg-6 mt-5 m-auto col">
@@ -45,7 +40,8 @@
 
 <script>
 // les components
-import Logo from '../components/Logo';
+import Logo from './Logo';
+import Error from './Error';
 // import user from '../store/user'
 
 // pour connexion avec backend et serveur
@@ -56,12 +52,13 @@ export default {
     name: "Login",
     components: {
         Logo,
+        Error
     },
     data () {
         return {
             email:"",
             password: "",
-            errors: [],
+            error: "",
             // store
         }
     },
@@ -70,32 +67,30 @@ export default {
 
         // fonction gérer le login
         async login() {
-            let user = {                    //créer user
-                email: this.email,
-                password: this.password
-            }
-            await axios.post('api/auth/login', user)   // post au serveur
-                .then((response) => {
-                    // récupérer token dans localStorage pour maintenir la session
-                    localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('id', response.data.currentUser.userId);
-                    // console.log (response.data.currentUser.userId)   //OK
-                    // console.log (response.data.currentUser)         //OK
+            try {
+                let user = {                    //créer user
+                    email: this.email,
+                    password: this.password
+                }
+                await axios.post('api/auth/login', user)   // post au serveur
+                    .then((response) => {
+                        // récupérer token dans localStorage pour maintenir la session
+                        localStorage.setItem('token', response.data.token);
+                        localStorage.setItem('id', response.data.currentUser.userId);
+                        // console.log (response.data.currentUser.userId)   //OK
+                        // console.log (response.data.currentUser)         //OK
 
-                    this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
-                    
-                    // aller sur la page Home une fois connecté
-                    this.$router.push('/home')
-                } )
-                .catch(error => console.log(error))
+                        this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
+                        
+                        // aller sur la page Home une fois connecté
+                        this.$router.push('/home')
+                    } )
+                    .catch( (e) => { 
+                        console.log(e);
+                        this.error = "Email/password Invalid"
+                    })
+            } catch (err) { console.log( "err" + err) }
         }
-    },
-    computed: {
-        // getToken() {
-        //     this.$store.user.commit('user/getToken', localStorage.getItem('token'))
-        //     console.log(this.$store.user)
-        //     return this.$store.user
-        // }
     }
 }
 

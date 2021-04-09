@@ -9,8 +9,8 @@
       <div v-if="user.user">
           <p>Bonjour {{user.user.pseudo}} </p>
       </div>
-      <div v-else>
-          <p>This is the page HOME </p>
+      <div v-else class="text-center d-flex align-self-center my-5 mx-auto">
+          <h3>Bienvenue au Groupomania, connectez - vous pour commencer </h3>
       </div>
 
       <div>

@@ -204,7 +204,7 @@ exports.getOneUser = (req, res, next) => {
                 res.status(200).json({currentUser});
             }
         })
-        .catch(() => res.status(500).json({message: "promblème connexion avec base de donnée"}))
+        .catch(() => res.status(500).json({message: "problème connexion avec base de donnée"}))
 }
 
 // route pour récupéer tous les utilisateurs (pour admin par expemple)

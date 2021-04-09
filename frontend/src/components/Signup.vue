@@ -1,9 +1,11 @@
 <template>
     <!-- Afficher template Inscription quand toggle = off -->
         <div>
-            <!-- <div>
-                <button class="btn d-flex col-1 col-md-1 col-lg-1  pink font-weight-bolder mt-3" @click="switchToggle">Login</button>
-            </div> -->
+            <!-- Afficher les erreurs -->
+            <error v-if="error" :error = "error"/>
+
+            <!-- formulaire de Signup -->
+
             <div id="inscription" class="container m-auto text-center">
 
                 <div class="col-md-6 col-lg-6 col m-auto">
@@ -74,11 +76,13 @@ import * as yup from 'yup';
 
 // pour connexion avec backend et serveur
 import axios from '../axios'
+import Error from './Error';
 
 export default {
     name: "Signup",
     components: {
-        Logo
+        Logo,
+        Error
     },
     data() {
         return {
@@ -87,6 +91,7 @@ export default {
             pseudo:'',
             fonction:'',
             avatar:'',
+            error: ''
         }
     },
     setup () {
@@ -139,6 +144,7 @@ export default {
 
         // fonction pour envoyer le formulaire et signup
         async inscriptionSubmit () {
+            try {
                 // créer utilisateur
                 
                     let nom = this.nom;
@@ -164,8 +170,10 @@ export default {
                         console.log(response)
                         this.$router.push("/login")              //login et aller au Home
                         })
-                    .catch((error) => console.log(error))
-                    
+                    .catch((e) => { 
+                        console.log(e);
+                        this.error = "Veuillez corriger les erreurs" })
+            }catch (err) { console.log("error" + err) }     
         },
         
     }
