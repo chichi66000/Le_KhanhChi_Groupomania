@@ -9,9 +9,10 @@ const passwordValidator = require("password-validator");
 
 const sequelize = require('sequelize');
 const db = require('../models');
-// const Op = require( 'sequelize');
+const Op = require( 'sequelize');
 
-const sendEmail = require('./email')
+const sendEmail = require('./email');
+const { Sequelize } = require('sequelize');
 
 let error ="";
 // function async pour récupérer error
@@ -249,7 +250,7 @@ exports.forgotPassword = async (req, res, next) => {
                 
             // 3) Send token to user email
             const resetURL = `${req.protocol}://${req.get('host')}/api/auth/reset/${resetToken}`;
-            const message = `Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 2 heurs) ${resetURL}. \n Si ce n'est pas le cas, ignorez ce message`  ;
+            const message = `<p>Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 2 heurs) </p> <br> <a href="${resetURL}">${resetURL}</a>  <br> Si ce n'est pas le cas, ignorez ce message</p>`  ;
 
             await sendEmail( {
                 email: req.body.email,
@@ -271,4 +272,54 @@ exports.forgotPassword = async (req, res, next) => {
 }
 
 // route pour reset password
-exports.resetPassword = (req, res, next) => {}
+exports.resetPassword = async (req, res, next) => {
+    // 1) Récupérer user selon token
+    const hashToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
+    const user= await db.Users.findOne( { where: {
+        createPasswordResetToken: hashToken,
+        // passwordResetExpires: { [Op.gt]: Sequelize.fn('CURRENT_TIMESTAMP') }
+        }
+    }) // comparer avec ce Date.now()
+    // 2) S'il y a user et token est encore valide
+        
+            if ( !user ) {          // si pas user
+                res.status(400).json({ message: "Token invalid"})
+            }
+            else {                  // si user vérifier que resetToken est encore valid
+                db.Users.findOne( { where: { passwordResetExpires: { [Op.gt]: Date.now() }}})
+                .then(valid => {
+                    if (!valid) { return res.status(404).json({ message: "Token expire"})}
+                    // 3) Update nouveau password
+                    bcrypt.hash(req.body.password, 10)
+                    .then( hash => {
+                        db.Users.update( {
+                            ...user,
+                            password: hash,
+                            passwordResetExpires: undefined,
+                            createPasswordResetToken: undefined,
+                        }, 
+                        { where: {createPasswordResetToken: hashToken}} )
+                        
+                    //4) Login user et envoyer token
+                        const token = jwt.sign(            // un token permet la connexion
+                            {userId: user.id },
+                            "RANDOM_TOKEN_SECRET", 
+                            {expiresIn: "24h",});
+                            
+                        res.status(200).json( {
+                            message: "Password reset avec succès",
+                            token
+                        })
+                    })
+                    .catch(() => res.status(400).json( {message: 'Problème server pour chercher user'}))
+                    })
+
+                .catch((err) => { console.log(err); res.status(500).json({message: "Problème pour chercher token expire"})})
+            
+                
+            }
+        
+        // .catch( err => res.status(500).json({ message: "Problème server pour chercher user"}))
+
+}

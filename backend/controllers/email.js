@@ -16,8 +16,8 @@ const sendEmail = async options => {
         from: ' Groupomania service réseau interne <admin@groupomania.fr>',
         to: options.email,
         subject: options.subject,
-        text: options.message,
-        // html: 
+        // text: options.message,
+        html: options.message
     }
     // 3) Send email avec nodemailer
     await transporter.sendMail(emailOptions)
