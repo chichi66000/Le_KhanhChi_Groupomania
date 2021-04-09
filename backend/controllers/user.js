@@ -9,7 +9,9 @@ const passwordValidator = require("password-validator");
 
 const sequelize = require('sequelize');
 const db = require('../models');
-const Op = require( 'sequelize');
+// const Op = require( 'sequelize');
+
+const sendEmail = require('./email')
 
 let error ="";
 // function async pour récupérer error
@@ -225,27 +227,45 @@ exports.forgotPassword = async (req, res, next) => {
     try {
         if ( ! user ) { res.status(404).json({ message: " Utilisateur non trouvé avec email "})}
         // 2) Generate random reset token
-        else { const resetToken = crypto.randomBytes(32).toString('hex');
-        // Hash ce resetToken pour sauvegarder dans BDD
-            const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
-        // ce token est expired dans 2h
-            const expires = Date.now() + 2*60*60*1000;
-            console.log({resetToken}, { resetTokenHash}, expires);      //OK
-            let userObject= user
-            // console.log({user});    //OK
-        db.Users.update (
-            {...userObject,
+        else { 
+            const resetToken = crypto.randomBytes(32).toString('hex');
+            // Hash ce resetToken pour sauvegarder dans BDD
+                const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
+            // ce token est expired dans 2h
+                const expires = Date.now() + 2*60*60*1000;
+                console.log({resetToken}, { resetTokenHash}, expires);      //OK
+                let userObject= user
+                // console.log({user});    //OK
+            db.Users.update (
+                {...userObject,
+                    email: req.body.email,
+                    passwordResetExpires: expires,
+                    createPasswordResetToken: resetTokenHash
+                },
+                {where: { email: req.body.email} }
+                )
+                .then( () => res.status(200).json( { message: " Reset Token réussi"}))
+                .catch( error => res.status(404).json({message: "Problème pour update token user"}))
+                
+            // 3) Send token to user email
+            const resetURL = `${req.protocol}://${req.get('host')}/api/auth/reset/${resetToken}`;
+            const message = `Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 2 heurs) ${resetURL}. \n Si ce n'est pas le cas, ignorez ce message`  ;
+
+            await sendEmail( {
                 email: req.body.email,
-                passwordResetExpires: expires,
-                createPasswordResetToken: resetTokenHash
-            },
-            {where: { email: req.body.email} }
-            )
-            .then( () => res.status(200).json( { message: " Reset Token réussi"}))
-            .catch( error => res.status(404).json({message: "Problème pour update token user"}))
-            
-        // 3) Send token to user email
+                subject: "Groupomania, reset password ( valide pour 2 heures )",
+                message
+            })
+            .then( () => res.status(200).json( { message: "Verifier votre email pour reset password"}))
+            .catch ( err => {
+                console.log(err)
+                res.status(500).json({ message: "Problème pour envoyer email"})
+                user.createPasswordResetToken = undefined; 
+                user.passwordResetExpires = undefined; 
+                user.save()
+            })
         }
+            
 
     } catch (err) { console.log(err) }
 }

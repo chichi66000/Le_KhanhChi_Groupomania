@@ -26,9 +26,9 @@ router.get('/:id', auth, userCtrl.getOneUser)
 router.get('/', auth, userCtrl.getAllUser)
 
 // forgot password
-router.patch('/forgot', userCtrl.forgotPassword)
+router.post('/forgot', userCtrl.forgotPassword)
 
 // reset password
-router.patch('/reset', userCtrl.resetPassword)
+router.patch('/reset/:token', userCtrl.resetPassword)
 
 module.exports = router;
