@@ -232,15 +232,17 @@ exports.forgotPassword = async (req, res, next) => {
             const resetToken = crypto.randomBytes(32).toString('hex');
             // Hash ce resetToken pour sauvegarder dans BDD
                 const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
-            // ce token est expired dans 2h
-                const expires = Date.now() + 2*60*60*1000;
-                console.log({resetToken}, { resetTokenHash}, expires);      //OK
+            //token expires after one hour
+                var expireDate = new Date();
+                expireDate.setDate(expireDate.getDate() + 1/24);
+                console.log({resetToken}, { resetTokenHash}, expireDate);      //OK
+                
                 let userObject= user
                 // console.log({user});    //OK
             db.Users.update (
                 {...userObject,
                     email: req.body.email,
-                    passwordResetExpires: expires,
+                    passwordResetExpires: expireDate,
                     createPasswordResetToken: resetTokenHash
                 },
                 {where: { email: req.body.email} }
@@ -287,8 +289,10 @@ exports.resetPassword = async (req, res, next) => {
                 res.status(400).json({ message: "Token invalid"})
             }
             else {                  // si user vérifier que resetToken est encore valid
-                db.Users.findOne( { where: { passwordResetExpires: { [Op.gt]: Date.now() }}})
+                db.Users.findOne( { where: { passwordResetExpires: { [Op.gt]: Sequelize.fn('CURDATE') }}})
                 .then(valid => {
+                    console.log(user.passwordResetExpires);
+                    console.log('today' + Sequelize.fn('CURDATE'));
                     if (!valid) { return res.status(404).json({ message: "Token expire"})}
                     // 3) Update nouveau password
                     bcrypt.hash(req.body.password, 10)

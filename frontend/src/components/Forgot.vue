@@ -1,6 +1,6 @@
 <template>
     <div class="text-center">
-        <error v-if="error" :error ="error" />
+        <error v-if="error" :error ="error" class="mx-auto text-center my-5 col col-md-5 col-lg-4 col-xl-4" />
 
         <form class="mx-auto text-center my-5 col col-md-5 col-lg-4 col-xl-4" @submit.prevent = "handleSubmit">
             <h3 class="text-primary my-5">
@@ -20,7 +20,7 @@ import Error from './Error'
 
 export default {
     name: 'Forgot',
-    component: {
+    components: {
         Error
     },
     data() {
@@ -40,7 +40,7 @@ export default {
                         this.error = "Email non trouvé, veuillez réessayer"
                         })
             }
-            catch (e) { console.log(e);}
+            catch (e) { console.log(e); this.error = "Email non trouvé, veuillez réessayer!!!"}
         }
     }
 }
