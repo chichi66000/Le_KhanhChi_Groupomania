@@ -1,5 +1,4 @@
 'use strict';
-const crypto = require ('crypto')
 
 // const {
 //   Model
@@ -74,29 +73,10 @@ module.exports = function (sequelize, DataTypes) {
         createPasswordResetToken: {
           allowNull:true,
           type: DataTypes.STRING,
-          //attribuer la valeur resetTokenHash pour colonne;retourne resetToken pour envoyer par email
-          // get () {
-          //   const resetToken = crypto.randomBytes(32).toString('hex');
-          //   resetToken = this.getDataValue('createPasswordResetToken');
-          //   return resetToken;
-          // },
-          // set (resetToken) {
-            
-          //   const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
-          //   this.setDataValue('createPasswordResetToken', resetTokenHash)
-          //   console.log( {resetToken})
-          //   console.log(createPasswordResetToken);
-            
-          // }
         },
         passwordResetExpires: {
           allowNull: true,
-          type: DataTypes.DATE,
-          // attribuer la valeur pour la colonne, expires dans 2h
-          // set () {
-          //   const expires = Date.now() + 2*60*60*1000;
-          //   this.setDataValue('passwordResetExpires', expires )
-          // }
+          type: DataTypes.DATE
         }
       }, {
         sequelize,
@@ -123,17 +103,6 @@ module.exports = function (sequelize, DataTypes) {
         ]
       }
     );
-    // function createToken () {
-    //   const resetToken = crypto.randomBytes(32).toString('hex');
-    //   const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
-    //   this.Users.createPasswordResetToken = resetTokenHash
-    //   console.log( {resetToken})
-    //   console.log(createPasswordResetToken);
-    //   const expires = Date.now() + 2*60*60*1000;
-    //   this.Users.passwordResetExpires= expires 
-    //   return resetToken
-    // };
-    // createToken()
     return users
 }
 

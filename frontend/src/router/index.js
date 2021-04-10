@@ -4,6 +4,8 @@ import Home from '../views/Home.vue'
 // import User from '../views/User.vue'
 import Login from '../components/Login.vue'
 import Signup from '../components/Signup.vue'
+import Forgot from '../components/Forgot.vue'
+import Reset from '../components/Reset.vue'
 
 
 
@@ -40,6 +42,16 @@ const routes = [
     name: 'Login',
     component: Login
 
+  },
+  {
+    path: '/forgot',
+    name: 'Forgot',
+    component: Forgot
+  },
+  {
+    path: '/reset/:token',
+    name: 'Reset',
+    component: Reset
   }
 ]
 

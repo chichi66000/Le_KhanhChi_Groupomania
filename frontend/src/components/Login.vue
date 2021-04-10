@@ -26,6 +26,10 @@
                 </div>
                 
                 <button type="submit" class="btn btn-primary text-center" id="button">Connexion</button>
+
+                <p class=" forgot-password my-3 text-right">
+                    <router-link to="forgot">Forgot password</router-link>
+                </p>
             </form>
             <!-- <div class="mt-3">
                 <p class="pink font-weight-bolder">Vous n'avez pas encore de compte?</p>
