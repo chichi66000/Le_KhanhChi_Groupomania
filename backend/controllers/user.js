@@ -251,7 +251,7 @@ exports.forgotPassword = async (req, res, next) => {
                 .catch( error => res.status(404).json({message: "Problème pour update token user"}))
                 
             // 3) Send token to user email
-            const resetURL = `${req.protocol}://${req.get('host')}/api/auth/reset/${resetToken}`;
+            const resetURL = `${req.protocol}://${process.env.GROUPO_HOST}/api/auth/reset/${resetToken}`;
             const message = `<p>Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 2 heurs) </p> <br> <a href="${resetURL}">${resetURL}</a>  <br> Si ce n'est pas le cas, ignorez ce message</p>`  ;
 
             await sendEmail( {
