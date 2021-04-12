@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const multer = require('../middlewares/multer_config');
 const auth = require('../middlewares/auth');
-const error = require('../middlewares/error');
-const passport = require('passport')
+// const error = require('../middlewares/error');
+// const passport = require('passport')
 const userCtrl = require('../controllers/user');
 
 
 // Incription user
-router.post("/signup", error ,  multer, userCtrl.signup);
+router.post("/signup", /*error , */ multer, userCtrl.signup);
 
 // connexion user
 router.post("/login", userCtrl.login);

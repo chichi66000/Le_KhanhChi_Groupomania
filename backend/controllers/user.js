@@ -314,28 +314,28 @@ exports.resetPassword = async (req, res, next) => {
                         }
                     else {                  // si user vérifier que resetToken est encore valid
                         // 3) Update nouveau password
-                                bcrypt.hash(req.body.password, 10)
-                                .then( hash => {
-                                    db.Users.update( {
-                                        ...user,
-                                        password: hash,
-                                        passwordResetExpires: undefined,
-                                        createPasswordResetToken: undefined,
+                        bcrypt.hash(req.body.password, 10)
+                            .then( hash => {
+                                db.Users.update( {
+                                    ...user,
+                                    password: hash,
+                                    passwordResetExpires: undefined,
+                                    createPasswordResetToken: undefined,
                                     }, 
                                     { where: {createPasswordResetToken: hashToken}} )
                                     
-                                //4) Login user et envoyer token
-                                    const token = jwt.sign(            // un token permet la connexion
-                                        {userId: user.id },
-                                        "RANDOM_TOKEN_SECRET", 
-                                        {expiresIn: "24h",});
+                                //4) Envoyer nouveau token pour login
+                                const token = jwt.sign(            
+                                    {userId: user.id },
+                                    "RANDOM_TOKEN_SECRET", 
+                                    {expiresIn: "24h",});
                                         
-                                    res.status(200).json( {
+                                res.status(200).json( {
                                         message: "Password reset avec succès",
-                                        token
+                                        token,
                                     })
                                 })
-                                .catch(() => res.status(400).json( {message: 'Problème server pour chercher user'}))
+                            .catch(() => res.status(400).json( {message: 'Problème server pour chercher user'}))
                         }
             }
         })

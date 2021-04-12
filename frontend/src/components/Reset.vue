@@ -6,7 +6,7 @@
             <span>{{passwordError}}</span>
         </div>
         <div class="form-group">
-            <input type="passwordConfirm" id="passwordConfirm" placeholder="passwordConfirm" class="form-control" v-model="passwordConfirm" />
+            <input type="password" id="passwordConfirm" placeholder="passwordConfirm" class="form-control" v-model="passwordConfirm" />
             <span>{{passwordConfirmError}}</span>
         </div>
         <button class="btn btn-primary">Valider</button>
