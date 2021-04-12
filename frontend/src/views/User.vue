@@ -55,6 +55,8 @@
 <script>
 import { mapState } from 'vuex'
 import axios from '../axios'
+import Swal from 'sweetalert2'
+
 export default {
     name: "User",
     data () {
@@ -67,13 +69,37 @@ export default {
     },
     methods: {
         async deleteUser () {
-            
+           
             console.log(this.id)        //OK
-            await axios.delete(`api/auth/${this.id}`)
-            .then((response) => {
-                console.log(response)
-            })
-            .catch (error =>console.log(error))
+            const { value: password } = await Swal.fire({
+                title: 'Entrer votre password pour supprimer votre compte',
+                input: 'password',
+                inputLabel: 'Password',
+                inputPlaceholder: 'Password',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                showCancelButton: true,
+                })
+
+                if (password) {
+                    console.log(password);
+                    axios.delete(`api/auth/delete/${this.id}`, {password: password})
+                    .then((response) => {
+                        console.log(response)
+                        localStorage.removeItem('token');
+                        this.$store.dispatch('user/setCurrentUser', null)
+                        
+                        this.$router.push("/home")
+                    })
+                    .catch (error => console.log(error))
+                        
+                    Swal.fire("Votre compte a été supprimé. Retour à Home")
+            }
+
+            
+        
         }
     }
     

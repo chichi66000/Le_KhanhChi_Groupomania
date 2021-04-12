@@ -144,25 +144,45 @@ exports.login = (req, res, next) => {
 exports.deleteUser = (req, res, next) => {
     db.Users.findOne({where: {id: req.params.id}})
         .then( user => {
-            console.log("user" + user.avatar);      //OK
-            const filename = user.avatar
-            if( !filename.includes("avatar_default.png")) {
-                console.log(filename);
-                fs.unlink(`images/${filename}`, () => {
-                    db.Users.destroy ({where: {id:req.params.id}})
-                        .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-                        .catch((error) => res.status(400).json({error}))
-                })
+            console.log("user" + user);      //OK
+            console.log(req.body.password);
+            if(!user) { // si user n'existe pas dans bdd
+                console.log('Utilisateur non trouvé');
+                return res.status(401).json({error: 'Utilisateur non trouvé'}) // renvoyer message erreur
             }
-            else {
-                db.Users.destroy ({where: {id:req.params.id}})
-                        .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-                        .catch((error) => {
-                            console.log(error)
-                            res.status(400).json({message: "Problème pour supprimer user"})
-                        }) 
+            // si trouvé user, comparer password du requête avec celui dans BDD
+            bcrypt.compare(req.body.password, user.password)
+                .then( valid => {
+                    if (!valid) {           // si c'est pas le même password
+                        console.log('Mot de passe incorrect')
+                        return res.status(401).json({ error: 'Mot de passe incorrect'})
                     }
+                    else {                  // Si password est le même
+                        const filename = user.avatar
+                        if( !filename.includes("avatar_default.png")) {
+                            console.log(filename);
+                            fs.unlink(`images/${filename}`, () => {
+                                db.Users.destroy ({where: {id:req.params.id}})
+                                    .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+                                    .catch((error) => res.status(400).json({error}))
+                            })
+                        }
+                        else {
+                            db.Users.destroy ({where: {id:req.params.id}})
+                                    .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+                                    .catch((error) => {
+                                        console.log(error)
+                                        res.status(400).json({message: "Problème pour supprimer user"})
+                                    }) 
+                                }
+                    }
+                })
         })
+                .catch( error => { 
+                    console.log(error);
+                    res.status(500).json( { message: "Problème comparer le password"})
+                })
+            
         .catch(error => { 
             console.log(error); 
             res.status(500).json( { message: "Problème pour trouver user, réessayer plus tard"})
