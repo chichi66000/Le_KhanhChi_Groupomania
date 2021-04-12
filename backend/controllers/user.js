@@ -229,29 +229,40 @@ exports.forgotPassword = async (req, res, next) => {
         if ( ! user ) { res.status(404).json({ message: " Utilisateur non trouvé avec email "})}
         // 2) Generate random reset token
         else { 
-            const resetToken = crypto.randomBytes(32).toString('hex');
-            // Hash ce resetToken pour sauvegarder dans BDD
-                const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
-            //token expires after one hour
-                var expireDate = new Date();
-                expireDate.setDate(expireDate.getDate() + 1/24);
-                console.log({resetToken}, { resetTokenHash}, expireDate);      //OK
+            // const resetToken = crypto.randomBytes(32).toString('hex');
+            // // Hash ce resetToken pour sauvegarder dans BDD
+            //     const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
+            // //token expires after one hour
+            //     var expireDate = new Date();
+            //     expireDate.setDate(expireDate.getDate() + 1/24);
                 
                 let userObject= user
                 // console.log({user});    //OK
+                const resetToken = jwt.sign(            //créer un token 
+                    {userId: user.id },
+                    "RANDOM_TOKEN_SECRET", 
+                    {expiresIn: "1h",});     
+                const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
+                console.log({resetToken}, { resetTokenHash});      //OK
+                
             db.Users.update (
                 {...userObject,
                     email: req.body.email,
-                    passwordResetExpires: expireDate,
                     createPasswordResetToken: resetTokenHash
+                    // passwordResetExpires: expireDate,
                 },
                 {where: { email: req.body.email} }
                 )
                 .then( () => res.status(200).json( { message: " Reset Token réussi"}))
-                .catch( error => res.status(404).json({message: "Problème pour update token user"}))
+                .catch( error => {
+                    res.status(404).json({message: "Problème pour update token user"});
+                    console.log(error);
+                } )
                 
             // 3) Send token to user email
+
             const resetURL = `${req.protocol}://${process.env.GROUPO_HOST}/api/auth/reset/${resetToken}`;
+
             const message = `<p>Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 2 heurs) </p> <br> <a href="${resetURL}">${resetURL}</a>  <br> Si ce n'est pas le cas, ignorez ce message</p>`  ;
 
             await sendEmail( {
@@ -263,67 +274,70 @@ exports.forgotPassword = async (req, res, next) => {
             .catch ( err => {
                 console.log(err)
                 res.status(500).json({ message: "Problème pour envoyer email"})
-                user.createPasswordResetToken = undefined; 
-                user.passwordResetExpires = undefined; 
-                user.save()
+                // user.createPasswordResetToken = undefined; 
+                // user.passwordResetExpires = undefined; 
+                db.Users.update (
+                    {...userObject,
+                        email: req.body.email,
+                        createPasswordResetToken: undefined
+                        // passwordResetExpires: expireDate,
+                    },
+                    {where: { email: req.body.email} }
+                    )
+                    .then( () => res.status(200).json( { message: " ResetToken effacé"}))
+                    .catch( (e) =>{console.log(e);res.status(404).json({message: "Problème pour effacé resetToken user"})}) 
             })
         }
-            
-
     } catch (err) { console.log(err) }
 }
 
 // route pour reset password
 exports.resetPassword = async (req, res, next) => {
     // 1) Récupérer user selon token
-    const hashToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
-
-    const user= await db.Users.findOne( { where: {
-        createPasswordResetToken: hashToken,
-        // passwordResetExpires: { [Op.gt]: Sequelize.fn('CURRENT_TIMESTAMP') }
-        }
-    }) // comparer avec ce Date.now()
-    // 2) S'il y a user et token est encore valide
-        
-            if ( !user ) {          // si pas user
-                res.status(400).json({ message: "Token invalid"})
+    try {
+        const resetToken = req.params.token;
+        // vérifier si token n'est pas expiré
+        jwt.verify(resetToken, 'RANDOM_TOKEN_SECRET', function (err) {
+            if (err) { 
+                console.log(err);
+                res.status(400).json({message: "token expired"})
             }
-            else {                  // si user vérifier que resetToken est encore valid
-                db.Users.findOne( { where: { passwordResetExpires: { [Op.gt]: Sequelize.fn('CURDATE') }}})
-                .then(valid => {
-                    console.log(user.passwordResetExpires);
-                    console.log('today' + Sequelize.fn('CURDATE'));
-                    if (!valid) { return res.status(404).json({ message: "Token expire"})}
-                    // 3) Update nouveau password
-                    bcrypt.hash(req.body.password, 10)
-                    .then( hash => {
-                        db.Users.update( {
-                            ...user,
-                            password: hash,
-                            passwordResetExpires: undefined,
-                            createPasswordResetToken: undefined,
-                        }, 
-                        { where: {createPasswordResetToken: hashToken}} )
-                        
-                    //4) Login user et envoyer token
-                        const token = jwt.sign(            // un token permet la connexion
-                            {userId: user.id },
-                            "RANDOM_TOKEN_SECRET", 
-                            {expiresIn: "24h",});
-                            
-                        res.status(200).json( {
-                            message: "Password reset avec succès",
-                            token
-                        })
-                    })
-                    .catch(() => res.status(400).json( {message: 'Problème server pour chercher user'}))
-                    })
-
-                .catch((err) => { console.log(err); res.status(500).json({message: "Problème pour chercher token expire"})})
-            
-                
+            else {
+                // 2) Si token est encore valide, comparer avec celui dans BDD
+                const hashToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+                const user= db.Users.findOne( { where: {
+                    createPasswordResetToken: hashToken,
+                    }
+                })
+                    if ( !user ) {          // si pas user
+                            res.status(400).json({ message: "Token invalid, user non trouvé"})
+                        }
+                    else {                  // si user vérifier que resetToken est encore valid
+                        // 3) Update nouveau password
+                                bcrypt.hash(req.body.password, 10)
+                                .then( hash => {
+                                    db.Users.update( {
+                                        ...user,
+                                        password: hash,
+                                        passwordResetExpires: undefined,
+                                        createPasswordResetToken: undefined,
+                                    }, 
+                                    { where: {createPasswordResetToken: hashToken}} )
+                                    
+                                //4) Login user et envoyer token
+                                    const token = jwt.sign(            // un token permet la connexion
+                                        {userId: user.id },
+                                        "RANDOM_TOKEN_SECRET", 
+                                        {expiresIn: "24h",});
+                                        
+                                    res.status(200).json( {
+                                        message: "Password reset avec succès",
+                                        token
+                                    })
+                                })
+                                .catch(() => res.status(400).json( {message: 'Problème server pour chercher user'}))
+                        }
             }
-        
-        // .catch( err => res.status(500).json({ message: "Problème server pour chercher user"}))
-
+        })
+    } catch (e) { console.log(e); }
 }
