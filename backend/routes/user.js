@@ -17,7 +17,7 @@ router.post("/login", userCtrl.login);
 router.put('/:id',auth, multer, userCtrl.updateUser);
 
 //delete user
-router.delete('/:id', auth, userCtrl.deleteUser)
+router.delete('/delete/:id', auth, userCtrl.deleteUser)
 
 // récupérer utilisateur connecté ( pour page profil d'utilisateur )
 router.get('/:id', auth, userCtrl.getOneUser)

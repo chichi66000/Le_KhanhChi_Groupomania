@@ -3,7 +3,7 @@
 
       <div>
         <!-- <Navbar/> -->
-      </div>
+      </div> 
 
       <!-- Afficher les actualités des postes -->
       <div v-if="user.user">
@@ -13,23 +13,23 @@
           <h3>Bienvenue au Groupomania, connectez - vous pour commencer </h3>
       </div>
 
-      <div>
+      <!-- <div>
         <Footer/>
-      </div>
+      </div> -->
       
     </div>
 </template>
 
 <script>
 // import Navbar from "../components/Navbar"
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import { mapState } from 'vuex'
 
 export default {
     name: "Home",
     components: {
       // Navbar,
-      Footer
+      // Footer
     },
     computed: {
       ...mapState ( { user: state => state.user} )

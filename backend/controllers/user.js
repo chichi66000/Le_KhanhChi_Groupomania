@@ -143,9 +143,11 @@ exports.login = (req, res, next) => {
 //route pour supprimer un user
 exports.deleteUser = (req, res, next) => {
     db.Users.findOne({where: {id: req.params.id}})
-        .then((user) => {
-            const filename = user.avater.split('/images/')[1];
-            if (!filename.includes("avatar_default.png")) {
+        .then( user => {
+            console.log("user" + user.avatar);      //OK
+            const filename = user.avatar
+            if( !filename.includes("avatar_default.png")) {
+                console.log(filename);
                 fs.unlink(`images/${filename}`, () => {
                     db.Users.destroy ({where: {id:req.params.id}})
                         .then(() => res.status(200).json({message: "utilisateur supprimé"}))
@@ -153,12 +155,34 @@ exports.deleteUser = (req, res, next) => {
                 })
             }
             else {
-                db.Users.destroy({where: {id: req.params.id}})
-                    .then(() => res.status(200).json({message: "Utilisateur supprimé"}))
-                    .catch((error) => res.status(400).json({error}))
-            }
+                db.Users.destroy ({where: {id:req.params.id}})
+                        .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+                        .catch((error) => {
+                            console.log(error)
+                            res.status(400).json({message: "Problème pour supprimer user"})
+                        }) 
+                    }
         })
-        .catch((error) => res.status(500).json({error}))
+        .catch(error => { 
+            console.log(error); 
+            res.status(500).json( { message: "Problème pour trouver user, réessayer plus tard"})
+        })
+        // .then((user) => {
+        //     /* const filename = user.avater.split('/images/')[1];
+        //     if (!filename.includes("avatar_default.png")) {
+        //         fs.unlink(`images/${filename}`, () => {
+        //             db.Users.destroy ({where: {id:req.params.id}})
+        //                 .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+        //                 .catch((error) => res.status(400).json({error}))
+        //         })
+        //     }
+        //     else {
+        //         db.Users.destroy({where: {id: req.params.id}})
+        //             .then(() => res.status(200).json({message: "Utilisateur supprimé"}))
+        //             .catch((error) => res.status(400).json({error}))
+        //     }*/
+        // })
+        // .catch((error) => res.status(500).json({error}))
 }
 
 // route pour update user
@@ -190,8 +214,7 @@ exports.updateUser = (req, res, next) => {
 
 // route pour récupérer utilisateur (pour page profil)
 exports.getOneUser = (req, res, next) => {
-    let num = 18;
-    console.log(num);
+    
     db.Users.findOne( {where: { id: req.params.id}})
         .then((user) => {
             
@@ -261,7 +284,7 @@ exports.forgotPassword = async (req, res, next) => {
                 
             // 3) Send token to user email
 
-            const resetURL = `${req.protocol}://${process.env.GROUPO_HOST}/api/auth/reset/${resetToken}`;
+            const resetURL = `${req.protocol}://${process.env.GROUPO_HOST}/reset/${resetToken}`;
 
             const message = `<p>Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 2 heurs) </p> <br> <a href="${resetURL}">${resetURL}</a>  <br> Si ce n'est pas le cas, ignorez ce message</p>`  ;
 
