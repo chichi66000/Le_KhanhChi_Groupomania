@@ -145,13 +145,13 @@ exports.deleteUser = (req, res, next) => {
     db.Users.findOne({where: {id: req.params.id}})
         .then( user => {
             console.log("user" + user);      //OK
-            console.log(req.body.password);
+            console.log(req.params.password);
             if(!user) { // si user n'existe pas dans bdd
                 console.log('Utilisateur non trouvé');
                 return res.status(401).json({error: 'Utilisateur non trouvé'}) // renvoyer message erreur
             }
             // si trouvé user, comparer password du requête avec celui dans BDD
-            bcrypt.compare(req.body.password, user.password)
+            bcrypt.compare(req.params.password, user.password)
                 .then( valid => {
                     if (!valid) {           // si c'est pas le même password
                         console.log('Mot de passe incorrect')

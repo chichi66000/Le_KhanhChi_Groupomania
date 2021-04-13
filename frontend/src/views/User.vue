@@ -84,18 +84,23 @@ export default {
                 })
 
                 if (password) {
-                    console.log(password);
-                    axios.delete(`api/auth/delete/${this.id}`, {password: password})
+                    console.log(password);          //OK
+                    axios.delete(`api/auth/delete/${this.id}/${password}`)
                     .then((response) => {
                         console.log(response)
                         localStorage.removeItem('token');
                         this.$store.dispatch('user/setCurrentUser', null)
                         
+                        Swal.fire("Votre compte a été supprimé. Retour à Home")
                         this.$router.push("/home")
                     })
-                    .catch (error => console.log(error))
+                    .catch (error => {
+                        console.log(error);
+                        alert("Password incorrect, veuillez réessayer")
+
+                        }) 
                         
-                    Swal.fire("Votre compte a été supprimé. Retour à Home")
+                        
             }
 
             
