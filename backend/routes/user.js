@@ -14,7 +14,10 @@ router.post("/signup", /*error , */ multer, userCtrl.signup);
 router.post("/login", userCtrl.login);
 
 // update user
-router.put('/:id',auth, multer, userCtrl.updateUser);
+router.put('update/user/:id',auth, multer, userCtrl.updateUser);
+
+// update user password
+router.patch("updatepassword",auth, userCtrl.updatePassword);
 
 //delete user
 router.delete('/delete/:id/:password', auth, userCtrl.deleteUser)

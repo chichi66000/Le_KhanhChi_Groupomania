@@ -169,12 +169,12 @@ exports.deleteUser = (req, res, next) => {
                         }
                         else {
                             db.Users.destroy ({where: {id:req.params.id}})
-                                    .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-                                    .catch((error) => {
+                                .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+                                .catch((error) => {
                                         console.log(error)
                                         res.status(400).json({message: "Problème pour supprimer user"})
-                                    }) 
-                                }
+                                }) 
+                        }
                     }
                 })
         })
@@ -187,49 +187,130 @@ exports.deleteUser = (req, res, next) => {
             console.log(error); 
             res.status(500).json( { message: "Problème pour trouver user, réessayer plus tard"})
         })
-        // .then((user) => {
-        //     /* const filename = user.avater.split('/images/')[1];
-        //     if (!filename.includes("avatar_default.png")) {
-        //         fs.unlink(`images/${filename}`, () => {
-        //             db.Users.destroy ({where: {id:req.params.id}})
-        //                 .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-        //                 .catch((error) => res.status(400).json({error}))
-        //         })
-        //     }
-        //     else {
-        //         db.Users.destroy({where: {id: req.params.id}})
-        //             .then(() => res.status(200).json({message: "Utilisateur supprimé"}))
-        //             .catch((error) => res.status(400).json({error}))
-        //     }*/
-        // })
-        // .catch((error) => res.status(500).json({error}))
 }
 
-// route pour update user
-exports.updateUser = (req, res, next) => {
-    let userObject = {};
-    req.file?       // condition si update avec photo ou non
-        (db.Users.findOne({id:req.params.id}) 
-        //avec photo => chercher user, split image, et changer nouvel avatar
-            .then( (user) => {                
-            const filename = user.avater.split('/images/')[1];
-                fs.unlinkSync(`images/${filename}`);
-        })
-            .catch((error) => res.status(500).json({error}))
-            (userObject = { 
-                ... JSON.parse(req.body.user),
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`  
-            } ))
+// route pour update user password
 
-    : (userObject = {...req.body.user})       // update sans photo => update les infos données
-
-    db.Users.updateOne (
-        {id: req.params.id},
-        {...userObject, id: req.params.id, updatedAt: new Date()}
-    )
-        .then(() => res.status(200).json({message: 'User modified ! '}))
-        .catch((error) => res.status(404).json({error}))
+exports.updatePassword =  (req, res, next) => {
+    let newPass = req.body.password;
+    console.log( {newPass});
+    // // 1) Get user from database by Id
+    // db.Users.findOne ( { where: { id: req.params.id}})
+    //     .then( user => {
+    // // 2) Check if the POSTED password is correct
+    //         bcrypt.compare(newPass, user.password)
+    //             .then( valid => {
+    //                 if (! valid) {
+    //                     res.status(400).json( { message: "Password incorrect"})
+    //                 }
+    //                 // 3) If password correct, update user with new password
+    //                 else {
+    //                     bcrypt.hash(newPass, 10)
+    //                     .then( hash => {
+    //                         db.Users.update( {
+    //                             ...req.body,
+    //                             password: hash,
+    //                             id: req.params.id
+    //                         },
+    //                         {where: { id: req.params.id}} )
+    //                     // 4) Send JWT, login user
+    //                         const token = jwt.sign(            
+    //                             {userId: user.id },
+    //                             "RANDOM_TOKEN_SECRET", 
+    //                             {expiresIn: "24h",});
+                                    
+    //                         res.status(200).json( {
+    //                                 message: "Password reset avec succès",
+    //                                 token,
+    //                         })
+    //                     })
+    //                     .catch( err => {
+    //                     console.log(err);
+    //                     res.status(500).json( {message: "Problème pour update password"})
+    //                 })
+    //                 }
+    //             })
+    //             .catch( err => {
+    //                 console.log(err);
+    //                 res.status(500).json( { message: "Problème pour comparer les passwords"})
+    //             }) 
+                        
+    //     })
+    //     .catch( err => { 
+    //         console.log(err);
+    //         res.status(500).json( { message: "Problème server, pas trouvé user"})
+    //     })
     
+
+    
+
+}
+// route pour update profile user
+exports.updateUser = (req, res, next) => {
+    let userObject = req.body;
+    console.log(userObject);        //OK
+    db.Users.findOne( { where:{id:req.params.id} })
+        .then( user => {
+            // 1) Définir le photo avatar 
+            const filename = user.avatar;
+            console.log({filename});
+            let avatarName = "";
+            // si update avec file image
+            if (req.file) {
+                fs.unlinkSync(`images/${filename}`, function (err) {
+                    if (err) { throw err; }
+                    // if no error, file has been deleted successfully
+                    else { console.log('File deleted!'); avatarName = req.file.filename}
+                })
+            }
+            // si update n'est pas avec file image, garder ancien photo
+            else { avatarName = filename}
+
+            // 2) Si update avec password
+            if( req.password) {
+
+            }
+                // db.Users.update (
+                // {...userObject,
+                //     avatar: "avatar_default.png"}, 
+                // { where: { id: req.params.id}})
+                // .then( () => res.status(200).json({ message: "User update"}))
+                // .catch( error => {
+                //     console.log(error);
+                //     res.status(400).json( { message: "Problème pour update user"})
+                // })
+            
+
+            
+        
+    // let userObject = {};
+    // req.file?       // condition si update avec photo ou non
+    //     (db.Users.findOne( { where:{id:req.params.id} }) 
+    //     //avec photo => chercher user, split image, et changer nouvel avatar
+    //         .then( (user) => {                
+    //         const filename = user.avater.split('/images/')[1];
+    //             fs.unlinkSync(`images/${filename}`);
+    //     })
+    //         .catch((error) => res.status(500).json({error}))
+    //         (userObject = { 
+    //             ... (req.body.user),
+    //             avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`  
+    //         } ))
+
+    // : (userObject = {...req.body.user})       // update sans photo => update les infos données
+
+    // db.Users.updateOne (
+    //     {id: req.params.id},
+    //     {...userObject, id: req.params.id, updatedAt: new Date()}
+    // )
+    //     .then(() => res.status(200).json({message: 'User modified ! '}))
+    //     .catch((error) => res.status(404).json({error}))
+    
+        })
+        .catch( error => {
+                console.log(error);
+                res.status(500).json( { message: "Problème pour chercher user"})
+            })
 }
 
 // route pour récupérer utilisateur (pour page profil)
@@ -257,6 +338,7 @@ exports.getOneUser = (req, res, next) => {
 
 // route pour récupéer tous les utilisateurs (pour admin par expemple)
 exports.getAllUser = (req, res, next) => {
+    
     db.Users.findAll()
         .then((users) => {
             if (! users) { res.status(404).json({ message:"Utilisateur non trouvé" })}
@@ -272,12 +354,7 @@ exports.forgotPassword = async (req, res, next) => {
         if ( ! user ) { res.status(404).json({ message: " Utilisateur non trouvé avec email "})}
         // 2) Generate random reset token
         else { 
-            // const resetToken = crypto.randomBytes(32).toString('hex');
-            // // Hash ce resetToken pour sauvegarder dans BDD
-            //     const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
             // //token expires after one hour
-            //     var expireDate = new Date();
-            //     expireDate.setDate(expireDate.getDate() + 1/24);
                 
                 let userObject= user
                 // console.log({user});    //OK
@@ -382,5 +459,6 @@ exports.resetPassword = async (req, res, next) => {
                         }
             }
         })
-    } catch (e) { console.log(e); }
+    } 
+    catch (e) { console.log(e) }
 }

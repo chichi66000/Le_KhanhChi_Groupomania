@@ -4,7 +4,7 @@
         <div class="container mx-auto mt-5 mb-5 col-11 col-sm-11 col-md-10 col-lg-10 col-xl-10">
             
     <!-- Profil user-->
-            <button class="btn btn-primary mb-3 text-center float-right">MODIFIER</button>
+            <button class="btn btn-primary mb-3 text-center float-right" @click.prevent = "updateUser">MODIFIER</button>
 
             <div class="row shadow rounded col d-flex mx-5 px-5 float-none">
                 <img class="logo" src="icon_1612778546480.png"/>
@@ -69,7 +69,6 @@ export default {
     },
     methods: {
         async deleteUser () {
-           
             console.log(this.id)        //OK
             const { value: password } = await Swal.fire({
                 title: 'Entrer votre password pour supprimer votre compte',
@@ -98,14 +97,14 @@ export default {
                         console.log(error);
                         alert("Password incorrect, veuillez réessayer")
 
-                        }) 
-                        
-                        
+                        })        
             }
+        },
 
-            
-        
+        async updateUser () {
+
         }
+
     }
     
 }
