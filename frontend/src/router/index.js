@@ -6,6 +6,7 @@ import Login from '../components/Login.vue'
 import Signup from '../components/Signup.vue'
 import Forgot from '../components/Forgot.vue'
 import Reset from '../components/Reset.vue'
+import UpdatePass from '../components/UpdatePass'
 
 
 
@@ -52,7 +53,12 @@ const routes = [
     path: '/reset/:token',
     name: 'Reset',
     component: Reset
-  }
+  },
+  {
+    path: '/updatePass',
+    name: 'UpdatePass',
+    component: UpdatePass
+  },
 ]
 
 const router = createRouter({

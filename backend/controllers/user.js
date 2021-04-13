@@ -124,7 +124,9 @@ exports.login = (req, res, next) => {
                             nom: user.nom,
                             email: user.email, 
                             pseudo: user.pseudo,
-                            userId: user.id},
+                            userId: user.id,
+                            avatar: user.avatar
+                        },
                         
                         token: jwt.sign(            // un token permet la connexion
                             {userId: user.id },
@@ -191,55 +193,58 @@ exports.deleteUser = (req, res, next) => {
 
 // route pour update user password
 
-exports.updatePassword =  (req, res, next) => {
-    let newPass = req.body.password;
+exports.updatePassword = (req, res) => {
+    let newPass = req.body.newPassword;
+    let oldPass = req.body.oldPass;
     console.log( {newPass});
-    // // 1) Get user from database by Id
-    // db.Users.findOne ( { where: { id: req.params.id}})
-    //     .then( user => {
-    // // 2) Check if the POSTED password is correct
-    //         bcrypt.compare(newPass, user.password)
-    //             .then( valid => {
-    //                 if (! valid) {
-    //                     res.status(400).json( { message: "Password incorrect"})
-    //                 }
-    //                 // 3) If password correct, update user with new password
-    //                 else {
-    //                     bcrypt.hash(newPass, 10)
-    //                     .then( hash => {
-    //                         db.Users.update( {
-    //                             ...req.body,
-    //                             password: hash,
-    //                             id: req.params.id
-    //                         },
-    //                         {where: { id: req.params.id}} )
-    //                     // 4) Send JWT, login user
-    //                         const token = jwt.sign(            
-    //                             {userId: user.id },
-    //                             "RANDOM_TOKEN_SECRET", 
-    //                             {expiresIn: "24h",});
+    console.log( {oldPass});
+
+    // 1) Get user from database by Id
+    db.Users.findOne ( { where: { id: req.params.id}})
+        .then( user => {
+    // 2) Check if the POSTED password is correct
+            bcrypt.compare(oldPass, user.password)
+                .then( valid => {
+                    if (! valid) {
+                        res.status(400).json( { message: "Password incorrect"})
+                    }
+                    // 3) If password correct, update user with new password
+                    else {
+                        bcrypt.hash(newPass, 10)
+                        .then( hash => {
+                            db.Users.update( {
+                                ...req.body,
+                                password: hash,
+                                id: req.params.id
+                            },
+                            {where: { id: req.params.id}} )
+                        // 4) Send JWT, login user
+                            const token = jwt.sign(            
+                                {userId: user.id },
+                                "RANDOM_TOKEN_SECRET", 
+                                {expiresIn: "24h",});
                                     
-    //                         res.status(200).json( {
-    //                                 message: "Password reset avec succès",
-    //                                 token,
-    //                         })
-    //                     })
-    //                     .catch( err => {
-    //                     console.log(err);
-    //                     res.status(500).json( {message: "Problème pour update password"})
-    //                 })
-    //                 }
-    //             })
-    //             .catch( err => {
-    //                 console.log(err);
-    //                 res.status(500).json( { message: "Problème pour comparer les passwords"})
-    //             }) 
+                            res.status(200).json( {
+                                    message: "Password reset avec succès",
+                                    token,
+                            })
+                        })
+                        .catch( err => {
+                        console.log(err);
+                        res.status(500).json( {message: "Problème pour update password"})
+                    })
+                    }
+                })
+                .catch( err => {
+                    console.log(err);
+                    res.status(500).json( { message: "Problème pour comparer les passwords"})
+                }) 
                         
-    //     })
-    //     .catch( err => { 
-    //         console.log(err);
-    //         res.status(500).json( { message: "Problème server, pas trouvé user"})
-    //     })
+        })
+        .catch( err => { 
+            console.log(err);
+            res.status(500).json( { message: "Problème server, pas trouvé user"})
+        })
     
 
     
@@ -327,9 +332,10 @@ exports.getOneUser = (req, res, next) => {
                     userNom: user.nom,
                     userId: user.id,
                     userPseudo: user.pseudo,
-                    email: user.email
+                    email: user.email,
+                    avatar: user.avatar
                 }
-                // console.log(currentUser)    //OK
+                console.log(currentUser.avatar)    //OK
                 res.status(200).json({currentUser});
             }
         })

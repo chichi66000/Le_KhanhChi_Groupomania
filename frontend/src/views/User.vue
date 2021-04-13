@@ -4,10 +4,9 @@
         <div class="container mx-auto mt-5 mb-5 col-11 col-sm-11 col-md-10 col-lg-10 col-xl-10">
             
     <!-- Profil user-->
-            <button class="btn btn-primary mb-3 text-center float-right" @click.prevent = "updateUser">MODIFIER</button>
 
-            <div class="row shadow rounded col d-flex mx-5 px-5 float-none">
-                <img class="logo" src="icon_1612778546480.png"/>
+            <div class="row shadow rounded col d-flex mx-5 px-5 my-5 float-none">
+                <img class="b-avatar-img"  alt="avatar" />
                 <p class="align-self-center m-auto"> {{user.user.pseudo }} </p>
 
             </div>
@@ -16,10 +15,15 @@
                 <h3 class="">A propos de moi</h3>
                 <p class="">Nom et prenom : <strong>{{ user.user.nom }}</strong>  </p>
                 <p class="">Pseudo : <strong>{{ user.user.pseudo }}</strong>  </p>
-                <p class="">Id : <strong>{{ user.user.userId }}</strong>  </p>
+                <p class="">Avatar : <strong>{{ user.user.avatar }}</strong>  </p>
 
-
+                <div class= "d-flex justify-content-between">
+                    <button class="mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updateUser">MODIFIER PROFIL</button> 
+                    <button class="mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updatePass">MODIFIER PASSWORD</button>
+                </div>
             </div>
+
+
     <!-- Mes publications -->
             <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
                 <h3> Mes publications </h3>
@@ -103,6 +107,10 @@ export default {
 
         async updateUser () {
 
+        },
+
+        async updatePass () {
+            this.$router.push("/updatePass")
         }
 
     }
@@ -111,5 +119,8 @@ export default {
 </script>
 
 <style scoped>
-
+    img {
+        width: 5rem
+    }
 </style>
+
