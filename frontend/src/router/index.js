@@ -7,6 +7,7 @@ import Signup from '../components/Signup.vue'
 import Forgot from '../components/Forgot.vue'
 import Reset from '../components/Reset.vue'
 import UpdatePass from '../components/UpdatePass'
+import UpdateProfil from '../components/UpdateProfil'
 
 
 
@@ -58,6 +59,11 @@ const routes = [
     path: '/updatePass',
     name: 'UpdatePass',
     component: UpdatePass
+  },
+  {
+    path: '/updateProfil',
+    name: 'UpdateProfil',
+    component: UpdateProfil
   },
 ]
 

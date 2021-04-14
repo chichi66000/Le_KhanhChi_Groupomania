@@ -6,7 +6,7 @@
     <!-- Profil user-->
 
             <div class="row shadow rounded col d-flex mx-5 px-5 my-5 float-none">
-                <img class="b-avatar-img"  alt="avatar" />
+                <img class="b-avatar-img" alt="avatar"  />
                 <p class="align-self-center m-auto"> {{user.user.pseudo }} </p>
 
             </div>
@@ -65,12 +65,17 @@ export default {
     name: "User",
     data () {
         return {
-            id: localStorage.getItem('id')
+            id: localStorage.getItem('id'),
+            // url:""
         }
     },
     computed: {
       ...mapState ( { user: state => state.user} )
     },
+    // created() {
+    // // when the instance ist create call the method
+    //     this.getUrl();
+    // },
     methods: {
         async deleteUser () {
             console.log(this.id)        //OK
@@ -106,14 +111,18 @@ export default {
         },
 
         async updateUser () {
-
+            this.$router.push("/updateProfil")
         },
 
         async updatePass () {
             this.$router.push("/updatePass")
         }
 
-    }
+    },
+    // getUrl() {
+    //     console.log(this.store.user.avatar);
+    //     this.url = `C:/Users/thanh/Desktop/projet7_ocr/backend/images/${this.store.user.avatar}`
+    // }
     
 }
 </script>

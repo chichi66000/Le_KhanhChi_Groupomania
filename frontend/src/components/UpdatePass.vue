@@ -2,7 +2,7 @@
     <div>
         <h3 class="text-center my-5 mx-auto">Modifier votre password</h3>
         
-        <error v-if="error" :error = "error"/>
+        <error class="text-center" v-if="error" :error = "error"/>
 
         <form @submit.prevent="changePass" class="form-group my-5 text-center col col-md-5 col-lg-4 col-xl-4 mx-auto">
             <div class="form-group">
@@ -25,8 +25,9 @@
 import axios from '../axios'
 import Error from './Error'
 import {  useField, useForm } from 'vee-validate';
-import { ref, } from 'vue'
+// import { ref, } from 'vue'
 import * as yup from 'yup';     
+// import Swal from 'sweetalert2'
 
 export default {
     name: "UpdatePass",
@@ -38,12 +39,12 @@ export default {
             id: localStorage.getItem('id'),
             oldPass:"",
             // newPass:"",
-            // error:""
+            error:""
         }
     },
     setup() {
         // Define a validation schema
-        const error = ref([])
+        // const error = ref([])
         const schema = yup.object({ 
             newPass: yup.string()
                 .min(8, 'Password doit avoir au minimum 8 characters')
@@ -59,19 +60,22 @@ export default {
         });
         const { value:newPass, errorMessage: newpassError } = useField('newPass');
         return {
-            error,
+            // error,
             newPass,
             newpassError
         };
     },
     methods: {
         async changePass () {
-            await axios.patch(`api/auth/updatepassword/${this.id}`, {
+            await axios.put(`api/auth/updatePassword/${this.id}`, {
                 oldPass: this.oldPass,
                 newPass: this.newPass
             })
                 .then( response => {
                     console.log(response);
+                    alert('Succès! Connecter avec votre nouveau password')
+                    // Swal.fire('Connecter avec votre nouveau password')
+                    this.$router.push('/login')
                 })
                 .catch( e => {
                     console.log(e);

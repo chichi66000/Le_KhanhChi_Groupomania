@@ -194,7 +194,7 @@ exports.deleteUser = (req, res, next) => {
 // route pour update user password
 
 exports.updatePassword = (req, res) => {
-    let newPass = req.body.newPassword;
+    let newPass = req.body.newPass;
     let oldPass = req.body.oldPass;
     console.log( {newPass});
     console.log( {oldPass});

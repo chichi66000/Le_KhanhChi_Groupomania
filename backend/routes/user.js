@@ -7,31 +7,31 @@ const auth = require('../middlewares/auth');
 const userCtrl = require('../controllers/user');
 
 
-// Incription user
+// Incription user      => OK testé
 router.post("/signup", /*error , */ multer, userCtrl.signup);
 
-// connexion user
+// connexion user       => OK testé
 router.post("/login", userCtrl.login);
 
 // update user
-router.put('updateuser/:id',auth, multer, userCtrl.updateUser);
+router.put('/updateUser/:id',auth, multer, userCtrl.updateUser);
 
 // update user password
-router.patch("updatepassword/:id", auth, userCtrl.updatePassword);
+router.put('/updatePassword/:id', auth, userCtrl.updatePassword)
 
-//delete user
+//delete user           => OK testé
 router.delete('/delete/:id/:password', auth, userCtrl.deleteUser)
 
-// récupérer utilisateur connecté ( pour page profil d'utilisateur )
+// récupérer utilisateur connecté ( pour page profil d'utilisateur )        => OK testé
 router.get('/:id', auth, userCtrl.getOneUser)
 
 // récupérer tous les utilisateur ( pour Admin)
 router.get('/', auth, userCtrl.getAllUser)
 
-// forgot password
+// forgot password          => OK testé
 router.post('/forgot', userCtrl.forgotPassword)
 
-// reset password
+// reset password           => OK testé
 router.patch('/reset/:token', userCtrl.resetPassword)
 
 module.exports = router;
