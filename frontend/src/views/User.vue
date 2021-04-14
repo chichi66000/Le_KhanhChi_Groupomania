@@ -17,9 +17,9 @@
                 <p class="">Pseudo : <strong>{{ user.user.pseudo }}</strong>  </p>
                 <p class="">Avatar : <strong>{{ user.user.avatar }}</strong>  </p>
 
-                <div class= "d-flex justify-content-between">
-                    <button class="mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updateUser">MODIFIER PROFIL</button> 
-                    <button class="mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updatePass">MODIFIER PASSWORD</button>
+                <div class="text-center">
+                    <button class="col col-md-6 col-lg-6 mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updateUser">MODIFIER PROFIL</button> 
+                    <button class="col col-md-6 col-lg-6 mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updatePass">MODIFIER PASSWORD</button>
                 </div>
             </div>
 
