@@ -334,14 +334,17 @@ exports.updateUser = (req, res, next) => {
             }
 
             // si update avec fonction:
-            if (req.body.fonction.length >0 && req.body.fonction !=undefined) {
+            if(req.body.fonction =="undefined") { console.log("Fonction est undefined");}
+            else {
                 newFonction = req.body.fonction;
+                console.log({newFonction});
                 db.Users.update({...user,fonction: newFonction},{ where: {id: req.params.id}} )
                     .then( () => {
                         console.log("Update fonction réussi");
                     } )
                     .catch( err => {console.log(err); res.status(500).json("Problème update fonction")} )
-                }
+            }
+            
             
             // envoyer status 200 si tout va bien
             res.status(200).json( {

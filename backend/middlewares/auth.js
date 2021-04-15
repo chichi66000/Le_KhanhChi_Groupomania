@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+module.exports =async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
-    jwt.verify(token, "RANDOM_TOKEN_SECRET", (err, user) => {
+    await jwt.verify(token, "RANDOM_TOKEN_SECRET", (err, user) => {
       console.log(err)
 
       if (err) return res.sendStatus(403)

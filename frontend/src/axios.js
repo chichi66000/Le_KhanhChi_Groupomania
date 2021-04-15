@@ -9,5 +9,6 @@ export default axios.create({
         
       }
 })
+// const AUTH_TOKEN = localStorage.getItem('token')
+// axios.defaults.headers.common['Authorization'] = `Bearer ${AUTH_TOKEN}`
 
-// axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
