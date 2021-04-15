@@ -257,14 +257,19 @@ exports.updateUser = (req, res, next) => {
     let newPseudo = "";
     let newEmail = "";
     let newFonction = "";
+
+    // Chercher user avec son ID
     db.Users.findOne ({ where: {id: req.params.id}} )
         .then( user => {
+
+            // si update avec photot avatar
             if (req.file) {
                 const filename = user.avatar;
-                
+                // si avatar du user est "avatar_default"; on fait rien
                 if( filename.includes("avatar_default.png")) {
                     console.log({filename});
                 }
+                // si non, on supprimer avatar dans le fichier images
                 else {
                     fs.unlinkSync(`images/${filename}`, function (err) {
                         if (err) { throw err; }
@@ -274,7 +279,7 @@ exports.updateUser = (req, res, next) => {
                         }
                     })
                 }
-                
+                // Puis update avatar dans BDD
                 console.log(req.file.filename);     //OK
                 db.Users.update( {
                     ...user,
@@ -288,7 +293,7 @@ exports.updateUser = (req, res, next) => {
             }
             
             //si update avec email: vérifier si email est déjà présenté dans BDD?
-            if (req.body.email.length >0) {
+            if (req.body.email.length >0 && req.body.email !=undefined) {
                 console.log("Il y a email dans update");
                 db.Users.findOne({where: {email:req.body.email}})
                     .then( user => {
@@ -297,25 +302,26 @@ exports.updateUser = (req, res, next) => {
 
                         // si email n'est pas encore dans BDD, update user avec nouvel email
                         newEmail = req.body.email; console.log("Email updatesera" + newEmail);
-                        db.Users.update( {...user, email:newEmail}, {where: {id:req.params.id}})
+                        db.Users.update({...user, email:newEmail}, {where: {id:req.params.id}})
                             .then( () => { console.log("Update email réussi")})
                             .catch(err => {
                                 console.log(err);
                                 res.status(500).json( {message: "Problème pour update email"})
                             })
                     })
-                    .catch( err => { console.log(err);})
+                    .catch( err => { console.log(err); res.status(500).json("Problème chercher email");})
             }
 
             //si update avec pseudo: vérifier si pseudo est déjà présenté dans BDD?
-            if (req.body.pseudo.length >0) {
+            if (req.body.pseudo.length >0 && req.body.pseudo !=undefined) {
                 console.log("Il y a pseudo dans update");
+
                 db.Users.findOne({where: {pseudo:req.body.pseudo}})
                     .then( user => {
-                        // si email est déjà utilisé, envoyer 400
+                        // si pseudo est déjà utilisé, envoyer 400
                         if (user) { res.status(400).json({message: "Pseudo déjà utilisé"})}
 
-                        // si email n'est pas encore dans BDD, update user avec nouvel email
+                        // si pseudo n'est pas encore dans BDD, update user avec pseudo
                         newPseudo = req.body.pseudo; console.log("Pseudo update sera " + newPseudo);
                         db.Users.update( {...user, pseudo: newPseudo}, {where: {id:req.params.id}})
                             .then( () => {console.log("Update pseudo réussi")})
@@ -324,21 +330,17 @@ exports.updateUser = (req, res, next) => {
                                 res.status(500).json( {message: "Problème pour update pseudo"})
                             })
                     })
-                    .catch( err => { console.log(err);})
+                    .catch( err => { console.log(err); res.status(500).json("Problème pour chercher pseudo")})
             }
 
             // si update avec fonction:
-            if (req.body.fonction.length >0) {
+            if (req.body.fonction.length >0 && req.body.fonction !=undefined) {
                 newFonction = req.body.fonction;
-                db.Users.update( {
-                    ...user,
-                    fonction: newFonction,
-                    },
-                    { where: {id: req.params.id}} )
+                db.Users.update({...user,fonction: newFonction},{ where: {id: req.params.id}} )
                     .then( () => {
                         console.log("Update fonction réussi");
                     } )
-                    .catch( err => console.log(err))
+                    .catch( err => {console.log(err); res.status(500).json("Problème update fonction")} )
                 }
             
             // envoyer status 200 si tout va bien

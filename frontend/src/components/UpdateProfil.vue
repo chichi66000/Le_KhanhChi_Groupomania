@@ -44,17 +44,11 @@ import {  useField, useForm } from 'vee-validate';
 import { ref, } from 'vue'
 import * as yup from 'yup'; 
 import axios from '../axios';
+import Swal from 'sweetalert2'
 
 export default {
     name: "UpdateProfil",
-    // data () {
-    //     return {
-    //         email:"",
-    //         fonction: "",
-    //         pseudo: "",
-    //         avatar: ""
-    //     }
-    // }
+    
     setup(){
         // Define a validation schema
         const error = ref([])
@@ -112,6 +106,9 @@ export default {
             await axios.put(`/api/auth/updateUser/${this.id}`, form)
                 .then( response => {
                     console.log(response);
+                    Swal.fire("Votre profil a été modifié.")
+                    
+                    this.$router.push('/home')
                 })
                 .catch( err => {
                     console.log(err);

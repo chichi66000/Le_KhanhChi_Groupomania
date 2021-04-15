@@ -72,9 +72,9 @@ export default {
     computed: {
       ...mapState ( { user: state => state.user} )
     },
-    // created() {
-    // // when the instance ist create call the method
-    //     this.getUrl();
+    
+    // mounted () {
+
     // },
     methods: {
         async deleteUser () {

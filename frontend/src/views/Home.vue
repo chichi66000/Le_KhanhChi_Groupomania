@@ -31,8 +31,12 @@ export default {
       // Navbar,
       // Footer
     },
+    
+    mounted () {
+      
+    },
     computed: {
-      ...mapState ( { user: state => state.user} )
+      ...mapState ( { user: state => state.user } )
     }
 }
 </script>

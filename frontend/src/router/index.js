@@ -8,6 +8,7 @@ import Forgot from '../components/Forgot.vue'
 import Reset from '../components/Reset.vue'
 import UpdatePass from '../components/UpdatePass'
 import UpdateProfil from '../components/UpdateProfil'
+import User from '../views/User'
 
 
 
@@ -28,10 +29,7 @@ const routes = [
   {
     path: '/user',
     name: 'User',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "user" */ '../views/User.vue')
+    component: User
   },
   {
     path: '/signup',

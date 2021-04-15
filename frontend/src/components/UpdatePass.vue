@@ -27,7 +27,7 @@ import Error from './Error'
 import {  useField, useForm } from 'vee-validate';
 // import { ref, } from 'vue'
 import * as yup from 'yup';     
-// import Swal from 'sweetalert2'
+import Swal from 'sweetalert2'
 
 export default {
     name: "UpdatePass",
@@ -73,8 +73,8 @@ export default {
             })
                 .then( response => {
                     console.log(response);
-                    alert('Succès! Connecter avec votre nouveau password')
-                    // Swal.fire('Connecter avec votre nouveau password')
+                    // alert('Succès! Connecter avec votre nouveau password')
+                    Swal.fire('Connecter avec votre nouveau password')
                     this.$router.push('/login')
                 })
                 .catch( e => {
