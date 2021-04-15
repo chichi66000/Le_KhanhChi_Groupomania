@@ -81,7 +81,7 @@ export default {
             pseudoError,
             email,
             emailError,
-            
+
             error
         }
     },
@@ -109,7 +109,7 @@ export default {
             form.append("pseudo", pseudo);
             form.append("image", this.avatar)
 
-            await axios.put(`/api/auth/updateUser/:${this.id}`, form)
+            await axios.put(`/api/auth/updateUser/${this.id}`, form)
                 .then( response => {
                     console.log(response);
                 })

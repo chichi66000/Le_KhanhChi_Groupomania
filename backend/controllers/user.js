@@ -252,70 +252,106 @@ exports.updatePassword = (req, res) => {
 }
 // route pour update profile user
 exports.updateUser = (req, res, next) => {
-    let userObject = req.body;
-    console.log(userObject);        //OK
-    db.Users.findOne( { where:{id:req.params.id} })
+    // console.log(req.body);  // Ok
+    let avatarName = "";
+    let newPseudo = "";
+    let newEmail = "";
+    let newFonction = "";
+    db.Users.findOne ({ where: {id: req.params.id}} )
         .then( user => {
-            // 1) Définir le photo avatar 
-            const filename = user.avatar;
-            console.log({filename});
-            let avatarName = "";
-            // si update avec file image
             if (req.file) {
-                fs.unlinkSync(`images/${filename}`, function (err) {
-                    if (err) { throw err; }
-                    // if no error, file has been deleted successfully
-                    else { console.log('File deleted!'); avatarName = req.file.filename}
-                })
+                const filename = user.avatar;
+                
+                if( filename.includes("avatar_default.png")) {
+                    console.log({filename});
+                }
+                else {
+                    fs.unlinkSync(`images/${filename}`, function (err) {
+                        if (err) { throw err; }
+                        // if no error, file has been deleted successfully
+                        else { 
+                            console.log('File deleted!');
+                        }
+                    })
+                }
+                
+                console.log(req.file.filename);     //OK
+                db.Users.update( {
+                    ...user,
+                    avatar: req.file.filename},
+                    {where: {id:req.params.id}})
+                    .then( () => { console.log("Update avatar réussi")})
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json( {message: "Problème pour update avatar"})
+                    })
             }
-            // si update n'est pas avec file image, garder ancien photo
-            else { avatarName = filename}
+            
+            //si update avec email: vérifier si email est déjà présenté dans BDD?
+            if (req.body.email.length >0) {
+                console.log("Il y a email dans update");
+                db.Users.findOne({where: {email:req.body.email}})
+                    .then( user => {
+                        // si email est déjà utilisé, envoyer 400
+                        if (user) { res.status(400).json({message: "Email déjà utilisé"})}
 
-            // 2) Si update avec password
-            if( req.password) {
-
+                        // si email n'est pas encore dans BDD, update user avec nouvel email
+                        newEmail = req.body.email; console.log("Email updatesera" + newEmail);
+                        db.Users.update( {...user, email:newEmail}, {where: {id:req.params.id}})
+                            .then( () => { console.log("Update email réussi")})
+                            .catch(err => {
+                                console.log(err);
+                                res.status(500).json( {message: "Problème pour update email"})
+                            })
+                    })
+                    .catch( err => { console.log(err);})
             }
-                // db.Users.update (
-                // {...userObject,
-                //     avatar: "avatar_default.png"}, 
-                // { where: { id: req.params.id}})
-                // .then( () => res.status(200).json({ message: "User update"}))
-                // .catch( error => {
-                //     console.log(error);
-                //     res.status(400).json( { message: "Problème pour update user"})
-                // })
+
+            //si update avec pseudo: vérifier si pseudo est déjà présenté dans BDD?
+            if (req.body.pseudo.length >0) {
+                console.log("Il y a pseudo dans update");
+                db.Users.findOne({where: {pseudo:req.body.pseudo}})
+                    .then( user => {
+                        // si email est déjà utilisé, envoyer 400
+                        if (user) { res.status(400).json({message: "Pseudo déjà utilisé"})}
+
+                        // si email n'est pas encore dans BDD, update user avec nouvel email
+                        newPseudo = req.body.pseudo; console.log("Pseudo update sera " + newPseudo);
+                        db.Users.update( {...user, pseudo: newPseudo}, {where: {id:req.params.id}})
+                            .then( () => {console.log("Update pseudo réussi")})
+                            .catch(err => {
+                                console.log(err);
+                                res.status(500).json( {message: "Problème pour update pseudo"})
+                            })
+                    })
+                    .catch( err => { console.log(err);})
+            }
+
+            // si update avec fonction:
+            if (req.body.fonction.length >0) {
+                newFonction = req.body.fonction;
+                db.Users.update( {
+                    ...user,
+                    fonction: newFonction,
+                    },
+                    { where: {id: req.params.id}} )
+                    .then( () => {
+                        console.log("Update fonction réussi");
+                    } )
+                    .catch( err => console.log(err))
+                }
             
-
-            
-        
-    // let userObject = {};
-    // req.file?       // condition si update avec photo ou non
-    //     (db.Users.findOne( { where:{id:req.params.id} }) 
-    //     //avec photo => chercher user, split image, et changer nouvel avatar
-    //         .then( (user) => {                
-    //         const filename = user.avater.split('/images/')[1];
-    //             fs.unlinkSync(`images/${filename}`);
-    //     })
-    //         .catch((error) => res.status(500).json({error}))
-    //         (userObject = { 
-    //             ... (req.body.user),
-    //             avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`  
-    //         } ))
-
-    // : (userObject = {...req.body.user})       // update sans photo => update les infos données
-
-    // db.Users.updateOne (
-    //     {id: req.params.id},
-    //     {...userObject, id: req.params.id, updatedAt: new Date()}
-    // )
-    //     .then(() => res.status(200).json({message: 'User modified ! '}))
-    //     .catch((error) => res.status(404).json({error}))
-    
-        })
-        .catch( error => {
-                console.log(error);
-                res.status(500).json( { message: "Problème pour chercher user"})
+            // envoyer status 200 si tout va bien
+            res.status(200).json( {
+                message: "Update profil réussi",
+                
             })
+            
+        })
+        .catch( err => {
+            console.log(err);
+            res.status(500).json({message: "Pb server, user non trouvé"})
+        })
 }
 
 // route pour récupérer utilisateur (pour page profil)
