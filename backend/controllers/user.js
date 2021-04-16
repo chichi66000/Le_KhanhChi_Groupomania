@@ -121,9 +121,9 @@ exports.login = (req, res, next) => {
                     res.status(200).json({ // si mdp correct, renvoyer id
                         
                         currentUser: {
-                            nom: user.nom,
+                            userNom: user.nom,
                             email: user.email, 
-                            pseudo: user.pseudo,
+                            userPseudo: user.pseudo,
                             userId: user.id,
                             avatar: user.avatar
                         },

@@ -91,7 +91,8 @@ export default {
             pseudo:'',
             fonction:'',
             avatar:'',
-            error: ''
+            error: '',
+            accept: false
         }
     },
     setup () {

@@ -13,8 +13,8 @@
 
             <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
                 <h3 class="">A propos de moi</h3>
-                <p class="">Nom et prenom : <strong>{{ user.user.nom }}</strong>  </p>
-                <p class="">Pseudo : <strong>{{ user.user.pseudo }}</strong>  </p>
+                <p class="">Nom et prenom : <strong>{{ user.user.userNom }}</strong>  </p>
+                <p class="">Pseudo : <strong>{{ user.user.userPseudo }}</strong>  </p>
                 <p class="">Avatar : <strong>{{ user.user.avatar }}</strong>  </p>
 
                 <div class="text-center">
@@ -66,7 +66,7 @@ export default {
     data () {
         return {
             id: localStorage.getItem('id'),
-            // url:""
+            url:''
         }
     },
     computed: {
@@ -74,7 +74,7 @@ export default {
     },
     
     // mounted () {
-
+    //     this.getUrl()
     // },
     methods: {
         async deleteUser () {
@@ -119,10 +119,9 @@ export default {
         }
 
     },
-    // getUrl() {
-    //     console.log(this.store.user.avatar);
-    //     this.url = `C:/Users/thanh/Desktop/projet7_ocr/backend/images/${this.store.user.avatar}`
-    // }
+    getUrl() {
+        this.url = `http://localhost:5000/images/${this.store.user.avatar}`
+    }
     
 }
 </script>

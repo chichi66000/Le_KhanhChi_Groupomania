@@ -60,6 +60,11 @@ export default {
     methods: {
         handleClick (){
             localStorage.removeItem('token');
+            localStorage.removeItem('id');
+            localStorage.removeItem('nom');
+            localStorage.removeItem('email')
+            localStorage.removeItem('pseudo')
+            localStorage.removeItem('avatar')
             this.$store.dispatch('user/setCurrentUser', null)
             this.$router.push('/home')
         }

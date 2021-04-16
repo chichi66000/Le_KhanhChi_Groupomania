@@ -81,9 +81,14 @@ export default {
                         // récupérer token dans localStorage pour maintenir la session
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('id', response.data.currentUser.userId);
+                        localStorage.setItem('nom', response.data.currentUser.nom)
+                        localStorage.setItem('email', response.data.currentUser.email)
+                        localStorage.setItem('pseudo', response.data.currentUser.pseudo)
+                        localStorage.setItem('avatar', response.data.currentUser.avatar)
+
                         // console.log (response.data.currentUser.userId)   //OK
                         // console.log (response.data.currentUser)         //OK
-
+                        
                         this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
                         
                         // aller sur la page Home une fois connecté

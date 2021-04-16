@@ -21,6 +21,7 @@
     "vue-router": "^4.0.0-0",
     "vuelidate": "^0.7.6",
     "vuex": "^4.0.0-0",
+    "vuex-persistedstate": "^4.0.0-beta.3",
     "yup": "^0.32.9"
   },
   "devDependencies": {
