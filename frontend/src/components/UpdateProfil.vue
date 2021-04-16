@@ -31,8 +31,11 @@
                 <span id="error_file" class="text-center text-danger fw-bold"></span>
 
             </div>
-            <button type="submit" class="btn btn-primary text-center mb-5" id="button" >Confirmer</button>
-    
+
+            <div class="text-center ">
+                <button @click.prevent="annuler" type="submit" class="btn btn-primary text-center mb-5 mx-5" id="button" >Annuler</button>
+                <button type="submit" class="btn btn-primary text-center mb-5 " id="button" >Confirmer</button>
+            </div>
         </form>
 
     </div>
@@ -75,7 +78,6 @@ export default {
             pseudoError,
             email,
             emailError,
-
             error
         }
     },
@@ -107,12 +109,22 @@ export default {
                 .then( response => {
                     console.log(response);
                     Swal.fire("Votre profil a été modifié.")
-                    
-                    this.$router.push('/home')
+                    axios.get(`api/auth/${this.id}`)
+                        .then( response => {
+                            console.log("currentuser" + response.data.currentUser);
+                            this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
+                        })
+                        .catch(error => console.log(error))
+                    this.$router.push('/user')
                 })
                 .catch( err => {
                     console.log(err);
+                    this.error = "Problème pour update votre profil. Réessayer plus tard"
                 })
+        },
+
+        annuler () {
+            this.$router.push('/user')
         }
     }
 }

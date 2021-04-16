@@ -2,7 +2,7 @@
     <div class="container">
    
         <div class="container mx-auto mt-5 mb-5 col-11 col-sm-11 col-md-10 col-lg-10 col-xl-10">
-            
+            <error v-if="error" :error = "error"/>
     <!-- Profil user-->
 
             <div class="row shadow rounded col d-flex mx-5 px-5 my-5 float-none">
@@ -60,9 +60,13 @@
 import { mapState } from 'vuex'
 import axios from '../axios'
 import Swal from 'sweetalert2'
+import Error from '../components/Error';
 
 export default {
     name: "User",
+    components: {
+        Error
+    },
     data () {
         return {
             id: localStorage.getItem('id'),
