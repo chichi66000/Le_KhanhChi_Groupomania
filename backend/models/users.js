@@ -74,10 +74,10 @@ module.exports = function (sequelize, DataTypes) {
           allowNull:true,
           type: DataTypes.STRING,
         },
-        passwordResetExpires: {
-          allowNull: true,
-          type: DataTypes.DATE
-        }
+        // passwordResetExpires: {
+        //   allowNull: true,
+        //   type: DataTypes.DATE
+        // }
       }, {
         sequelize,
         tableName: "users",

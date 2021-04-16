@@ -34,4 +34,7 @@ router.post('/forgot', userCtrl.forgotPassword)
 // reset password           => OK testé
 router.patch('/reset/:token', userCtrl.resetPassword)
 
+// route pour prendre images
+// router.get('/photo', userCtrl.images)
+
 module.exports = router;

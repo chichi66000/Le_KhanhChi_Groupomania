@@ -486,8 +486,7 @@ exports.resetPassword = async (req, res, next) => {
                                 db.Users.update( {
                                     ...user,
                                     password: hash,
-                                    passwordResetExpires: undefined,
-                                    createPasswordResetToken: undefined,
+                                    createPasswordResetToken: "undefined",
                                     }, 
                                     { where: {createPasswordResetToken: hashToken}} )
                                     
@@ -509,3 +508,8 @@ exports.resetPassword = async (req, res, next) => {
     } 
     catch (e) { console.log(e) }
 }
+
+// route pour récupérer image:
+// exports.images = (req, res) => {
+//     res.status.json("Voici images")
+// }
