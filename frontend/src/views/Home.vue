@@ -23,37 +23,18 @@
 </template>
 
 <script>
-// import Navbar from "../components/Navbar"
-// import Footer from "../components/Footer";
+
 import { mapState } from 'vuex'
 
 export default {
     name: "Home",
     components: {
-      // Navbar,
-      // Footer
+     
     },
     data () {
-      // return {
-      //   user
-      // }
+    
     },
-    // beforeCreated() {
-    //   this.userNom = this.$store.state.user.user.nom
-    // }
-    // beforeMounted () {
-      
-    //   // return {...mapState ( { user: state => state.user } )}
-      
-    // },
-    // beforeCreated () {
-    //   if(localStorage.nom) { this.nom = localStorage.nom}
-      
-    // },
-    // created () {
-    //   if(localStorage.nom) { this.nom = localStorage.nom }
-
-    // }
+    
     computed: {
       ...mapState ( { user: state => state.user} )
     }

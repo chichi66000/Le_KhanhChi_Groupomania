@@ -125,7 +125,8 @@ exports.login = (req, res, next) => {
                             email: user.email, 
                             userPseudo: user.pseudo,
                             userId: user.id,
-                            avatar: user.avatar
+                            avatar: user.avatar,
+                            isAdmin: user.isAdmin
                         },
                         
                         token: jwt.sign(            // un token permet la connexion
@@ -189,6 +190,35 @@ exports.deleteUser = (req, res, next) => {
             console.log(error); 
             res.status(500).json( { message: "Problème pour trouver user, réessayer plus tard"})
         })
+}
+
+// route pour supprimer 1 user par Admin:
+exports.adminDelete = (req, res) => {
+    // chercher user avec son id
+    db.Users.findOne ( { where: { id: req.params.id}})
+        .then( user => {
+            // si user a son photo avatar, supprimer la photo avant supprimer le compte
+            const filename = user.avatar
+            if( !filename.includes("avatar_default.png")) {
+                console.log(filename);
+                fs.unlink(`images/${filename}`, () => {
+                    db.Users.destroy ({where: {id:req.params.id}})
+                        .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+                        .catch((error) => res.status(400).json({error}))
+                })
+            }
+            // si c'est un avatar default; supprimer le compte user
+            else { 
+                db.Users.destroy ({where: {id:req.params.id}})
+                    .then(() => res.status(200).json({message: "utilisateur supprimé"}))
+                    .catch((error) => {
+                    console.log(error)
+                    res.status(400).json({message: "Problème pour supprimer user"})
+                                      }) 
+            }
+                          
+        })
+        .catch ( err => { console.log(err); res.status(500).json("User non trouvé")})
 }
 
 // route pour update user password
@@ -374,7 +404,8 @@ exports.getOneUser = (req, res, next) => {
                     userId: user.id,
                     userPseudo: user.pseudo,
                     email: user.email,
-                    avatar: user.avatar
+                    avatar: user.avatar,
+                    isAdmin: user.isAdmin
                 }
                 console.log(currentUser.avatar)    //OK
                 res.status(200).json({currentUser});
@@ -393,7 +424,7 @@ exports.getAllUser = (req, res, next) => {
             else {
             // si user est admin, chercher et renvoyer liste des users
                 db.Users.findAll( {
-                    attributes: ["id", "email", "nom", "prenom", "createdAt", "pseudo"]
+                    attributes: ["id", "email", "nom", "prenom", "createdAt", "pseudo", "isAdmin"]
                 },
                 {order: ["id"] })
                     .then((users) => {
