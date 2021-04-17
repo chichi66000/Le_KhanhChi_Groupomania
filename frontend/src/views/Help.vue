@@ -1,11 +1,11 @@
 <template>
   <div class="container">
 
-    <h1 class="text-center">FAQ</h1>
+    <h3 class="text-center my-3 text-info">FAQ</h3>
 
     <!-- Foire au question -->
     <div class="shadow rounded col  mx-auto mt-3 mb-3">
-        <details>
+        <details class="p-3">
           <summary class="text-primary">
             Comment supprimer une publication ?
           </summary>
@@ -16,21 +16,21 @@
 
         </details>
 
-        <details>
+        <details class="p-3">
           <summary class="text-primary">
             Comment modifier une publication ?
           </summary>
             Cliquez sur icon crayon à côté du titre de publication
         </details>
 
-        <details>
+        <details class="p-3">
           <summary class="text-primary">
             Comment modifier utilisateur?
           </summary>
             Allez dans votre espace profil, choisissez icon crayon pour modifier les informations, puis confirmer les changements.
         </details>
 
-        <details>
+        <details class="p-3">
           <summary class="text-primary">
             Comment nous contacter?
           </summary>

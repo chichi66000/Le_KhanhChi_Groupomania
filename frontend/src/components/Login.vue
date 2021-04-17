@@ -5,21 +5,21 @@
 
         <div> 
             
-            <div class="col-md-6 col-lg-6 mt-5 m-auto col">
+            <div class="col-md-6 col-lg-6 my-2 m-auto col">
                 <Logo />
             </div>
 
-            <h5 class="mb-5 font-weight-bolder pink fs-3">Indentifiez-vous</h5>
+            <h5 class="my-3 font-weight-bolder pink fs-3">Indentifiez-vous</h5>
 
-            <form class="form-group mt-5 mb-5 col col-md-8 col-lg-8 m-auto connexion text-center"  @submit.prevent = "login">
+            <form class="form-group col col-md-8 col-lg-8 m-auto connexion text-center col shadow rounded mx-5 my-5 p-3"  @submit.prevent = "login">
                 <div class="form-group row ">
-                    <label for="email" class="col col-form-label text-left pink font-weight-bolder fs-3">Email</label>
+                    <label for="email" class="col col-form-label text-left pink font-weight-bolder fs-6">Email</label>
                     <div class="col-8">
                         <input type="email" class="form-control" id="email" v-model="email" placeholder="email">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="password" class="col col-form-label text-left pink font-weight-bolder fs-3">Mot de passe</label>
+                    <label for="password" class="col col-form-label text-left pink font-weight-bolder fs-6">Mot de passe</label>
                     <div class="col-8">
                         <input type="password" class="form-control" id="password" v-model="password" placeholder="mot de passe">
                     </div>

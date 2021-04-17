@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container-fluid">
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
                 <!-- <div class=" navbar-brand text-left col-1 col-sm-2 col-md-1 col-lg-1">
                     <img class=" logo" src="../assets/images/icon-above-font.png" alt="icon entreprise Groupomania"/>
@@ -9,7 +9,7 @@
                     <!-- <span class ="navbar-toggle-icon"></span> -->
                 </button>
 
-                <div id="navbarContent" class="collapse navbar-collapse col col-sm-8 col-md-8 col-lg-8 mx-auto text-center font-weight-bolder justify-self-center dropdown-menu-lg-right justify-content-between text-light">
+                <div id="navbarContent" class="collapse navbar-collapse navbar-collapse-sm col  mx-auto text-center font-weight-bolder justify-self-center dropdown-menu-lg-right justify-content-between text-light">
                     <div class=" ">
                         <router-link to="/home">HOME</router-link>
                     </div>
@@ -23,14 +23,14 @@
                             </li>
                         </ul>
 
-                        <ul v-if="user.user" class="navbar-nav ml-auto">
-                            <li class="nav-item px-5">
+                        <ul v-if="user.user" class="navbar-nav m-auto">
+                            <li class="nav-item px-4">
                                 <router-link to="/help">FAQ</router-link>
                             </li>
-                            <li class="nav-item px-5">
+                            <li class="nav-item px-4">
                                 <router-link to="/user">Profile</router-link>
                             </li>
-                            <li class="nav-item px-5">
+                            <li class="nav-item px-4">
                                 <a href= "javascript:void(0)" @click = "handleClick">Logout</a>
                             </li>
                         </ul>
