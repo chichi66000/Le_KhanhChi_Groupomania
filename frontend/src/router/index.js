@@ -9,6 +9,7 @@ import Reset from '../components/Reset.vue'
 import UpdatePass from '../components/UpdatePass'
 import UpdateProfil from '../components/UpdateProfil'
 import User from '../views/User'
+import Admin from '../components/Admin'
 
 
 
@@ -62,6 +63,11 @@ const routes = [
     path: '/updateProfil',
     name: 'UpdateProfil',
     component: UpdateProfil
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin
   },
 ]
 

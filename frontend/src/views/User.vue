@@ -23,6 +23,10 @@
                 </div>
             </div>
 
+            <!-- Ce bloque est pour admin récupérer tous les user et delete 1 user -->
+            <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+                <button class="btn col col-md-6 col-lg-6 mx-1 btn btn-primary mb-3 text-center" @click.prevent = "admin">Gérer les utilisateurs</button>
+            </div>
 
     <!-- Mes publications -->
             <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
@@ -81,6 +85,7 @@ export default {
     //     this.getUrl()
     // },
     methods: {
+        // user supprimer son compte 
         async deleteUser () {
             console.log(this.id)        //OK
             const { value: password } = await Swal.fire({
@@ -114,18 +119,28 @@ export default {
             }
         },
 
+        //aller sur page update profil
         async updateUser () {
             this.$router.push("/updateProfil")
         },
 
+        // aller sur page update password
         async updatePass () {
             this.$router.push("/updatePass")
-        }
+        },
 
-    },
-    getUrl() {
+        // aller sur page admin
+        admin () {
+            this.$router.push("/admin")
+        },
+
+        // récupérer url pour afficher avatar user
+        getUrl() {
         this.url = `http://localhost:5000/images/${this.store.user.avatar}`
-    }
+        }
+    },
+
+    
     
 }
 </script>

@@ -13,10 +13,10 @@ router.post("/signup", /*error , */ multer, userCtrl.signup);
 // connexion user       => OK testé
 router.post("/login", userCtrl.login);
 
-// update user
+// update user              => OK testé
 router.put('/updateUser/:id',auth, multer, userCtrl.updateUser);
 
-// update user password
+// update user password         => OK testé
 router.put('/updatePassword/:id', auth, userCtrl.updatePassword)
 
 //delete user           => OK testé
@@ -25,8 +25,8 @@ router.delete('/delete/:id/:password', auth, userCtrl.deleteUser)
 // récupérer utilisateur connecté ( pour page profil d'utilisateur )        => OK testé
 router.get('/:id', auth, userCtrl.getOneUser)
 
-// récupérer tous les utilisateur ( pour Admin)
-router.get('/', auth, userCtrl.getAllUser)
+// récupérer tous les utilisateur ( pour Admin)     => OK testé
+router.get('/admin/:id', auth, userCtrl.getAllUser)
 
 // forgot password          => OK testé
 router.post('/forgot', userCtrl.forgotPassword)

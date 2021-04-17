@@ -385,12 +385,32 @@ exports.getOneUser = (req, res, next) => {
 
 // route pour récupéer tous les utilisateurs (pour admin par expemple)
 exports.getAllUser = (req, res, next) => {
+    // vérifier si user connecté est admin ou pas?
+    db.Users.findOne ( { where: { id: req.params.id }})
+        .then( user => {
+            // s'il n'est pas admin; interdit les actions
+            if(user.isAdmin === false) { res.status(400).json("Vous n'êtes pas admin")}
+            else {
+            // si user est admin, chercher et renvoyer liste des users
+                db.Users.findAll( {
+                    attributes: ["id", "email", "nom", "prenom", "createdAt", "pseudo"]
+                },
+                {order: ["id"] })
+                    .then((users) => {
+                        if (! users) { res.status(404).json({ message:"Utilisateur non trouvé" })}
+                        
+                        res.status(200).json( {
+                            users
+                        })
+                    })
+                    .catch((error) => res.status(404).json({error}))
+            }
+        })
+        .catch( err => {
+            console.log(err);
+            res.status(400).json("Pas trouvé user, actions interdites")
+        })
     
-    db.Users.findAll()
-        .then((users) => {
-            if (! users) { res.status(404).json({ message:"Utilisateur non trouvé" })}
-            res.status(200).json(users)})
-        .catch((error) => res.status(404).json({error}))
 }
 
 // route pour forgot password
