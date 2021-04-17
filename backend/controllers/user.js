@@ -221,6 +221,34 @@ exports.adminDelete = (req, res) => {
         .catch ( err => { console.log(err); res.status(500).json("User non trouvé")})
 }
 
+
+// route pour update role admin 
+exports.adminChange = (req, res) => {
+    db.Users.findOne ( {where : { id: req.params.id} } )
+        .then( user => {
+            let admin;
+            console.log(user.isAdmin);      // OK
+            // if ( user.isAdmin==true) { admin == false}
+            // else { admin==false};
+            db.Users.update( {
+                ...user,
+                isAdmin: true,
+                id: req.params.id
+            },
+            {where : { id: req.params.id}} )
+                .then( () => res.status(200).json("changer status admin du user"))
+                .catch( err => {
+                    console.log(err);
+                    res.status(500).json("Problème pour changer status admin du user")
+                })
+        })
+        .catch( err => {
+            console.log(err);
+            res.status(500).json("User non trouvé")
+        })
+}
+
+
 // route pour update user password
 
 exports.updatePassword = (req, res) => {

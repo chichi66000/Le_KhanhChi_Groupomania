@@ -55,7 +55,7 @@ text-right {
   text-align: right!important;
 }
 #app{
-  background: url(./assets/images/background_2.jpg);
+  background: url(./assets/images/bg_grey.png);
   background-size: cover;
   min-height: 100vh;
 }

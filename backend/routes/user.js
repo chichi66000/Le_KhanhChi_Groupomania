@@ -28,6 +28,8 @@ router.get('/:id', auth, userCtrl.getOneUser)
 // récupérer tous les utilisateur ( pour Admin)     => OK testé
 router.get('/admin/:id', auth, userCtrl.getAllUser)
 
+// changer le rôle admin du user en cas besoin (pour admin)
+router.put('/adminChange/:id', auth, userCtrl.adminChange)
 
 // supprimer 1 utilisateur par Admin     => OK testé
 router.delete('/adminDelete/:id', auth, userCtrl.adminDelete)
