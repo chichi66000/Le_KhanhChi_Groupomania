@@ -31,10 +31,7 @@
                     <router-link to="forgot">Forgot password</router-link>
                 </p>
             </form>
-            <!-- <div class="mt-3">
-                <p class="pink font-weight-bolder">Vous n'avez pas encore de compte?</p>
-                <button class="btn pink font-weight-bolder mt-2 fs-3 mb-5" @click="switchToggle">S'incrire</button>
-            </div> -->
+            
 
         </div>
 
