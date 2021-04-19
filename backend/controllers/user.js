@@ -131,7 +131,7 @@ exports.login = (req, res, next) => {
                         
                         token: jwt.sign(            // un token permet la connexion
                             {userId: user.id },
-                            "RANDOM_TOKEN_SECRET", 
+                            process.env.SECRET_TOKEN, 
                             {expiresIn: "24h",})
                             });
                             console.log("Utilisateur login réussi")
@@ -148,13 +148,13 @@ exports.deleteUser = (req, res, next) => {
     db.Users.findOne({where: {id: req.params.id}})
         .then( user => {
             console.log("user" + user);      //OK
-            console.log(req.params.password);
+            console.log(req.body.password);
             if(!user) { // si user n'existe pas dans bdd
                 console.log('Utilisateur non trouvé');
                 return res.status(401).json({error: 'Utilisateur non trouvé'}) // renvoyer message erreur
             }
             // si trouvé user, comparer password du requête avec celui dans BDD
-            bcrypt.compare(req.params.password, user.password)
+            bcrypt.compare(req.body.password, user.password)
                 .then( valid => {
                     if (!valid) {           // si c'est pas le même password
                         console.log('Mot de passe incorrect')
@@ -279,7 +279,7 @@ exports.updatePassword = (req, res) => {
                         // 4) Send JWT, login user
                             const token = jwt.sign(            
                                 {userId: user.id },
-                                "RANDOM_TOKEN_SECRET", 
+                                process.env.SECRET_TOKEN, 
                                 {expiresIn: "24h",});
                                     
                             res.status(200).json( {
@@ -486,7 +486,7 @@ exports.forgotPassword = async (req, res, next) => {
                 // console.log({user});    //OK
                 const resetToken = jwt.sign(            //créer un token 
                     {userId: user.id },
-                    "RANDOM_TOKEN_SECRET", 
+                    process.env.SECRET_TOKEN, 
                     {expiresIn: "1h",});     
                 const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
                 console.log({resetToken}, { resetTokenHash});      //OK
@@ -572,7 +572,7 @@ exports.resetPassword = async (req, res, next) => {
                                 //4) Envoyer nouveau token pour login
                                 const token = jwt.sign(            
                                     {userId: user.id },
-                                    "RANDOM_TOKEN_SECRET", 
+                                    process.env.SECRET_TOKEN, 
                                     {expiresIn: "24h",});
                                         
                                 res.status(200).json( {

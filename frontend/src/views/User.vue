@@ -6,8 +6,8 @@
     <!-- Profil user-->
 
             <div class="row shadow rounded col d-flex mx-5 px-5 my-5 float-none">
-                <img class="b-avatar-img" alt="avatar"  />
-                <p class="align-self-center m-auto"> {{user.user.pseudo }} </p>
+                <img  class="img-fluid" alt="avatar" :src= "getUrl()" />
+                <p class="align-self-center m-auto"> {{user.user.userPseudo }} </p>
 
             </div>
 
@@ -24,7 +24,7 @@
             </div>
 
             <!-- Ce bloque est pour admin récupérer tous les user et delete 1 user -->
-            <div v-if="user.user.isAdmin===true" class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+            <div v-if="user.user.isAdmin===true" class="text-center col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
                 <button class="btn col col-md-6 col-lg-6 mx-auto btn btn-primary mb-3 text-center" @click.prevent = "admin">Gérer les utilisateurs</button>
             </div>
 
@@ -74,16 +74,18 @@ export default {
     data () {
         return {
             id: localStorage.getItem('id'),
-            url:''
+            url:'',
+            error: ''
         }
     },
     computed: {
-      ...mapState ( { user: state => state.user} )
+      ...mapState ( { user: state => state.user} ),
     },
     
-    // mounted () {
-    //     this.getUrl()
-    // },
+    mounted () {
+        
+        
+    },
     methods: {
         // user supprimer son compte 
         async deleteUser () {
@@ -102,7 +104,8 @@ export default {
 
                 if (password) {
                     console.log(password);          //OK
-                    axios.delete(`api/auth/delete/${this.id}/${password}`)
+                    axios.post(`api/auth/delete/${this.id}`,
+                        {password : password })
                     .then((response) => {
                         console.log(response)
                         localStorage.removeItem('token');
@@ -134,9 +137,10 @@ export default {
             this.$router.push("/admin")
         },
 
-        // récupérer url pour afficher avatar user
-        getUrl() {
-        this.url = `http://localhost:5000/images/${this.store.user.avatar}`
+        getUrl () {
+            // récupérer url pour afficher avatar user
+        return this.url =`localhost:5000/images/${this.$store.state.user.user.avatar}`;
+       
         }
     },
 

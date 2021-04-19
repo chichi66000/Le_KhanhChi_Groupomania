@@ -18,6 +18,7 @@ import axios from '../axios'
 import {  useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { ref, } from 'vue'
+import Swal from 'sweetalert2'
 
 export default {
     name: "Reset",
@@ -63,7 +64,7 @@ export default {
                 token
             })
                 .then( response => {
-                    
+                    Swal.fire("Succès. Connecter vous avec nouveau password")
                     this.$router.push('/login')
                     console.log(response)
 

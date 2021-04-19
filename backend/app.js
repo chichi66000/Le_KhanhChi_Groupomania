@@ -36,11 +36,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-// imports les routes user
+// imports les routes user 
 const userRoutes = require('./routes/user');
+const postRoutes = require('./routes/posts');
 
-//route authentification
+//route authentification pour la gestion des utilisateurs
 app.use('/api/auth', userRoutes);
+
+// route pour la gestion des posts d'actualités
+app.use('/post', postRoutes )
 
 // route pour stocker les images
 app.use("/images", express.static(path.join(__dirname, "images")));

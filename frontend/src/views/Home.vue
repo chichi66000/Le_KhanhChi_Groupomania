@@ -1,13 +1,6 @@
 <template>
     <div class="container">
 
-      <div>
-        <!-- <Navbar/> -->
-      </div> 
-
-      <!-- Afficher les actualités des postes -->
-          <!-- <p>This nom from localStorage {{nom}}</p> -->
-
       <div v-if="user.user">
           <p>Bonjour {{user.user.userNom}} </p>
       </div>
@@ -15,9 +8,7 @@
           <h3>Bienvenue au Groupomania, connectez - vous pour commencer </h3>
       </div>
 
-      <!-- <div>
-        <Footer/>
-      </div> -->
+      <AllPost/>
       
     </div>
 </template>
@@ -25,15 +16,15 @@
 <script>
 
 import { mapState } from 'vuex'
-
+import AllPost from '../components/AllPost'
 export default {
     name: "Home",
     components: {
-     
+        AllPost,
     },
-    data () {
+    // data () {
     
-    },
+    // },
     
     computed: {
       ...mapState ( { user: state => state.user} )

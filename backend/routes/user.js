@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const multer = require('../middlewares/multer_config');
 const auth = require('../middlewares/auth');
-// const error = require('../middlewares/error');
-// const passport = require('passport')
 const userCtrl = require('../controllers/user');
 
 
@@ -20,7 +18,7 @@ router.put('/updateUser/:id',auth, multer, userCtrl.updateUser);
 router.put('/updatePassword/:id', auth, userCtrl.updatePassword)
 
 //delete user           => OK testé
-router.delete('/delete/:id/:password', auth, userCtrl.deleteUser)
+router.post('/delete/:id', auth, userCtrl.deleteUser)
 
 // récupérer utilisateur connecté ( pour page profil d'utilisateur )        => OK testé
 router.get('/:id', auth, userCtrl.getOneUser)

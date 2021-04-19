@@ -17,6 +17,7 @@
 <script>
 import axios from '../axios'
 import Error from './Error'
+import Swal from 'sweetalert2'
 
 export default {
     name: 'Forgot',
@@ -35,7 +36,9 @@ export default {
                 await axios.post('api/auth/forgot', { email: this.email })
                     .then( (response) => {console.log(response);
                     /* this.error="Vérifier votre email et suivre instruction"*/ 
-                    alert ("Email envoyé, veuillez suivre les instructions!")})
+                    Swal.fire("Email envoyé, veuillez suivre les instructions!")
+                    // alert ("")
+                    })
                     .catch( (err) => {
                         console.log(err);
                         this.error = "Email non trouvé, veuillez réessayer"
