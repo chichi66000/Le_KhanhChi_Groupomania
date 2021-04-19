@@ -44,7 +44,7 @@ const postRoutes = require('./routes/posts');
 app.use('/api/auth', userRoutes);
 
 // route pour la gestion des posts d'actualités
-app.use('/post', postRoutes )
+app.use('/api/post', postRoutes )
 
 // route pour stocker les images
 app.use("/images", express.static(path.join(__dirname, "images")));
