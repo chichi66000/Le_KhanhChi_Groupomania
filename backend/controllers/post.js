@@ -20,11 +20,11 @@ exports.createPost = (req, res) => {
     else {
         // s'il y a req file, enregistrer son URL; 
         if (req.files) {
-            console.log(req.files);
+            // console.log(req.files);     //OK
             for (let i=0; i<req.files.length; i++) {
                 file_url += (req.files[i].filename)+ ", "
             }
-            console.log(file_url);
+            // console.log(file_url);          //OK
         }
         else { file_url = ""};
             // enregistrer dans table Posts
