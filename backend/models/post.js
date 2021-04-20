@@ -29,6 +29,10 @@ module.exports = function (sequelize, DataTypes) {
           allowNull: true,
           type: DataTypes.STRING(255)
         },
+        video_url: {
+          allowNull: true,
+          type: DataTypes.STRING(255)
+        },
         createdAt: {
           allowNull: false,
           type: DataTypes.DATE

@@ -19,23 +19,25 @@ exports.createPost = (req, res) => {
     }
     else {
         // s'il y a req file, enregistrer son URL; 
-        if (req.file) {
-            file_url = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+        if (req.files) {
+            console.log(req.files);
+            for (let i=0; i<req.files.length; i++) {
+                file_url += (req.files[i].filename)+ ", "
+            }
             console.log(file_url);
-            console.log(req.file.mimetype);
         }
         else { file_url = ""};
-        // enregistrer dans table Posts
-        const post = db.Posts.create({
-            title: xss(req.body.title),
-            content: xss(req.body.content),
-            img_url: file_url,
-            userId: req.body.userId
-        })
-            .then( () => res.status(201).json("Votre article a été enregistré"))
-            .catch( err => {
-                console.log(err);
-                res.status(500).json("Créer post erreur")
+            // enregistrer dans table Posts
+            const post = db.Posts.create({
+                title: xss(req.body.title),
+                content: xss(req.body.content),
+                img_url: file_url,
+                userId: req.body.userId
             })
+                .then( () => res.status(201).json("Votre article a été enregistré"))
+                .catch( err => {
+                    console.log(err);
+                    res.status(500).json("Créer post erreur")
+                })
     }
 }
