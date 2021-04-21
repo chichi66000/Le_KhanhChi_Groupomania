@@ -1,14 +1,15 @@
 <template>
     <div class="container">
-
+        <!-- I user est connecté -->
       <div v-if="user.user">
-          <p>Bonjour {{user.user.userNom}} </p>
+            <p>Bonjour {{user.user.userNom}} </p>
+            <AllPost/>
       </div>
-      <div v-else class="text-center d-flex align-self-center my-5 mx-auto">
+        <!-- Si user n'est pas connecté, l'inviter à se connecter -->
+      <div v-else class="text-center my-5 mx-auto text-danger">
           <h3>Bienvenue au Groupomania, connectez - vous pour commencer </h3>
       </div>
 
-      <AllPost/>
       
     </div>
 </template>

@@ -41,3 +41,8 @@ exports.createPost = (req, res) => {
                 })
     }
 }
+
+// route pour récupérer tous les publications
+exports.getAllPosts = (req, res) => {
+    console.log("OKKKK");
+}
