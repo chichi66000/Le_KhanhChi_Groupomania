@@ -41,23 +41,23 @@
                                 </div>
                                     
                                     <div class="input-group">
-                                        <div class="d-flex justify-content-between">
+                                        <!-- <div class="d-flex justify-content-between"> -->
                                             <input @change="loadImage" multiple ref="file" type="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
                                             <!-- <button class="btn btn-danger" @click="annuler">X</button> -->
-                                        </div>
+                                        <!-- </div> -->
                                         <label class="form-group"  id="inputGroupFileAddon03"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
                                         <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
                                     </div>
 
                                 <!-- </div> -->
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+                                    <button @click="handleSubmit"  id="closeModal"  data-bs-dismiss="modal" type="submit" class="my-4 text-center mx-auto btn-primary" >Enregistrer</button>
+                                </div>
                             </form>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-
-                                <button @click="handleSubmit" data-bs-dismiss="modal" id="closeModal"  type="submit" class="my-4 text-center mx-auto btn-primary" >Enregistrer</button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -116,12 +116,13 @@ export default {
     methods: {
 
 
-        async handleSubmit (e) {
-            e.stopPropagation();
+        async handleSubmit () {
+            // s'il y a rien dans ensemble des champs, on fait rien...
             if (this.title.length==0 && this.content ==0 && this.$refs.file.files.length ==0) {
                 Swal.fire("Vous n'avez rien à nous dire ? ")
             }
             else {
+            // si non, envoyer les infos par FormData
                 let form = new FormData();
                 for( var i = 0; i < this.$refs.file.files.length; i++ ){
                         let file = this.$refs.file.files[i];
@@ -131,17 +132,15 @@ export default {
                 form.append('content', this.content)
                 form.append('userId', this.id)
 
-                console.log('OK');
-
+                // envoyer formulaire par axios, recevoir la response
                 await axios.post("/api/post/", form)
                     .then( response => {
                         console.log(response);
-                        
-                        // let staticBackdrop = document.getElementById('staticBackdrop');
-                    //     staticBackdrop.addEventListener('hide.bs.modal', function () {
-                    //        this.$router.push("/user")
-                    //    })
+                        // envoyer 1 message OK pour utilisateur
                         Swal.fire("Votre article a été enregistré")
+                        
+                        // fermer manuellement la modal 
+                        
                     })
                     .catch( err => {
                         console.log(err);
