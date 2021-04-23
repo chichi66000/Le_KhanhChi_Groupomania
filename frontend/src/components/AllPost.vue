@@ -8,36 +8,41 @@
                 <hr class="text-primary">
 
                 <!-- Partie pour afficher les actualité  -->
-                <div class="border text-justify p-5 my-5 bg-white">
+                <div :key="post" v-for="post in posts" class="border text-justify p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
-                        <h4>Titre du publication</h4>
+                        <h4>{{post.title}}</h4>
 
-                        <div class="dropdown">
+                        <!-- Si currentUser est author de l'artile, il peut le modifier et supprimer -->
+                        <div v-if="currentUserId==post.userId" class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="#">Modifier</a></li>
-                                <li><a class="dropdown-item" href="#">Supprimer</a></li>
+                                <li @click="modifyPost"><a class="dropdown-item" href="#">{{post.userId}}  Modifier</a></li>
+                                <li @click="deletePost"><a class="dropdown-item" href="#">Supprimer</a></li>
                             </ul>
                         </div>
 
                     </div>
 
                     <div class="text-justify p-3">
-                        <p>voicieiefqfkqefkqefhiehfknkdnksnknqklsnfkqnskfnq</p>
+                        <p >{{post.content}}</p>
                     </div>
 
                     <hr>
 
                     <div class="mx-auto my-1">
-                        <button class="btn fs-4 font-weight-bolder"><i class="bi bi-hand-thumbs-up"></i></button>
-                        <button class="btn fs-4 font-weight-bolder"><i class="bi bi-hand-thumbs-down"></i></button>
+                        <button class="btn fs-4 font-weight-bolder"><i class="bi bi-hand-thumbs-up"></i>{{post.likes.length}}</button>
+                        <!-- <button class="btn fs-4 font-weight-bolder">{{post.likes.length}}<i class="bi bi-hand-thumbs-down"></i></button> -->
 
                     </div>
 
                     <div>
                         <input class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
+
+                        <div class="rounded-pill border text-center my-3 py-3 ">
+                            {{post.commentaires}}
+                        </div>
                     </div>
                 </div>
 
@@ -47,9 +52,10 @@
 
 <script>
 import { mapState } from 'vuex'
-// import axios from '../axios'
+import axios from '../axios'
 // import Swal from 'sweetalert2'
 import AddPost from './AddPost'
+// import Home from '../views/Home'
 
 export default {
     name: "AllPost",
@@ -57,10 +63,59 @@ export default {
         AddPost
     },
     data () {
+        return {
+            commentaires : [],
+            likes: [],
+            posts: [],
+            // meOrAdmin:false,
+            // user_postId: []
+            currentUserId:localStorage.getItem('id')
+        }
+    },
+    // props: ['likes', 'commentaires', 'posts'],
+
+    async created () {
+        await axios.get('api/post/')
+            .then( response => {
+                // console.log(response);
+                // let currentUserId = localStorage.getItem('Id');
+                this.posts = response.data;
+                console.log(response.data.length);    //OK
+                for ( let i=0; i< response.data.length; i++) {
+                    this.commentaires.push (response.data[i].commentaires);
+                    this.likes.push(response.data[i].likes);
+                    // this.user_postId.push(response.data[i].userId);
+                    // console.log("admin" + this.$store.state.user.user.isAdmin);     //OK
+                    // if ( currentUserId === this.user_postId[i]) {
+                    //     this.meOrAdmin = true; console.log("meOrAdmin" + this.meOrAdmin);
+                    // }
+                }
+                // console.log("commentaire" + this.commentaires);   //OK
+                // console.log("likes" + this.likes);      //OK
+
+                // console.log(response.data);    // OK
+                this.$store.dispatch ('post/getAllPosts', response.data)
+            })
+            .catch( err => {
+                console.log(err);
+                this.error = "Problème connexion avec server"
+            })
+    },
+    mounted() {
+        
+    },
+    methods: {
+        deletePost () {},
+
+        modifyPost () {},
         
     },
     computed: {
-      ...mapState ( { user: state => state.user} ),
+      ...mapState ( {
+            user: state => state.user,
+            post: state => state.all_posts
+      } ),
+
     },
 
     
@@ -69,5 +124,11 @@ export default {
 
 <style scoped>
     
+    .bi-hand-thumbs-up {
+        color: red;
+    }
+    .bi-hand-thumbs-down {
+        color: blue
+    }
 
 </style>

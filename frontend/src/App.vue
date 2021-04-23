@@ -30,8 +30,14 @@ export default {
         id: localStorage.getItem('id'),
         // user: null
         // store
+        // commentaires : [],
+        // likes: [],
+        // posts: [],
+        currentUserId:localStorage.getItem('id')
       }   
     },
+    // props: ['commentaires', 'likes', 'posts'],
+
     async created() {
       await axios.get(`api/auth/${this.id}`,
         // {
@@ -45,7 +51,33 @@ export default {
           this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
           
         })
-        .catch(error => console.log(error))
+        .catch(error => console.log(error));
+
+        // await axios.get('api/post/')
+        //     .then( response => {
+        //         // console.log(response);
+        //         // let currentUserId = localStorage.getItem('Id');
+        //         this.posts = response.data;
+        //         console.log(response.data.length);    //OK
+        //         for ( let i=0; i< response.data.length; i++) {
+        //             this.commentaires.push (response.data[i].commentaires);
+        //             this.likes.push(response.data[i].likes);
+        //             // this.user_postId.push(response.data[i].userId);
+        //             // console.log("admin" + this.$store.state.user.user.isAdmin);     //OK
+        //             // if ( currentUserId === this.user_postId[i]) {
+        //             //     this.meOrAdmin = true; console.log("meOrAdmin" + this.meOrAdmin);
+        //             // }
+        //         }
+        //         // console.log("commentaire" + this.commentaires);   //OK
+        //         // console.log("likes" + this.likes);      //OK
+
+        //         // console.log(response.data);    // OK
+        //         this.$store.dispatch ('post/getAllPosts', response.data)
+        //     })
+        //     .catch( err => {
+        //         console.log(err);
+        //         this.error = "Problème connexion avec server"
+        //     })
 
     },
 }

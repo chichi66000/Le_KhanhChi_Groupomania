@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
             fields: [{ name: "id" }],
           },
           {
-            name: "fk_userId",
+            name: "userId",
             using: "BTREE",
             fields: [{ name: "userId" }],
           },

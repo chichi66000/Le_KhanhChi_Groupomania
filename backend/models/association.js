@@ -16,20 +16,20 @@ function association (sequelize) {
     users.hasMany(posts, { foreignKey: "userId"});
 
     // relation entre user et commentaires
-    commentaires.belongsTo(users, { foreignKey: "fk_commentaires_userId"});
-    users.hasMany(commentaires, { foreignKey: "fk_commentaires_userId"});
+    commentaires.belongsTo(users, { foreignKey: "userId"});
+    users.hasMany(commentaires, { foreignKey: "userId"});
     
     // relation entre user et likes
-    likes.belongsTo(users, { foreignKey: "fk_likes_userId"});
-    users.hasMany(likes, { foreignKey: "fk_likes_userId"});
+    likes.belongsTo(users, { foreignKey: "userId"});
+    users.hasMany(likes, { foreignKey: "userId"});
 
     // relation entre post et commentaires
-    commentaires.belongsTo(posts, { foreignKey: "fk_commentaires_postId"});
-    posts.hasMany(commentaires, { foreignKey: "fk_commentaires_postId"});
+    commentaires.belongsTo(posts, { foreignKey: "postId"});
+    posts.hasMany(commentaires, { foreignKey: "postId"});
 
     // relation entre post et likes
-    likes.belongsTo(posts, { foreignKey: "fk_likes_postId"});
-    posts.hasMany(likes, { foreignKey: "fk_likes_postId"});
+    likes.belongsTo(posts, { foreignKey: "postId"});
+    posts.hasMany(likes, { foreignKey: "postId"});
 
     return {
         posts,

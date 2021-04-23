@@ -1,6 +1,8 @@
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import  {user}    from './user'
+import  {post}    from './posts'
+
 
 export default createStore({
   state: {
@@ -10,7 +12,8 @@ export default createStore({
   actions: {
   },
   modules: {
-    user
+    user,
+    post
   },
   plugins: [createPersistedState()]
 })
