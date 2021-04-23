@@ -5,11 +5,14 @@ const multer = require('../middlewares/multer_config');
 
 const postCtrl = require('../controllers/posts');
 
-// créer 1 post
+// créer 1 post             // OK, testé
 router.post('/', auth, multer, postCtrl.createPost)
 
-// récupérer tous les publications
+// récupérer tous les publications      // OK, testé
 router.get('/', auth, postCtrl.getAllPosts)
+
+//====> Ajout ou suppresson de like <====\\
+router.post("/:postId/:userId/like", auth, postCtrl.createLike);
 
 
 
