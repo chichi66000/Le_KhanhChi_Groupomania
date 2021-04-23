@@ -8,7 +8,7 @@
                 <hr class="text-primary">
 
                 <!-- Partie pour afficher les actualité  -->
-                <div :key="post" v-for="post in posts" class="border text-justify p-5 my-5 bg-white">
+                <div :key="post" v-for="( post, index) in posts" class="border text-justify p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
                         <h4>{{post.title}}</h4>
 
@@ -32,7 +32,7 @@
                     <hr>
 
                     <div class="mx-auto my-1">
-                        <button class="btn fs-4 font-weight-bolder"><i class="bi bi-hand-thumbs-up"></i>{{post.likes.length}}</button>
+                        <button @click="ajouteLike(index)" class="btn fs-4 font-weight-bolder"><i class="bi bi-hand-thumbs-up"></i>{{post.likes.length}}</button>
                         <!-- <button class="btn fs-4 font-weight-bolder">{{post.likes.length}}<i class="bi bi-hand-thumbs-down"></i></button> -->
 
                     </div>
@@ -109,6 +109,23 @@ export default {
 
         modifyPost () {},
         
+        // ajouter/ delete like du post
+        async ajouteLike (index) {
+            let userId = this.currentUserId;
+            let postId = this.posts[index].id;
+            console.log({postId}); console.log({userId});       //OK
+            await axios.post(`api/post/${postId}/${userId}/like`, {
+                userId: userId, postId: postId
+            })
+                .then( response => {
+                    console.log(response);
+                    // mettre à jour tableau likes sans rafraichir la page
+                    })
+                .catch( err => {
+                    console.log(err);
+                    this.error = "Problème pour ajouter like"
+                })
+        },
     },
     computed: {
       ...mapState ( {
