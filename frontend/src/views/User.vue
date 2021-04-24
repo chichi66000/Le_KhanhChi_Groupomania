@@ -29,8 +29,31 @@
             </div>
 
     <!-- Mes publications -->
-            <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
-                <h3> Mes publications </h3>
+            <div class="accordion col shadow rounded mx-5 mt-3 mb-3 px-5 py-5" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button @click="getUserPosts" class="accordion-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Mes publications
+                        </button>
+                    </h2>
+                    <div :key="userPost" v-for="(userPost) in userPosts"  id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body shadow my-3">
+                            <h4 class="font-weight-bold">{{userPost.title}}</h4>
+                            <p class="p-2 text-center"> {{userPost.content}}</p>
+
+                            <!-- <div :key="lien" v-for="(lien) in liens" >
+                                {{lien}}
+                                <img  :src="getUser_Url_img(index)"/>
+                            </div> -->
+                            
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+                <button @click="getUserPosts" class="btn btn-primary"> Mes publications </button>
 
                 <div class="border text-justify p-5">
                     <div class="d-flex justify-content-between mt-1 mb-1">
@@ -47,7 +70,7 @@
                     </div>
                 </div>
 
-            </div>
+            </div> -->
 
     <!-- Supprimer le compte user -->
             <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
@@ -75,15 +98,17 @@ export default {
         return {
             id: localStorage.getItem('id'),
             url:'',
-            error: ''
+            error: '',
+            userPosts: [],
+            url_img: [],
+            // liens: []
         }
     },
     computed: {
       ...mapState ( { user: state => state.user} ),
     },
     
-    mounted () {
-        
+    async created () {
         
     },
     methods: {
@@ -116,7 +141,7 @@ export default {
                     })
                     .catch (error => {
                         console.log(error);
-                        alert("Password incorrect, veuillez réessayer")
+                        Swal.fire("Password incorrect, veuillez réessayer")
 
                         })        
             }
@@ -141,7 +166,37 @@ export default {
             // récupérer url pour afficher avatar user
         return this.url =`localhost:5000/images/${this.$store.state.user.user.avatar}`;
        
-        }
+        },
+
+        // récupérer tous les post du User
+        async getUserPosts () {
+            await axios.get(`api/post/${this.id}`)
+            .then( response => {
+                console.log(response.data);
+                this.$store.dispatch('post/setCurrentUserPosts', response.data)     //pas OK
+                this.error=""
+                this.userPosts = response.data;
+                for (let i =0; i< this.userPosts.length; i++) {
+                    this.url_img.push(this.userPosts[i].img_url) 
+                }
+                // console.log("url_img" + this.url_img);      //OK 
+            })
+            .catch( err => {
+                console.log(err);
+                this.error = "Problème server, impossible récupérer vos publications"
+            })
+        },
+
+        // getUser_Url_img (index) {
+            
+        //     if (this.url_img[index].split(' ') != "") {
+        //         this.liens.push(this.url_img[index].split(' '))
+        //     }
+        //     // for ( let i=0; i<this.liens.length; i++) {
+        //     //     console.log(`http://localhost:5000/images/${this.liens[i]}`)
+        //     //     return `http://localhost:5000/images/${this.liens[i]}`
+        //     // }
+        // },
     },
 
     

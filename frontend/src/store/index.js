@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import  {user}    from './user'
-import  {post}    from './posts'
+import  {post}    from './post'
 
 
 export default createStore({

@@ -88,7 +88,7 @@ export default {
                 // console.log(response);
                 // let currentUserId = localStorage.getItem('Id');
                 this.posts = response.data;
-                console.log(response.data.length);    //OK
+                // console.log(response.data.length);    //OK
                 for ( let i=0; i< response.data.length; i++) {
                     this.commentaires.push (response.data[i].commentaires);
                     this.likes.push(response.data[i].likes);
