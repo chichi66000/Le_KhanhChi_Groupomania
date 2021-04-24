@@ -2,6 +2,8 @@
     <div>
         <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
 
+                <error v-if="error" :error = "error"/>
+
                 <AddPost/>
                 <h3 class="text-center mx-auto my-3 text-danger">Les actualités </h3>
 
@@ -18,8 +20,8 @@
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li @click="modifyPost"><a class="dropdown-item" href="#">{{post.userId}}  Modifier</a></li>
-                                <li @click="deletePost"><a class="dropdown-item" href="#">Supprimer</a></li>
+                                <li @click="modifyPost (index)"><a class="dropdown-item" href="#">Modifier</a></li>
+                                <li @click="deletePost (index)"><a class="dropdown-item" href="#">Supprimer</a></li>
                             </ul>
                         </div>
 
@@ -29,6 +31,10 @@
                         <p >{{post.content}}</p>
                     </div>
 
+                    <div class="embed-responsive">
+                        <iframe class="embed-responsive-item" src="" width="300" height="150"></iframe>
+                        
+                    </div>
                     <hr>
 
                     <div class="mx-auto my-1">
@@ -53,14 +59,15 @@
 <script>
 import { mapState } from 'vuex'
 import axios from '../axios'
-// import Swal from 'sweetalert2'
+import Swal from 'sweetalert2'
 import AddPost from './AddPost'
-// import Home from '../views/Home'
+import Error from './Error'
 
 export default {
     name: "AllPost",
     components : {
-        AddPost
+        AddPost,
+        Error
     },
     data () {
         return {
@@ -69,7 +76,8 @@ export default {
             posts: [],
             // meOrAdmin:false,
             // user_postId: []
-            currentUserId:localStorage.getItem('id')
+            currentUserId:localStorage.getItem('id'),
+            error: ''
         }
     },
     // props: ['likes', 'commentaires', 'posts'],
@@ -105,9 +113,23 @@ export default {
         
     },
     methods: {
-        deletePost () {},
+        async deletePost (index) {
+            let postId = this.posts[index].id;
+            await axios.delete(`api/post/${postId}`)
+                .then( response => {
+                    console.log(response);
+                    Swal.fire('Votre publication a été supprimé')
+                })
+                .catch (err => {
+                    console.log(err);
+                    this.error = "Problème server pour supprimer post. Réessayer plus tard"
+                })
+        },
 
-        modifyPost () {},
+        // modify post par user
+        modifyPost () {
+
+        },
         
         // ajouter/ delete like du post
         async ajouteLike (index) {

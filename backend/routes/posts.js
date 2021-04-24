@@ -11,6 +11,9 @@ router.post('/', auth, multer, postCtrl.createPost)
 // récupérer tous les publications                          // OK, testé
 router.get('/', auth, postCtrl.getAllPosts)
 
+//====> Misa à jour publication <====\\
+router.put("/:postId/:id/update", auth, multer, postCtrl.updatePost);
+
 //====> Suppression d'une publication <====\\               // OK testé
 router.delete("/:postId", auth, postCtrl.deletePost);
 
