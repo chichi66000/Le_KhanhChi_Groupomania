@@ -260,5 +260,15 @@ exports.createCommentaire = (req, res) => {
 
 // route pour récupérer les commentaires du publication
 exports.getCommentaires = (req, res) => {
-    console.log("OKK");
+    db.commentaires.findAll ( 
+        { where: {postId: req.params.postId}},
+        {order: [["id", "ASC"]]},)
+        .then( commentaires => {
+            res.status(200).json(commentaires)
+        })
+        .catch (err=>  res.status(500).json({
+            message: "problème récupérer commentaires",
+            err: err
+        }) 
+        )
 }
