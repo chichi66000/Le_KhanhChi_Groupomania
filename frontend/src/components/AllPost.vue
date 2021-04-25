@@ -1,53 +1,110 @@
 <template>
     <div>
         <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
-
+                <!-- afficher error -->
                 <error v-if="error" :error = "error"/>
-
+                <!-- Component pour créer nouveau publication -->
                 <AddPost/>
+
                 <h3 class="text-center mx-auto my-3 text-danger">Les actualités </h3>
 
                 <hr class="text-primary">
 
                 <!-- Partie pour afficher les actualité  -->
-                <div :key="post" v-for="( post, index) in posts" class="border text-justify p-5 my-5 bg-white">
+                <div :key="post.id" v-for="( post, index) in posts" class="border text-justify p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
                         <h4>{{post.title}}</h4>
 
-                        <!-- Si currentUser est author de l'artile, il peut le modifier et supprimer -->
+                        <!-- Si currentUser est auteur de l'article, il peut le modifier et supprimer -->
                         <div v-if="currentUserId==post.userId" class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li @click="modifyPost (index)"><a class="dropdown-item" href="#">Modifier</a></li>
+                                <li :key="post.id"><button type="button"   data-bs-target="#modify" data-bs-toggle="modal" class="btn dropdown-item" >Modifier</button></li>
                                 <li @click="deletePost (index)"><a class="dropdown-item" href="#">Supprimer</a></li>
+                            
                             </ul>
+
+                            
                         </div>
+
+                        <!-- Modal formulaire pour modify publication -->
+                            <div class="modal fade"  id="modify" tabindex="-1" aria-labelledby="modify" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Modifier votre publication</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            
+                                        </div>
+                                        <div class="modal-body">
+                                            <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
+                                                <div class="mb-3">
+                                                    <label for="recipient-name" class="col-form-label">Titre</label>
+                                                    <input v-model="title" type="text" class="form-control" id="titre" max="50"/>
+                                                        
+                                                    
+                                                    <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="message-text" class="col-form-label">Contenu</label>
+                                                    <textarea v-model="content" class="form-control" id="message-text"></textarea>
+                                                </div>
+
+                                            <!-- Zone pour modifier image et video -->
+                                                <div>
+                                                    <img class="img" v-bind:src="`${post.img_url}`">
+                                                </div>
+
+                                                <div class="input-group">
+                                        
+                                                    <input @change="loadImage" multiple ref="file" type="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+
+                                                    <label class="form-group"  id="inputGroupFileAddon03"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
+                                                    <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
+
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button @click="modifyPost(index)" type="button" class="btn btn-primary">Enregistrer</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
 
                     </div>
 
+                    <!-- afficher le corps de l'article -->
                     <div class="text-justify p-3">
                         <p >{{post.content}}</p>
                     </div>
 
+                    <!-- afficher image et vidéo    -->
                     <div class="embed-responsive">
                         <iframe class="embed-responsive-item" src="" width="300" height="150"></iframe>
                         
                     </div>
-                    <hr>
 
+                    <hr>
+                    <!-- bouton ajouter/ delete like -->
                     <div class="mx-auto my-1">
                         <button @click="ajouteLike(index)" class="btn fs-4 font-weight-bolder"><i class="bi bi-hand-thumbs-up"></i>{{post.likes.length}}</button>
-                        <!-- <button class="btn fs-4 font-weight-bolder">{{post.likes.length}}<i class="bi bi-hand-thumbs-down"></i></button> -->
+                        
 
                     </div>
 
+                    <!-- afficher les commentaires -->
                     <div>
-                        <input class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
+                            <input v-model="commentaires[index]" v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
 
-                        <div class="rounded-pill border text-center my-3 py-3 ">
-                            {{post.commentaires}}
+                        <div :key="commentaire" v-for="commentaire in commentaires[index]" class="rounded-pill border text-center my-3 py-3 ">
+                            {{commentaire.commentaires}}
                         </div>
                     </div>
                 </div>
@@ -77,11 +134,15 @@ export default {
             // meOrAdmin:false,
             // user_postId: []
             currentUserId:localStorage.getItem('id'),
-            error: ''
+            error: '',
+            title: '',
+            content:'',
+            commentaire:''
         }
     },
     // props: ['likes', 'commentaires', 'posts'],
 
+// récupérer tous les publications => OK, (enregistrer dans store de vuex: pas OK)
     async created () {
         await axios.get('api/post/')
             .then( response => {
@@ -102,7 +163,7 @@ export default {
                 // console.log("likes" + this.likes);      //OK
 
                 // console.log(response.data);    // OK
-                this.$store.dispatch ('post/getAllPosts', response.data)
+                this.$store.dispatch ('post/getAllPosts', response.data)        //not OK
             })
             .catch( err => {
                 console.log(err);
@@ -113,6 +174,7 @@ export default {
         
     },
     methods: {
+        // supprimer post par user
         async deletePost (index) {
             let postId = this.posts[index].id;
             await axios.delete(`api/post/${postId}`)
@@ -127,8 +189,9 @@ export default {
         },
 
         // modify post par user
-        modifyPost () {
-
+        modifyPost (index) {
+            let postId = this.posts[index].id 
+            console.log(postId)
         },
         
         // ajouter/ delete like du post
@@ -148,6 +211,29 @@ export default {
                     this.error = "Problème pour ajouter like"
                 })
         },
+
+        //ajouter commentaire
+        async setCommentaire(index) {
+            let postId = this.posts[index].id;
+            let userId = this.currentUserId;
+            // console.log( {postId}); console.log( {userId});     //OK
+            // console.log("commentaire " + this.commentaires[index]);     //OK
+            
+            await axios.post('/api/post/commentaire', {
+                commentaire: this.commentaires[index],
+                userId: userId,
+                postId: postId
+            })
+                .then( (response) => {
+                    console.log(response);
+                    this.error=""
+                })
+                .catch ( err => {
+                    console.log(err);
+                    this.error = "Problème pour enregistrer votre commentaire"
+                    Swal.fire("Veuillez ne pas utiliser les characters spéciaux")
+                })
+        }
     },
     computed: {
       ...mapState ( {
@@ -166,8 +252,17 @@ export default {
     .bi-hand-thumbs-up {
         color: red;
     }
-    .bi-hand-thumbs-down {
-        color: blue
+    .bi-camera-reels-fill {
+        color: #e42645
+    }
+    .bi-card-image {
+        color: #41b35d !important
+    }
+    .gray {
+        color: #e4e6e9 !important
+    }
+    .flou {
+        opacity: 0.5;
     }
 
 </style>

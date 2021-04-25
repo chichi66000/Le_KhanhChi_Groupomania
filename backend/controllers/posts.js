@@ -235,3 +235,30 @@ exports.getLike = (req, res) => {
       })
       .catch((error) => res.status(500).json(error));
   };
+
+
+// Création commentaire
+exports.createCommentaire = (req, res) => {
+    let regex = /[@&"()_$§*€£`+=\/;#]+$/;
+    if (validator.matches(req.body.commentaire, regex)) {
+    res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+    }
+    else {
+        console.log(req.body.commentaire)
+        db.commentaires.create({
+            commentaires: xss(req.body.commentaire),
+            postId: req.body.postId,
+            userId: req.body.userId,
+        })
+            .then( () => res.status(201).json("Commentaire enregistré"))
+            .catch( err => res.status(500).json( {
+                message: "Problème pour enregistrer commentaire",
+                err: err
+            }))
+    }
+}
+
+// route pour récupérer les commentaires du publication
+exports.getCommentaires = (req, res) => {
+    console.log("OKK");
+}

@@ -26,6 +26,12 @@ router.post("/:postId/:userId/like", auth, postCtrl.createLike);
 //====> Récupèration des likes d'une publication <====\\    // Ok testé
 router.get("/:postId/like", auth, postCtrl.getLike);        
 
+//====> Création commentaire <====\\
+router.post("/commentaire", auth, postCtrl.createCommentaire);
+
+//====> Récupèration des commentaires d'une publication <====\\
+router.get("/:postId/commentaires", auth, postCtrl.getCommentaires);
+
 
 
 
