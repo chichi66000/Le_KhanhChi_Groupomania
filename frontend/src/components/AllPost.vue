@@ -42,7 +42,7 @@
                                             <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
                                                 <div class="mb-3">
                                                     <label for="recipient-name" class="col-form-label">Titre</label>
-                                                    <input v-model="title" type="text" class="form-control" id="titre" max="50"/>
+                                                    <input v-model="title" type="text" class="form-control" id="titre" max="50" />
                                                         
                                                     
                                                     <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
@@ -101,7 +101,7 @@
 
                     <!-- afficher les commentaires -->
                     <div>
-                            <input v-model="commentaires[index]" v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
+                            <input    v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
 
                         <div :key="commentaire" v-for="commentaire in commentaires[index]" class="rounded-pill border text-center my-3 py-3 ">
                             {{commentaire.commentaires}}
@@ -126,6 +126,9 @@ export default {
         AddPost,
         Error
     },
+    // props: {
+    //     value: {type: Object, required: true}
+    // },
     data () {
         return {
             commentaires : [],
@@ -137,14 +140,29 @@ export default {
             error: '',
             title: '',
             content:'',
-            commentaire:''
+            comment:'',
+            intervall: null
         }
     },
     // props: ['likes', 'commentaires', 'posts'],
 
 // récupérer tous les publications => OK, (enregistrer dans store de vuex: pas OK)
-    async created () {
-        await axios.get('api/post/')
+    created () {
+        
+        this.interval = setInterval(this.getAllPosts, 5000)
+            
+    },
+    mounted() {
+        
+    },
+    beforeUnmount () {
+         clearInterval(this.interval)
+    },
+
+    methods: {
+        // récupérer tous les publications
+        async getAllPosts () {
+            await axios.get('api/post/')
             .then( response => {
                 // console.log(response);
                 // let currentUserId = localStorage.getItem('Id');
@@ -165,15 +183,14 @@ export default {
                 // console.log(response.data);    // OK
                 this.$store.dispatch ('post/getAllPosts', response.data)        //not OK
             })
+            
+            
             .catch( err => {
                 console.log(err);
                 this.error = "Problème connexion avec server"
-            })
-    },
-    mounted() {
-        
-    },
-    methods: {
+            });
+        },
+
         // supprimer post par user
         async deletePost (index) {
             let postId = this.posts[index].id;
@@ -217,10 +234,10 @@ export default {
             let postId = this.posts[index].id;
             let userId = this.currentUserId;
             // console.log( {postId}); console.log( {userId});     //OK
-            // console.log("commentaire " + this.commentaires[index]);     //OK
+            console.log("commentaire " + this.commentaires[index]);     //OK
             
             await axios.post('/api/post/commentaire', {
-                commentaire: this.commentaires[index],
+                comment: this.commentaires[index],
                 userId: userId,
                 postId: postId
             })
@@ -233,7 +250,12 @@ export default {
                     this.error = "Problème pour enregistrer votre commentaire"
                     Swal.fire("Veuillez ne pas utiliser les characters spéciaux")
                 })
-        }
+        },
+
+        // updateComment(key, value) {
+        //     this.$emit("input", {... this.value, [key]:value})
+        //     console.log(this.value); console.log(this.comment);
+        // }
     },
     computed: {
       ...mapState ( {
