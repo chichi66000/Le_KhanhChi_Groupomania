@@ -101,7 +101,7 @@
 
                     <!-- afficher les commentaires -->
                     <div>
-                            <input    v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
+                            <input v-model="commentaires"  v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
 
                         <div :key="commentaire" v-for="commentaire in commentaires[index]" class="rounded-pill border text-center my-3 py-3 ">
                             {{commentaire.commentaires}}

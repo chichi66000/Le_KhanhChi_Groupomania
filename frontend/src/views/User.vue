@@ -6,7 +6,7 @@
     <!-- Profil user-->
 
             <div class="row shadow rounded col d-flex mx-5 px-5 my-5 float-none">
-                <img  class="img-fluid" alt="avatar" :src= "getUrl()" />
+                <img  class="img-fluid" alt="avatar" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
                 <p class="align-self-center m-auto"> {{user.user.userPseudo }} </p>
 
             </div>
