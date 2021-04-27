@@ -102,8 +102,8 @@
                     <div>
                             <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
 
-                        <div :key="commentaire" v-for="commentaire in post.commentaires" class="rounded-pill border text-center my-3 py-3 ">
-                            {{commentaire.commentaires}}
+                        <div :key="commentaire.id" v-for="commentaire in post.commentaires" class="rounded-pill border text-center my-3 py-3 ">
+                            {{commentaire.commentaires}} {{commentaire.id}}
                         </div>
                     </div>
                 </div>
@@ -268,12 +268,14 @@ export default {
             // ajouter commentaire avec la touche enter
             
                 axios.post('/api/post/commentaire', {
-                    comment: saisie,
+                    commentaire: saisie,
                     userId: userId,
                     postId: postId
                 })
                     .then( response => {
                         console.log(response)
+                        this.posts[index].commentaires.push(saisie)
+                        
                     })
                     .catch( err => {
                         console.log(err);
