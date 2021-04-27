@@ -21,16 +21,15 @@
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li :key="post.id"><button type="button"   data-bs-target="#modify" data-bs-toggle="modal" class="btn dropdown-item" >Modifier</button></li>
+                                <li :key="post.id"><button type="button"   :data-bs-target="`#modify${post.id}`" data-bs-toggle="modal" class="btn dropdown-item" >Modifier</button></li>
                                 <li @click="deletePost (index)"><a class="dropdown-item" href="#">Supprimer</a></li>
                             
                             </ul>
 
-                            
                         </div>
 
                         <!-- Modal formulaire pour modify publication -->
-                            <div class="modal fade"  id="modify" tabindex="-1" aria-labelledby="modify" aria-hidden="true">
+                            <div class="modal fade"  :id="`modify${post.id}`" tabindex="-1" aria-labelledby="modify" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-scrollable">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -42,7 +41,7 @@
                                             <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
                                                 <div class="mb-3">
                                                     <label for="recipient-name" class="col-form-label">Titre</label>
-                                                    <input v-model="title" type="text" class="form-control" id="titre" max="50" />
+                                                    <input v-model="post.title" type="text" class="form-control" id="titre" max="50" />
                                                         
                                                     
                                                     <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
@@ -50,7 +49,7 @@
 
                                                 <div class="mb-3">
                                                     <label for="message-text" class="col-form-label">Contenu</label>
-                                                    <textarea v-model="content" class="form-control" id="message-text"></textarea>
+                                                    <textarea v-model="post.content" class="form-control" id="message-text" ></textarea>
                                                 </div>
 
                                             <!-- Zone pour modifier image et video -->
