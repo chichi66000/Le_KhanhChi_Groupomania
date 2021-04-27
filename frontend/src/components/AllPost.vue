@@ -53,8 +53,8 @@
                                                 </div>
 
                                             <!-- Zone pour modifier image et video -->
-                                                <div>
-                                                    <img class="img" v-bind:src="`${post.img_url}`">
+                                                <div v-if="post.img_url !=''">
+                                                    <img class="img" :src="`${post.img_url}`">
                                                 </div>
 
                                                 <div class="input-group">
@@ -100,9 +100,9 @@
 
                     <!-- afficher les commentaires -->
                     <div>
-                            <input v-model="commentaires"  v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
+                            <input v-model="comment" @input="loadComment(index)"  v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
 
-                        <div :key="commentaire" v-for="commentaire in commentaires[index]" class="rounded-pill border text-center my-3 py-3 ">
+                        <div :key="commentaire" v-for="commentaire in post.commentaires" class="rounded-pill border text-center my-3 py-3 ">
                             {{commentaire.commentaires}}
                         </div>
                     </div>
@@ -130,15 +130,15 @@ export default {
     // },
     data () {
         return {
-            commentaires : [],
-            likes: [],
+            // commentaires : [],
+            // likes: [],
             posts: [],
             // meOrAdmin:false,
             // user_postId: []
             currentUserId:localStorage.getItem('id'),
             error: '',
-            title: '',
-            content:'',
+            // title: '',
+            // content:'',
             comment:'',
             intervall: null
         }
@@ -147,8 +147,8 @@ export default {
 
 // récupérer tous les publications => OK, (enregistrer dans store de vuex: pas OK)
     created () {
-        
-        this.interval = setInterval(this.getAllPosts, 5000)
+        // update automatique tous les 1m
+        this.interval = setInterval(this.getAllPosts, 60000)
             
     },
     mounted() {
@@ -167,15 +167,15 @@ export default {
                 // let currentUserId = localStorage.getItem('Id');
                 this.posts = response.data;
                 // console.log(response.data.length);    //OK
-                for ( let i=0; i< response.data.length; i++) {
-                    this.commentaires.push (response.data[i].commentaires);
-                    this.likes.push(response.data[i].likes);
+                // for ( let i=0; i< response.data.length; i++) {
+                //     this.commentaires.push (response.data[i].commentaires);
+                //     this.likes.push(response.data[i].likes);
                     // this.user_postId.push(response.data[i].userId);
                     // console.log("admin" + this.$store.state.user.user.isAdmin);     //OK
                     // if ( currentUserId === this.user_postId[i]) {
                     //     this.meOrAdmin = true; console.log("meOrAdmin" + this.meOrAdmin);
                     // }
-                }
+                // }
                 // console.log("commentaire" + this.commentaires);   //OK
                 // console.log("likes" + this.likes);      //OK
 
@@ -228,27 +228,33 @@ export default {
                 })
         },
 
+        // récupérer value de input commentaire
+        loadComment (index) {
+            console.log(this.posts[index])
+            
+        },
+
         //ajouter commentaire
         async setCommentaire(index) {
             let postId = this.posts[index].id;
             let userId = this.currentUserId;
-            // console.log( {postId}); console.log( {userId});     //OK
-            console.log("commentaire " + this.commentaires[index]);     //OK
-            
-            await axios.post('/api/post/commentaire', {
-                comment: this.commentaires[index],
-                userId: userId,
-                postId: postId
-            })
-                .then( (response) => {
-                    console.log(response);
-                    this.error=""
-                })
-                .catch ( err => {
-                    console.log(err);
-                    this.error = "Problème pour enregistrer votre commentaire"
-                    Swal.fire("Veuillez ne pas utiliser les characters spéciaux")
-                })
+            console.log( {postId}); console.log( {userId});     //OK
+            // console.log("commentaire " + this.commentaires[index]);     //OK
+            // console.log(this.comment);
+            // await axios.post('/api/post/commentaire', {
+            //     comment: this.commentaires[index],
+            //     userId: userId,
+            //     postId: postId
+            // })
+            //     .then( (response) => {
+            //         console.log(response);
+            //         this.error=""
+            //     })
+            //     .catch ( err => {
+            //         console.log(err);
+            //         this.error = "Problème pour enregistrer votre commentaire"
+            //         Swal.fire("Veuillez ne pas utiliser les characters spéciaux")
+            //     })
         },
 
         // updateComment(key, value) {
