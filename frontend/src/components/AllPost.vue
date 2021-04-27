@@ -100,7 +100,7 @@
 
                     <!-- afficher les commentaires -->
                     <div>
-                            <input v-model="comment" @input="loadComment(index)"  v-on:keyup.enter="setCommentaire(index)" class="form-control " type="text" id="commentaire" name="commentaire" placeholder="Ecrivez une commentaire" />
+                            <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
 
                         <div :key="commentaire" v-for="commentaire in post.commentaires" class="rounded-pill border text-center my-3 py-3 ">
                             {{commentaire.commentaires}}
@@ -146,22 +146,10 @@ export default {
     // props: ['likes', 'commentaires', 'posts'],
 
 // récupérer tous les publications => OK, (enregistrer dans store de vuex: pas OK)
-    created () {
-        // update automatique tous les 1m
-        this.interval = setInterval(this.getAllPosts, 60000)
-            
-    },
-    mounted() {
-        
-    },
-    beforeUnmount () {
-         clearInterval(this.interval)
-    },
-
-    methods: {
-        // récupérer tous les publications
-        async getAllPosts () {
-            await axios.get('api/post/')
+    async created () {
+        // update automatique tous les 30s
+        // this.interval = setInterval(this.getAllPosts, 10000)
+        await axios.get('api/post/')
             .then( response => {
                 // console.log(response);
                 // let currentUserId = localStorage.getItem('Id');
@@ -188,6 +176,45 @@ export default {
                 console.log(err);
                 this.error = "Problème connexion avec server"
             });
+            
+    },
+    mounted() {
+        
+    },
+    beforeUnmount () {
+         clearInterval(this.interval)
+    },
+
+    methods: {
+        // récupérer tous les publications
+        async getAllPosts () {
+            // await axios.get('api/post/')
+            // .then( response => {
+            //     // console.log(response);
+            //     // let currentUserId = localStorage.getItem('Id');
+            //     this.posts = response.data;
+            //     // console.log(response.data.length);    //OK
+            //     // for ( let i=0; i< response.data.length; i++) {
+            //     //     this.commentaires.push (response.data[i].commentaires);
+            //     //     this.likes.push(response.data[i].likes);
+            //         // this.user_postId.push(response.data[i].userId);
+            //         // console.log("admin" + this.$store.state.user.user.isAdmin);     //OK
+            //         // if ( currentUserId === this.user_postId[i]) {
+            //         //     this.meOrAdmin = true; console.log("meOrAdmin" + this.meOrAdmin);
+            //         // }
+            //     // }
+            //     // console.log("commentaire" + this.commentaires);   //OK
+            //     // console.log("likes" + this.likes);      //OK
+
+            //     // console.log(response.data);    // OK
+            //     this.$store.dispatch ('post/getAllPosts', response.data)        //not OK
+            // })
+            
+            
+            // .catch( err => {
+            //     console.log(err);
+            //     this.error = "Problème connexion avec server"
+            // });
         },
 
         // supprimer post par user
@@ -230,32 +257,55 @@ export default {
 
         // récupérer value de input commentaire
         loadComment (index) {
-            console.log(this.posts[index])
+            // console.log(this.posts[index])      //OK
+            let postId = this.posts[index].id 
+            let userId = this.currentUserId;
+            // let input = document.getElementById(`commentaire${postId}`)
+            let saisie = document.getElementById(`commentaire${postId}`).value
+            console.log({saisie})
+            console.log({postId})                   //OK
+            // this.posts[index].commentaires.push(saisie)
+            // ajouter commentaire avec la touche enter
+            
+                axios.post('/api/post/commentaire', {
+                    comment: saisie,
+                    userId: userId,
+                    postId: postId
+                })
+                    .then( response => {
+                        console.log(response)
+                    })
+                    .catch( err => {
+                        console.log(err);
+                        this.error="Problème pour enregistrer votre commentaire"
+                    })
+                
             
         },
 
         //ajouter commentaire
-        async setCommentaire(index) {
-            let postId = this.posts[index].id;
-            let userId = this.currentUserId;
-            console.log( {postId}); console.log( {userId});     //OK
-            // console.log("commentaire " + this.commentaires[index]);     //OK
-            // console.log(this.comment);
-            // await axios.post('/api/post/commentaire', {
-            //     comment: this.commentaires[index],
-            //     userId: userId,
-            //     postId: postId
-            // })
-            //     .then( (response) => {
-            //         console.log(response);
-            //         this.error=""
-            //     })
-            //     .catch ( err => {
-            //         console.log(err);
-            //         this.error = "Problème pour enregistrer votre commentaire"
-            //         Swal.fire("Veuillez ne pas utiliser les characters spéciaux")
-            //     })
-        },
+        // async setCommentaire(index, saisie) {
+            
+        //     let postId = this.posts[index].id;
+        //     let userId = this.currentUserId;
+        //     console.log( {postId}); console.log( {userId});     //OK
+        //     // console.log("commentaire " + this.commentaires[index]);     //OK
+        //     console.log({saisie});
+        //     // await axios.post('/api/post/commentaire', {
+        //     //     comment: this.commentaires[index],
+        //     //     userId: userId,
+        //     //     postId: postId
+        //     // })
+        //     //     .then( (response) => {
+        //     //         console.log(response);
+        //     //         this.error=""
+        //     //     })
+        //     //     .catch ( err => {
+        //     //         console.log(err);
+        //     //         this.error = "Problème pour enregistrer votre commentaire"
+        //     //         Swal.fire("Veuillez ne pas utiliser les characters spéciaux")
+        //     //     })
+        // },
 
         // updateComment(key, value) {
         //     this.$emit("input", {... this.value, [key]:value})
