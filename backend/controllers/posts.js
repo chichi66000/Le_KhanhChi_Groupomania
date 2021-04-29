@@ -52,7 +52,10 @@ exports.getAllPosts = (req, res) => {
     models.posts
       .findAll({
         include: [ models.likes, models.commentaires],
-        order: [["id", "DESC"]],
+        order: [
+            ["id", "DESC"],
+            [models.commentaires, "id", 'DESC']
+        ],
       })
       .then((posts) => {
         res.status(200).json(posts);
@@ -150,7 +153,9 @@ exports.getUserPosts = (req, res) => {
       .findAll({
         where: {userId: req.params.id},
         include: [ models.likes, models.commentaires],
-        order: [["id", "DESC"]],
+        order: [
+            ["id", "DESC"], [models.commentaires, "id", 'DESC']
+        ],
       })
       .then((posts) => {
         res.status(200).json(posts);
@@ -262,7 +267,7 @@ exports.createCommentaire = (req, res) => {
 exports.getCommentaires = (req, res) => {
     db.commentaires.findAll ( 
         { where: {postId: req.params.postId}},
-        {order: [["id", "ASC"]]},)
+        {order: [["id", "DESC"]]},)
         .then( commentaires => {
             res.status(200).json(commentaires)
         })

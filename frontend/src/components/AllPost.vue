@@ -70,7 +70,7 @@
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button @click="modifyPost(index)" type="submit" class="btn btn-primary">Enregistrer</button>
+                                            <button @click="modifyPost (index)" :id="`submitModify${post.id}`" type="submit" class="btn btn-primary">Enregistrer</button>
                                         </div>
                                     </div>
                                 </div>
@@ -103,7 +103,7 @@
                             <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
 
                         <div :key="commentaire.id" v-for="commentaire in post.commentaires" class="rounded-pill border text-center my-3 py-3 ">
-                            {{commentaire.commentaires}} {{commentaire.id}}
+                            {{commentaire.commentaires}}
                         </div>
                     </div>
                 </div>
@@ -140,9 +140,16 @@ export default {
     // props: ['likes', 'commentaires', 'posts'],
 
 // récupérer tous les publications => OK, (enregistrer dans store de vuex: pas OK)
-    async created () {
-        
-        await axios.get('api/post/')
+     created () {
+        //récupérer tous les publications dès début
+        this.getAllPosts()
+            
+    },
+
+    methods: {
+        // récupérer tous les publications
+        async getAllPosts () {
+            await axios.get('api/post/')
             .then( response => {
                 this.posts = response.data;
                 this.$store.dispatch ('post/getAllPosts', response.data)        //not OK
@@ -151,45 +158,6 @@ export default {
                 console.log(err);
                 this.error = "Problème connexion avec server"
             });
-            
-    },
-    mounted() {
-        
-    },
-    beforeUnmount () {
-         clearInterval(this.interval)
-    },
-
-    methods: {
-        // récupérer tous les publications
-        async getAllPosts () {
-            // await axios.get('api/post/')
-            // .then( response => {
-            //     // console.log(response);
-            //     // let currentUserId = localStorage.getItem('Id');
-            //     this.posts = response.data;
-            //     // console.log(response.data.length);    //OK
-            //     // for ( let i=0; i< response.data.length; i++) {
-            //     //     this.commentaires.push (response.data[i].commentaires);
-            //     //     this.likes.push(response.data[i].likes);
-            //         // this.user_postId.push(response.data[i].userId);
-            //         // console.log("admin" + this.$store.state.user.user.isAdmin);     //OK
-            //         // if ( currentUserId === this.user_postId[i]) {
-            //         //     this.meOrAdmin = true; console.log("meOrAdmin" + this.meOrAdmin);
-            //         // }
-            //     // }
-            //     // console.log("commentaire" + this.commentaires);   //OK
-            //     // console.log("likes" + this.likes);      //OK
-
-            //     // console.log(response.data);    // OK
-            //     this.$store.dispatch ('post/getAllPosts', response.data)        //not OK
-            // })
-            
-            
-            // .catch( err => {
-            //     console.log(err);
-            //     this.error = "Problème connexion avec server"
-            // });
         },
 
         // supprimer post par user
@@ -198,7 +166,8 @@ export default {
             await axios.delete(`api/post/${postId}`)
                 .then( response => {
                     console.log(response);
-                    Swal.fire('Votre publication a été supprimé')
+                    Swal.fire('Votre publication a été supprimé');
+                    this.getAllPosts()
                 })
                 .catch (err => {
                     console.log(err);
@@ -226,15 +195,19 @@ export default {
                         // envoyer 1 message OK pour utilisateur
                         this.$store.dispatch ('post/getAllPosts', response.data)
                         Swal.fire("Votre article a été modifié")
-                        // fermer manuellement la modal 
-                        
                         this.error=""
+                        this.getAllPosts()
                         
                     })
                     .catch( err => {
                         console.log(err);
                         this.error = "Problème pour enregistrer votre article"
                     })
+                
+                    // fermer manuellement la modal
+                    // document.getElementById(`modify${postId}`).modal('hide')
+                        
+ 
         },
         
         // ajouter/ delete like du post
@@ -248,24 +221,23 @@ export default {
                 .then( response => {
                     console.log(response);
                     // mettre à jour tableau likes sans rafraichir la page
+                    this.getAllPosts()
                     })
                 .catch( err => {
                     console.log(err);
                     this.error = "Problème pour ajouter like"
                 })
         },
-        forceRerender() {
-            this.componentKey += 1;
-        },
-        // récupérer value de input commentaire
+
+        // récupérer value de input commentaire et créer commentaire
         loadComment (index) {
-            // console.log(this.posts[index])      //OK
+            
             let postId = this.posts[index].id 
             let userId = this.currentUserId;
+            // récupérer la value de champs input choisi
             let saisie = document.getElementById(`commentaire${postId}`).value
             
             // ajouter commentaire avec la touche enter puis envoyer au server
-            
                 axios.post('/api/post/commentaire', {
                     commentaire: saisie,
                     userId: userId,
@@ -275,8 +247,11 @@ export default {
                     .then( response => {
                         console.log(response)
                         // ajouter ce commentaire dans le tableau commentaire du post
-                        this.posts[index].commentaires.push(saisie)
-                        this.forceRerender()
+                        this.posts[index].commentaires.unshift(saisie)
+                        // update/reload la page
+                        this.getAllPosts()
+                        // réinitialiser la champs input => vide
+                        document.getElementById(`commentaire${postId}`).value=""   
                     })
                     .catch( err => {
                         console.log(err);
@@ -286,34 +261,6 @@ export default {
             
         },
 
-        //ajouter commentaire
-        // async setCommentaire(index, saisie) {
-            
-        //     let postId = this.posts[index].id;
-        //     let userId = this.currentUserId;
-        //     console.log( {postId}); console.log( {userId});     //OK
-        //     // console.log("commentaire " + this.commentaires[index]);     //OK
-        //     console.log({saisie});
-        //     // await axios.post('/api/post/commentaire', {
-        //     //     comment: this.commentaires[index],
-        //     //     userId: userId,
-        //     //     postId: postId
-        //     // })
-        //     //     .then( (response) => {
-        //     //         console.log(response);
-        //     //         this.error=""
-        //     //     })
-        //     //     .catch ( err => {
-        //     //         console.log(err);
-        //     //         this.error = "Problème pour enregistrer votre commentaire"
-        //     //         Swal.fire("Veuillez ne pas utiliser les characters spéciaux")
-        //     //     })
-        // },
-
-        // updateComment(key, value) {
-        //     this.$emit("input", {... this.value, [key]:value})
-        //     console.log(this.value); console.log(this.comment);
-        // }
     },
     computed: {
       ...mapState ( {

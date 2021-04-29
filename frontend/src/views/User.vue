@@ -93,7 +93,7 @@ export default {
     },
     
     async created () {
-        
+        this.getUserPosts()
     },
     methods: {
         // user supprimer son compte 
