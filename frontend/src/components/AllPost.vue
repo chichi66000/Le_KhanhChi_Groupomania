@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+        <div :key="componentKey" class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
                 <!-- afficher error -->
                 <error v-if="error" :error = "error"/>
                 <!-- Component pour créer nouveau publication -->
@@ -59,9 +59,9 @@
 
                                                 <div class="input-group">
                                         
-                                                    <input @change="loadImage" multiple ref="file" type="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                                    <input v-on="post.img_url" multiple ref="file" type="file" class="form-control-file" :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
-                                                    <label class="form-group"  id="inputGroupFileAddon03"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
+                                                    <label class="form-group"  :for="`inputFile${post.id}`"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
 
                                                 </div>
@@ -70,7 +70,7 @@
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button @click="modifyPost(index)" type="button" class="btn btn-primary">Enregistrer</button>
+                                            <button @click="modifyPost(index)" type="submit" class="btn btn-primary">Enregistrer</button>
                                         </div>
                                     </div>
                                 </div>
@@ -130,48 +130,23 @@ export default {
     // },
     data () {
         return {
-            // commentaires : [],
-            // likes: [],
             posts: [],
-            // meOrAdmin:false,
-            // user_postId: []
             currentUserId:localStorage.getItem('id'),
             error: '',
-            // title: '',
-            // content:'',
-            comment:'',
-            intervall: null
+            intervall: null,
+            componentKey: 0,
         }
     },
     // props: ['likes', 'commentaires', 'posts'],
 
 // récupérer tous les publications => OK, (enregistrer dans store de vuex: pas OK)
     async created () {
-        // update automatique tous les 30s
-        // this.interval = setInterval(this.getAllPosts, 10000)
+        
         await axios.get('api/post/')
             .then( response => {
-                // console.log(response);
-                // let currentUserId = localStorage.getItem('Id');
                 this.posts = response.data;
-                // console.log(response.data.length);    //OK
-                // for ( let i=0; i< response.data.length; i++) {
-                //     this.commentaires.push (response.data[i].commentaires);
-                //     this.likes.push(response.data[i].likes);
-                    // this.user_postId.push(response.data[i].userId);
-                    // console.log("admin" + this.$store.state.user.user.isAdmin);     //OK
-                    // if ( currentUserId === this.user_postId[i]) {
-                    //     this.meOrAdmin = true; console.log("meOrAdmin" + this.meOrAdmin);
-                    // }
-                // }
-                // console.log("commentaire" + this.commentaires);   //OK
-                // console.log("likes" + this.likes);      //OK
-
-                // console.log(response.data);    // OK
                 this.$store.dispatch ('post/getAllPosts', response.data)        //not OK
             })
-            
-            
             .catch( err => {
                 console.log(err);
                 this.error = "Problème connexion avec server"
@@ -232,9 +207,34 @@ export default {
         },
 
         // modify post par user
-        modifyPost (index) {
+        async modifyPost (index) {
             let postId = this.posts[index].id 
-            console.log(postId)
+            let inputFile = document.getElementById(`inputFile${postId}`).files
+            let form = new FormData();
+            for( var i = 0; i < inputFile.length; i++ ) {
+                let file = inputFile[i];
+                form.append('files[' + i + ']', file);
+            }
+                
+                form.append('title', this.posts[index].title)
+                form.append('content', this.posts[index].content)
+
+                // envoyer formulaire par axios, recevoir la response
+                await axios.put(`/api/post/${postId}/${this.currentUserId}/update`, form)
+                    .then( response => {
+                        console.log(response);
+                        // envoyer 1 message OK pour utilisateur
+                        this.$store.dispatch ('post/getAllPosts', response.data)
+                        Swal.fire("Votre article a été modifié")
+                        // fermer manuellement la modal 
+                        
+                        this.error=""
+                        
+                    })
+                    .catch( err => {
+                        console.log(err);
+                        this.error = "Problème pour enregistrer votre article"
+                    })
         },
         
         // ajouter/ delete like du post
@@ -254,28 +254,29 @@ export default {
                     this.error = "Problème pour ajouter like"
                 })
         },
-
+        forceRerender() {
+            this.componentKey += 1;
+        },
         // récupérer value de input commentaire
         loadComment (index) {
             // console.log(this.posts[index])      //OK
             let postId = this.posts[index].id 
             let userId = this.currentUserId;
-            // let input = document.getElementById(`commentaire${postId}`)
             let saisie = document.getElementById(`commentaire${postId}`).value
-            console.log({saisie})
-            console.log({postId})                   //OK
-            // this.posts[index].commentaires.push(saisie)
-            // ajouter commentaire avec la touche enter
+            
+            // ajouter commentaire avec la touche enter puis envoyer au server
             
                 axios.post('/api/post/commentaire', {
                     commentaire: saisie,
                     userId: userId,
                     postId: postId
                 })
+                // récupérer le reponse OK du server puis update les commentaires
                     .then( response => {
                         console.log(response)
+                        // ajouter ce commentaire dans le tableau commentaire du post
                         this.posts[index].commentaires.push(saisie)
-                        
+                        this.forceRerender()
                     })
                     .catch( err => {
                         console.log(err);
