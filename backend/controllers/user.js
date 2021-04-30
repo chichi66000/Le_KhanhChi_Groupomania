@@ -74,7 +74,7 @@ exports.signup = ((req, res) => {
                             .then( hash => {
                             // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
                                 let avatarName = "";
-                                if ( req.file) { avatarName = req.file.filename}
+                                if ( req.files) { avatarName = req.files[0].filename}
                                 else { avatarName = "avatar_default.png"} 
                                     // créer user
                                 const newUser = db.Users.create({
@@ -320,16 +320,17 @@ exports.updateUser = (req, res, next) => {
     db.Users.findOne ({ where: {id: req.params.id}} )
         .then( user => {
 
-            // si update avec photot avatar
-            if (req.file) {
-                const filename = user.avatar;
+            // si update avec photo avatar
+            if (req.files) {
+                console.log(req.files)
+                const file = user.avatar;
                 // si avatar du user est "avatar_default"; on fait rien
-                if( filename.includes("avatar_default.png")) {
-                    console.log({filename});
+                if( file.includes("avatar_default.png")) {
+                    console.log("file avatar rien à effacer");
                 }
                 // si non, on supprimer avatar dans le fichier images
                 else {
-                    fs.unlinkSync(`images/${filename}`, function (err) {
+                    fs.unlink(`images/${file}`, function (err) {
                         if (err) { throw err; }
                         // if no error, file has been deleted successfully
                         else { 
@@ -338,10 +339,10 @@ exports.updateUser = (req, res, next) => {
                     })
                 }
                 // Puis update avatar dans BDD
-                console.log(req.file.filename);     //OK
+                console.log("file nouveau" + req.files[0].filename);     //OK
                 db.Users.update( {
                     ...user,
-                    avatar: req.file.filename},
+                    avatar: req.files[0].filename},
                     {where: {id:req.params.id}})
                     .then( () => { console.log("Update avatar réussi")})
                     .catch(err => {
@@ -351,7 +352,7 @@ exports.updateUser = (req, res, next) => {
             }
             
             //si update avec email: vérifier si email est déjà présenté dans BDD?
-            if (req.body.email.length >0 && req.body.email !=undefined) {
+            if (req.body.email.length >0 && req.body.email !="undefined") {
                 console.log("Il y a email dans update");
                 db.Users.findOne({where: {email:req.body.email}})
                     .then( user => {
@@ -371,7 +372,7 @@ exports.updateUser = (req, res, next) => {
             }
 
             //si update avec pseudo: vérifier si pseudo est déjà présenté dans BDD?
-            if (req.body.pseudo.length >0 && req.body.pseudo !=undefined) {
+            if (req.body.pseudo.length >0 && req.body.pseudo !="undefined") {
                 console.log("Il y a pseudo dans update");
 
                 db.Users.findOne({where: {pseudo:req.body.pseudo}})
@@ -392,8 +393,7 @@ exports.updateUser = (req, res, next) => {
             }
 
             // si update avec fonction:
-            if(req.body.fonction =="undefined") { console.log("Fonction est undefined");}
-            else {
+            if(req.body.fonction.length >0 &&req.body.fonction !="undefined") {
                 newFonction = req.body.fonction;
                 console.log({newFonction});
                 db.Users.update({...user,fonction: newFonction},{ where: {id: req.params.id}} )
@@ -402,8 +402,7 @@ exports.updateUser = (req, res, next) => {
                     } )
                     .catch( err => {console.log(err); res.status(500).json("Problème update fonction")} )
             }
-            
-            
+
             // envoyer status 200 si tout va bien
             res.status(200).json( {
                 message: "Update profil réussi",

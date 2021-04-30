@@ -51,7 +51,12 @@ exports.createPost = (req, res) => {
 exports.getAllPosts = (req, res) => {
     models.posts
       .findAll({
-        include: [ models.likes, models.commentaires],
+        include: [ 
+            {model: models.likes},
+            {model: models.commentaires},
+            {model: models.users,
+            attributes: ['avatar', 'pseudo']}
+         ],
         order: [
             ["id", "DESC"],
             [models.commentaires, "id", 'DESC']

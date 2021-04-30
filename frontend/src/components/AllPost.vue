@@ -13,6 +13,8 @@
                 <!-- Partie pour afficher les actualité  -->
                 <div :key="post.id" v-for="( post, index ) in posts" class="border text-justify p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
+                        <img class="img" :src="`http://localhost:5000/images/${post.User.avatar}`" />
+
                         <h4>{{post.title}}</h4>
 
                         <!-- Si currentUser est auteur de l'article, il peut le modifier et supprimer -->
@@ -278,6 +280,11 @@ export default {
                     }
                 }
             }
+        },
+
+        // récupérer avatar des users publications
+        getAvatar() {
+
         },
     },
     computed: {
