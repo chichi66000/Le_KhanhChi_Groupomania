@@ -35,12 +35,13 @@
 
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
-                        <button @click="getUserPosts" class="accordion-button btn-primary fs-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <button @click="getUserPosts" class="accordion-button btn-primary fs-4" type="button" data-bs-toggle="collapseOne" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" >
                             Mes publications
                         </button>
+
                     </h2>
 
-                    <div :key="userPost" v-for="(userPost, index) in userPosts"  id="collapseOne" class="accordion-collapse collapse show " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div :key="userPost" v-for="(userPost, index) in userPosts"  id="collapseOne" class="accordion-collapse collapse show p-2 my-2" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body shadow my-5">
 
                             <div class="d-flex justify-content-between">
