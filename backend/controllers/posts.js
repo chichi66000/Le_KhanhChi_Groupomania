@@ -61,7 +61,6 @@ exports.getAllPosts = (req, res) => {
         res.status(200).json(posts);
       })
       .catch((error) => res.status(500).json(error));
-    // console.log("OKKKK");
   };
 
 exports.updatePost = (req, res) => {

@@ -79,7 +79,9 @@ export default {
             error:'',
         }
     },
-
+    props: {
+        method: { type: Function },
+    },
     methods: {
 
         async handleSubmit () {
@@ -108,7 +110,7 @@ export default {
                         // fermer manuellement la modal 
                         // document.querySelector('.modal').hide('modal')           // ne marche pas
                         this.error=""
-                        
+                        this.method()
                     })
                     .catch( err => {
                         console.log(err);

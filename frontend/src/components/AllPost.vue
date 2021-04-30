@@ -4,7 +4,7 @@
                 <!-- afficher error -->
                 <error v-if="error" :error = "error"/>
                 <!-- Component pour créer nouveau publication -->
-                <AddPost/>
+                <AddPost :method="getAllPosts"/>
 
                 <h3 class="text-center mx-auto my-3 text-danger">Les actualités </h3>
 
@@ -16,7 +16,7 @@
                         <h4>{{post.title}}</h4>
 
                         <!-- Si currentUser est auteur de l'article, il peut le modifier et supprimer -->
-                        <div v-if="currentUserId==post.userId" class="dropdown">
+                        <div v-if="currentUserId==post.userId || user.user.isAdmin===true" class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-pencil"></i>
                             </button>
@@ -85,10 +85,12 @@
                     </div>
 
                     <!-- afficher image et vidéo    -->
-                    <div class="embed-responsive">
-                        <iframe class="embed-responsive-item" src="" width="300" height="150"></iframe>
+                    <!-- <div v-if="images[index] !=='' " class="embed-responsive">
+                        <div  :key="file" v-for="file in files[index]">
+                            <img :src="getImage(index)" class="img" width="300" height="150" />
+                        </div>
                         
-                    </div>
+                    </div> -->
 
                     <hr>
                     <!-- bouton ajouter/ delete like -->
@@ -133,8 +135,8 @@ export default {
             posts: [],
             currentUserId:localStorage.getItem('id'),
             error: '',
-            intervall: null,
-            componentKey: 0,
+            images: [],
+            // files: []
         }
     },
     // props: ['likes', 'commentaires', 'posts'],
@@ -152,7 +154,10 @@ export default {
             await axios.get('api/post/')
             .then( response => {
                 this.posts = response.data;
-                this.$store.dispatch ('post/getAllPosts', response.data)        //not OK
+                for ( let i=0; i< this.posts.length; i++) {
+                    this.images.push(this.posts[i].img_url);
+                    
+                }
             })
             .catch( err => {
                 console.log(err);
@@ -261,6 +266,20 @@ export default {
             
         },
 
+        // récupérer le nom de image pour afficher
+        getImage(index) {
+            if ( this.images[index]!=="") {
+                let files =[]
+                files =this.images[index].split(' ')
+                console.log(files)
+                for (let i=0; i< files.length; i++) {
+                    let names = files[i]
+                    if ( names !== "") {
+                        return `localhost:5000/images/${names}`
+                    }
+                }
+            }
+        },
     },
     computed: {
       ...mapState ( {
