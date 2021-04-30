@@ -13,9 +13,16 @@
                 <!-- Partie pour afficher les actualité  -->
                 <div :key="post.id" v-for="( post, index ) in posts" class="border text-justify p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
-                        <img class="img" :src="`http://localhost:5000/images/${post.User.avatar}`" />
+                        <div>
+                            <img class="b-avatar rounded-circle" :src="`http://localhost:5000/images/${post.User.avatar}`" />
+                            <p >{{post.User.pseudo}}</p>
+                        </div>
 
-                        <h4>{{post.title}}</h4>
+                        <div>
+                            <h4>{{post.title}}</h4>
+                            <p class="font_light"> update: {{post.updatedAt}}</p>   
+                        </div>
+                        
 
                         <!-- Si currentUser est auteur de l'article, il peut le modifier et supprimer -->
                         <div v-if="currentUserId==post.userId || user.user.isAdmin===true" class="dropdown">
@@ -315,6 +322,10 @@ export default {
     }
     .flou {
         opacity: 0.5;
+    }
+    .font_light {
+        font-size: 0.7rem !important;
+        opacity: 0.5 !important;
     }
 
 </style>

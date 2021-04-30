@@ -6,9 +6,9 @@
     <!-- Profil user-->
 
             <!-- Partie afficher avatar -->
-            <div class="row shadow rounded col d-flex mx-auto px-5 my-5 float-none">
-                <img class="img-fluid m-2 text-left " alt="avatar" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
-                <p class="m-2 p-2 text-left font-weight-bold"> {{user.user.userPseudo }} </p>
+            <div class="row shadow rounded col d-flex mx-auto px-5 my-5">
+                <img class="img-fluid my-2 rounded-circle " alt="avatar" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
+                <p class=" font-weight-bold"> {{user.user.userPseudo }} </p>
 
             </div>
 
