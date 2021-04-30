@@ -11,7 +11,7 @@
                 <hr class="text-primary">
 
                 <!-- Partie pour afficher les actualité  -->
-                <div :key="post.id" v-for="( post, index) in posts" class="border text-justify p-5 my-5 bg-white">
+                <div :key="post.id" v-for="( post, index ) in posts" class="border text-justify p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
                         <h4>{{post.title}}</h4>
 
