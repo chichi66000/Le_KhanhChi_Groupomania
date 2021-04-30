@@ -35,13 +35,13 @@
 
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
-                        <button @click="getUserPosts" class="accordion-button btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <button @click="getUserPosts" class="accordion-button btn-primary fs-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                             Mes publications
                         </button>
                     </h2>
 
-                    <div :key="userPost" v-for="(userPost, index) in userPosts"  id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                        <div class="accordion-body shadow my-3">
+                    <div :key="userPost" v-for="(userPost, index) in userPosts"  id="collapseOne" class="accordion-collapse collapse show " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body shadow my-5">
 
                             <div class="d-flex justify-content-between">
 
@@ -113,7 +113,7 @@
 
                             <!-- Le contenu -->
                             <div>
-                                <p class="p-2 text-center"> {{userPost.content}}</p>
+                                <p class="p-2 "> {{userPost.content}}</p>
                                 
                             </div>
 
@@ -124,6 +124,11 @@
 
                             <hr class="text-primary">
 
+                            <!-- Les likes -->
+                            <div>
+                                <i class="bi bi-hand-thumbs-up"></i> {{userPost.likes.length}}
+                            </div>
+
                             <!-- Les commentaires -->
                             <div>
                                 <p class="text-right font-italic"> Commentaires</p>
@@ -132,10 +137,6 @@
                                     {{commentaire.commentaires}}
                                 </div>
                             </div>
-                            <!-- <div :key="lien" v-for="(lien) in liens" >
-                                {{lien}}
-                                <img  :src="getUser_Url_img(index)"/>
-                            </div> -->
                             
                         </div>
                     </div>
@@ -145,7 +146,7 @@
 
 
             <!-- Supprimer le compte user -->
-            <div class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+            <div class="col shadow border border-danger rounded m-auto mt-3 mb-3 px-5 py-5">
                 <h3 class="text-danger">Supprimer le compte</h3>
                 <p>Si vous souhaitez supprimer votre compte, cliquez sur le button et confirmer</p>
                 <button class="btn btn-danger" @click.prevent = "deleteUser">Supprimer mon compte</button>
@@ -290,6 +291,21 @@ export default {
                     // document.getElementById(`modify${postId}`).modal('hide')
                         
  
+        },
+
+        // supprimer post par user
+        async deletePost (index) {
+            let postId = this.userPosts[index].id;
+            await axios.delete(`api/post/${postId}`)
+                .then( response => {
+                    console.log(response);
+                    Swal.fire('Votre publication a été supprimé');
+                    this.getUserPosts()
+                })
+                .catch (err => {
+                    console.log(err);
+                    this.error = "Problème server pour supprimer post. Réessayer plus tard"
+                })
         },
 
         // Récupérer le lien de l'images 

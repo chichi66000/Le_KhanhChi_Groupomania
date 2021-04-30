@@ -97,7 +97,6 @@
                     <div class="mx-auto my-1">
                         <button @click="ajouteLike(index)" class="btn fs-4 font-weight-bolder"><i class="bi bi-hand-thumbs-up"></i>{{post.likes.length}}</button>
                         
-
                     </div>
 
                     <!-- afficher les commentaires -->
