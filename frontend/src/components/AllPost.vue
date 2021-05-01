@@ -11,16 +11,16 @@
                 <hr class="text-primary">
 
                 <!-- Partie pour afficher les actualité  -->
-                <div :key="post.id" v-for="( post, index ) in posts" class="border text-justify p-5 my-5 bg-white">
+                <div :key="post.id" v-for="( post, index ) in posts" class="border  p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
                         <div>
-                            <img class="b-avatar rounded-circle" :src="`http://localhost:5000/images/${post.User.avatar}`" />
+                            <img class="b-avatar rounded-circle mx-2" :src="`http://localhost:5000/images/${post.User.avatar}`" />
                             <p >{{post.User.pseudo}}</p>
+                            <p class="font_light"> publié {{post.updatedAt}}</p>   
                         </div>
 
                         <div>
-                            <h4>{{post.title}}</h4>
-                            <p class="font_light"> update: {{post.updatedAt}}</p>   
+                            <h4 class="mx-2 px-2">{{post.title}}</h4>
                         </div>
                         
 
@@ -94,12 +94,21 @@
                     </div>
 
                     <!-- afficher image et vidéo    -->
-                    <!-- <div v-if="images[index] !=='' " class="embed-responsive">
-                        <div  :key="file" v-for="file in files[index]">
-                            <img :src="getImage(index)" class="img" width="300" height="150" />
+                    <div v-if="post.img_url !='' "  class="">
+                        <div v-if="post.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
+                            <img class="img img-fluid" :src="getImage(index)" />
+                        </div>
+<!-- 
+                        <div v-if="post.img_url.split('.')[1] == ('avi' || 'mp4' || 'wav' || 'flv' || 'mov' || 'wmv' || 'movie' ) " class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item"
+                                :src="getVideo(index)" allowfullscreen>
+                            </iframe>
+                        </div> -->
+                        <div v-else class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" :src="getImage (index)" allowfullscreen></iframe>
                         </div>
                         
-                    </div> -->
+                    </div>
 
                     <hr>
                     <!-- bouton ajouter/ delete like -->
@@ -143,7 +152,8 @@ export default {
             posts: [],
             currentUserId:localStorage.getItem('id'),
             error: '',
-            images: [],
+            // video: false,
+            // image: false,
             // files: []
         }
     },
@@ -162,10 +172,6 @@ export default {
             await axios.get('api/post/')
             .then( response => {
                 this.posts = response.data;
-                for ( let i=0; i< this.posts.length; i++) {
-                    this.images.push(this.posts[i].img_url);
-                    
-                }
             })
             .catch( err => {
                 console.log(err);
@@ -274,22 +280,28 @@ export default {
 
         // récupérer le nom de image pour afficher
         getImage(index) {
-            if ( this.images[index]!=="") {
-                let files =[]
-                files =this.images[index].split(' ')
-                console.log(files)
-                for (let i=0; i< files.length; i++) {
-                    let names = files[i]
-                    if ( names !== "") {
-                        return `localhost:5000/images/${names}`
-                    }
-                }
+            let url = this.posts[index].img_url
+            console.log(url);
+            if (url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')) {
+                console.log("c'est image")
+                // this.image = true
+                return `http://localhost:5000/images/${url}`
             }
+            else {
+                return `http://localhost:5000/images/${url}`
+            }
+            // console.log(url)
         },
 
-        // récupérer avatar des users publications
-        getAvatar() {
+        getVideo(index) {
+            let url = this.posts[index].img_url
+            if (url.split('.')[1] == ('avi' || 'mp4' || 'wav' || 'flv' || 'mov' || 'wmv' || 'movie' )) {
+                console.log("c'est video")
+                console.log(url);
 
+                // this.video = true
+                return `http://localhost:5000/images/${url}`
+            }
         },
     },
     computed: {
