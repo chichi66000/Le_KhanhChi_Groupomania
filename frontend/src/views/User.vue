@@ -1,7 +1,7 @@
 <template>
     <div class="container">
    
-        <div class="container mx-auto mt-5 mb-5 col-11 col-sm-11 col-md-10 col-lg-10 col-xl-10">
+        <div class="container mx-auto mt-5 mb-5 col ">
             <error v-if="error" :error = "error"/>
     <!-- Profil user-->
 
@@ -19,19 +19,19 @@
                 <p class="">Pseudo : <strong>{{ user.user.userPseudo }}</strong>  </p>
                 <!-- <p class="">Avatar : <strong>{{ user.user.avatar }}</strong>  </p> -->
 
-                <div class="text-center">
-                    <button class="col col-md-6 col-lg-6 mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updateUser">MODIFIER PROFIL</button> 
-                    <button class="col col-md-6 col-lg-6 mx-1 btn btn-primary mb-3 text-center" @click.prevent = "updatePass">MODIFIER PASSWORD</button>
+                <div class="text-center d-flex flex-column mx-auto">
+                    <button class="col col-md-6 col-lg-4 mx-auto btn btn-primary mb-3 text-center" @click.prevent = "updateUser">MODIFIER PROFIL</button> 
+                    <button class="col col-md-6 col-lg-4 mx-auto btn btn-primary mb-3 text-center" @click.prevent = "updatePass">MODIFIER PASSWORD</button>
                 </div>
             </div>
 
             <!-- Ce bloc est pour admin récupérer tous les user et delete 1 user -->
             <div v-if="user.user.isAdmin===true" class="text-center col shadow rounded mx-auto mt-3 mb-3 px-5 py-5">
-                <button class="btn col col-md-6 col-lg-6 mx-auto btn btn-primary mb-3 text-center" @click.prevent = "admin">Gérer les utilisateurs</button>
+                <button class="btn col col-md-6 col-lg-4 mx-auto btn btn-primary mb-3 text-center" @click.prevent = "admin">Gérer les utilisateurs</button>
             </div>
 
             <!-- Mes publications, quand on click, les articles s'affichent -->
-            <div class="accordion col shadow rounded mx-auto my-3 px-5 py-5" id="accordionExample">
+            <div class="accordion col shadow rounded mx-auto my-3 py-5" id="accordionExample">
 
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
@@ -148,7 +148,7 @@
                                         <!-- afficher userAvatar et son pseudo -->
                                     <div class="align-self-center">
                                         <img class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${userPost.User.avatar}`" />
-                                        <p class="text-primary font_superlight ">{{commentaire.userPseudo}}</p>
+                                        <p class="text-primary font_superlight ml-3 ">{{commentaire.userPseudo}}</p>
                                     </div>
 
                                 <!-- Les commentaires -->

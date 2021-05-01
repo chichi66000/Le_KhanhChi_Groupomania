@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div :key="componentKey" class="col shadow rounded mx-5 mt-3 mb-3 px-5 py-5">
+        <div class="col shadow rounded mx-auto mt-3 mb-3 py-5">
                 <!-- afficher error -->
                 <error v-if="error" :error = "error"/>
                 <!-- Component pour créer nouveau publication -->
@@ -127,7 +127,7 @@
                                 <!-- afficher userAvatar et son pseudo -->
                                 <div class="align-self-center">
                                     <img class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${commentaire.userAvatar}`" />
-                                    <p class="text-primary font_superlight ">{{commentaire.userPseudo}}</p>
+                                    <p class="text-primary font_superlight ml-3">{{commentaire.userPseudo}}</p>
                                 </div>
                                 <!-- Les commentaires -->
                                 <p class="px-3 align-self-center">{{commentaire.commentaires}}</p>
