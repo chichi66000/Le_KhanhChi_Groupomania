@@ -122,15 +122,14 @@
                         <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
 
                         <!-- afficher commentaires -->
-                        
-                            
 
                             <div :key="commentaire.id" v-for="commentaire in post.commentaires" class="d-flex rounded-pill border text-center my-3 py-1 ">
+                                <!-- afficher userAvatar et son pseudo -->
                                 <div class="align-self-center">
                                     <img class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${commentaire.userAvatar}`" />
-                                    <p class="text-primary font_light ">{{commentaire.userPseudo}}</p>
+                                    <p class="text-primary font_superlight ">{{commentaire.userPseudo}}</p>
                                 </div>
-                                
+                                <!-- Les commentaires -->
                                 <p class="px-3 align-self-center">{{commentaire.commentaires}}</p>
                             </div>
                         
@@ -350,6 +349,10 @@ export default {
     }
     .font_light {
         font-size: 0.7rem !important;
+        opacity: 0.5 !important;
+    }
+    .font_superlight {
+        font-size: 0.5rem !important;
         opacity: 0.5 !important;
     }
 

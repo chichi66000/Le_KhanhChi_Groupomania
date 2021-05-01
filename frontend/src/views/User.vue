@@ -7,7 +7,7 @@
 
             <!-- Partie afficher avatar -->
             <div class="row shadow rounded col d-flex mx-auto px-5 my-5">
-                <img class="img-fluid my-2 rounded-circle " alt="avatar" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
+                <img class="monAvatar img-fluid my-2 rounded-circle " alt="avatar" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
                 <p class=" font-weight-bold"> {{user.user.userPseudo }} </p>
 
             </div>
@@ -143,13 +143,20 @@
                             <div>
                                 <p class="text-right font-italic"> Commentaires</p>
                                 <!-- Les commentaires -->
-                                <div class="d-flex">
-                                    <img class="b-avatar rounded-circle mx-2" :src="`http://localhost:5000/images/${userPost.User.avatar}`" />
 
-                                    <div :key="commentaire.id" v-for="commentaire in userPost.commentaires" class="rounded-pill border text-center my-3 py-3 ">
-                                    {{commentaire.commentaires}}
+                                <div :key="commentaire.id" v-for="commentaire in userPost.commentaires" class="d-flex rounded-pill border text-center my-3 py-1 ">
+                                        <!-- afficher userAvatar et son pseudo -->
+                                    <div class="align-self-center">
+                                        <img class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${userPost.User.avatar}`" />
+                                        <p class="text-primary font_superlight ">{{commentaire.userPseudo}}</p>
                                     </div>
+
+                                <!-- Les commentaires -->
+                                        <p class="px-3 align-self-center">
+                                            {{commentaire.commentaires}}
+                                        </p>
                                 </div>
+                                
                                 
                             </div>
                             
@@ -341,7 +348,7 @@ export default {
 </script>
 
 <style scoped>
-    img {
+    .monAvatar {
         width: 10rem !important
     }
     .bi-hand-thumbs-up {
@@ -358,6 +365,10 @@ export default {
     }
     .flou {
         opacity: 0.5;
+    }
+    .font_superlight {
+        font-size: 0.6rem !important;
+        opacity: 0.5 !important;
     }
 </style>
 
