@@ -70,7 +70,9 @@
                                         
                                                     <input v-on="post.img_url" ref="file" type="file" class="form-control-file" :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
-                                                    <label class="form-group"  :for="`inputFile${post.id}`"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
+                                                    <label class="form-group"  :for="`inputFile${post.id}`">
+                                                        <i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video
+                                                    </label>
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
 
                                                 </div>
@@ -95,15 +97,12 @@
 
                     <!-- afficher image et vidéo    -->
                     <div v-if="post.img_url !='' "  class="">
+                        <!-- image -->
                         <div v-if="post.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
                             <img class="img img-fluid" :src="getImage(index)" />
                         </div>
-<!-- 
-                        <div v-if="post.img_url.split('.')[1] == ('avi' || 'mp4' || 'wav' || 'flv' || 'mov' || 'wmv' || 'movie' ) " class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item"
-                                :src="getVideo(index)" allowfullscreen>
-                            </iframe>
-                        </div> -->
+
+                        <!-- video -->
                         <div v-else class="embed-responsive embed-responsive-16by9">
                             <iframe class="embed-responsive-item" :src="getImage (index)" allowfullscreen></iframe>
                         </div>
@@ -119,11 +118,23 @@
 
                     <!-- afficher les commentaires -->
                     <div>
-                            <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
+                        <!-- ajouter commentaire -->
+                        <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
 
-                        <div :key="commentaire.id" v-for="commentaire in post.commentaires" class="rounded-pill border text-center my-3 py-3 ">
-                            {{commentaire.commentaires}}
-                        </div>
+                        <!-- afficher commentaires -->
+                        
+                            
+
+                            <div :key="commentaire.id" v-for="commentaire in post.commentaires" class="d-flex rounded-pill border text-center my-3 py-1 ">
+                                <div class="align-self-center">
+                                    <img class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${commentaire.userAvatar}`" />
+                                    <p class="text-primary font_light ">{{commentaire.userPseudo}}</p>
+                                </div>
+                                
+                                <p class="px-3 align-self-center">{{commentaire.commentaires}}</p>
+                            </div>
+                        
+                        
                     </div>
                 </div>
 
@@ -253,12 +264,16 @@ export default {
             let userId = this.currentUserId;
             // récupérer la value de champs input choisi
             let saisie = document.getElementById(`commentaire${postId}`).value
-            
+            console.log(this.$store.state.user.user.avatar)
+            console.log(this.$store.state.user.user.userPseudo)
+
             // ajouter commentaire avec la touche enter puis envoyer au server
                 axios.post('/api/post/commentaire', {
                     commentaire: saisie,
                     userId: userId,
-                    postId: postId
+                    postId: postId,
+                    userAvatar: this.$store.state.user.user.avatar,
+                    userPseudo: this.$store.state.user.user.userPseudo
                 })
                 // récupérer le reponse OK du server puis update les commentaires
                     .then( response => {

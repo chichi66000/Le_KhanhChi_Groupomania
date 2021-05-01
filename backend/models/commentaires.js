@@ -21,6 +21,22 @@ module.exports = function (sequelize, DataTypes) {
           key: "id",
         },
       },
+      userAvatar: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
+      },
+      userPseudo: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
+      },
       postId: {
         type: DataTypes.INTEGER,
         allowNull: false,

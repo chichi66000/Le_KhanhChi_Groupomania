@@ -119,8 +119,17 @@
                             </div>
 
                             <!-- Les images -->
-                            <div v-if="url_img[index] !=='' ">
-                                <img :key="url" v-for="url in lien[index]" class="img" :src="getUrl(index)" />
+                            <div v-if="userPost.img_url !='' "  class="">
+                                <!-- image -->
+                                <div v-if="userPost.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
+                                    <img class="img img-fluid" :src="getImage(index)" />
+                                </div>
+
+                                <!-- video -->
+                                <div v-else class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" :src="getImage (index)" allowfullscreen></iframe>
+                                </div>
+                                
                             </div>
 
                             <hr class="text-primary">
@@ -134,9 +143,14 @@
                             <div>
                                 <p class="text-right font-italic"> Commentaires</p>
                                 <!-- Les commentaires -->
-                                <div :key="commentaire.id" v-for="commentaire in userPost.commentaires" class="rounded-pill border text-center my-3 py-3 ">
+                                <div class="d-flex">
+                                    <img class="b-avatar rounded-circle mx-2" :src="`http://localhost:5000/images/${userPost.User.avatar}`" />
+
+                                    <div :key="commentaire.id" v-for="commentaire in userPost.commentaires" class="rounded-pill border text-center my-3 py-3 ">
                                     {{commentaire.commentaires}}
+                                    </div>
                                 </div>
+                                
                             </div>
                             
                         </div>
@@ -308,20 +322,18 @@ export default {
         },
 
         // Récupérer le lien de l'images 
-        getUrl(index) {
-            if (this.url_img[index].split(' ') != "") {
-                this.lien[index] = this.url_img[index].split(' ');
-                // for ( let i=0; i< this.lien[index].length; i++) {
-                //     let url = this.lien[index][i]
-                //     if ( url !== "") {
-
-                //         return `http://localhost:5000/images/${url}`
-                //     }
-                // } 
+        getImage(index) {
+            let url = this.userPosts[index].img_url
+            console.log(url);
+            if (url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')) {
                 
+                return `http://localhost:5000/images/${url}`
             }
-            
-        }
+            else {
+                return `http://localhost:5000/images/${url}`
+            }
+        },
+
             
     }
   

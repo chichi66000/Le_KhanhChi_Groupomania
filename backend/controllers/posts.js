@@ -152,7 +152,12 @@ exports.getUserPosts = (req, res) => {
     models.posts
       .findAll({
         where: {userId: req.params.id},
-        include: [ models.likes, models.commentaires],
+        include: [
+            {model: models.likes},
+            {model: models.commentaires},
+            {model: models.users,
+            attributes: ['avatar', 'pseudo']}
+        ],
         order: [
             ["id", "DESC"], [models.commentaires, "id", 'DESC']
         ],
@@ -254,6 +259,8 @@ exports.createCommentaire = (req, res) => {
             commentaires: xss(req.body.commentaire),
             postId: req.body.postId,
             userId: req.body.userId,
+            userAvatar: req.body.userAvatar,
+            userPseudo: req.body.userPseudo
         })
             .then( () => res.status(201).json("Commentaire enregistré"))
             .catch( err => res.status(500).json( {
