@@ -263,13 +263,11 @@ export default {
         // modify post par user
         async modifyPost (index) {
             let postId = this.userPosts[index].id 
-            let inputFile = document.getElementById(`inputFile${postId}`).files
+            let inputFile = document.getElementById(`inputFile${postId}`).files[0]
+
             let form = new FormData();
-            for( var i = 0; i < inputFile.length; i++ ) {
-                let file = inputFile[i];
-                form.append('files[' + i + ']', file);
-            }
-                
+            
+                form.append('image', inputFile)
                 form.append('title', this.userPosts[index].title)
                 form.append('content', this.userPosts[index].content)
 
@@ -280,7 +278,7 @@ export default {
                         // envoyer 1 message OK pour utilisateur
                         Swal.fire("Votre article a été modifié")
                         this.error=""
-                        this.getUserPost()
+                        this.getUserPosts()
                         
                     })
                     .catch( err => {

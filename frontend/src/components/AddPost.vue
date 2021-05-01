@@ -38,7 +38,7 @@
                                     
                                     <div class="input-group">
                                         <!-- <div class="d-flex justify-content-between"> -->
-                                            <input @change="loadImage" multiple ref="file" type="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                            <input @change="onChangeFile" type="file" ref="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
                                             <!-- <button class="btn btn-danger" @click="annuler">X</button> -->
                                         <!-- </div> -->
@@ -74,7 +74,7 @@ export default {
             title: '',
             content:'',
             id: localStorage.getItem('id'),
-            image: [],
+            image: '',
             video: '',
             error:'',
         }
@@ -83,6 +83,11 @@ export default {
         method: { type: Function },
     },
     methods: {
+        // fonction pour upload photo dans avatar
+        onChangeFile(e) {
+            this.image = e.target.files[0];
+            console.log(this.image)
+        },
 
         async handleSubmit () {
             // s'il y a rien dans ensemble des champs, on fait rien...
@@ -91,14 +96,12 @@ export default {
             }
             else {
             // si non, envoyer les infos par FormData
+            console.log(this.image)
                 let form = new FormData();
-                for( var i = 0; i < this.$refs.file.files.length; i++ ){
-                        let file = this.$refs.file.files[i];
-                        form.append('files[' + i + ']', file);
-                    }
                 form.append('title', this.title)
                 form.append('content', this.content)
                 form.append('userId', this.id)
+                form.append('image', this.image)
 
                 // envoyer formulaire par axios, recevoir la response
                 await axios.post("/api/post/", form)

@@ -68,7 +68,7 @@
 
                                                 <div class="input-group">
                                         
-                                                    <input v-on="post.img_url" multiple ref="file" type="file" class="form-control-file" :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                                    <input v-on="post.img_url" ref="file" type="file" class="form-control-file" :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
                                                     <label class="form-group"  :for="`inputFile${post.id}`"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
@@ -191,12 +191,10 @@ export default {
         // modify post par user
         async modifyPost (index) {
             let postId = this.posts[index].id 
-            let inputFile = document.getElementById(`inputFile${postId}`).files
+            let inputFile = document.getElementById(`inputFile${postId}`).files[0]
+            console.log(inputFile)
             let form = new FormData();
-            for( var i = 0; i < inputFile.length; i++ ) {
-                let file = inputFile[i];
-                form.append('files[' + i + ']', file);
-            }
+            form.append('image', inputFile)
                 
                 form.append('title', this.posts[index].title)
                 form.append('content', this.posts[index].content)

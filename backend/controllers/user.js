@@ -74,7 +74,7 @@ exports.signup = ((req, res) => {
                             .then( hash => {
                             // s'il n'y a pas photo, prendre nom de l'image avatar default, si non prendre le nom de requete file
                                 let avatarName = "";
-                                if ( req.files) { avatarName = req.files[0].filename}
+                                if ( req.file) { avatarName = req.file.filename}
                                 else { avatarName = "avatar_default.png"} 
                                     // créer user
                                 const newUser = db.Users.create({
@@ -321,8 +321,8 @@ exports.updateUser = (req, res, next) => {
         .then( user => {
 
             // si update avec photo avatar
-            if (req.files) {
-                console.log(req.files)
+            if (req.file) {
+                console.log(req.file)
                 const file = user.avatar;
                 // si avatar du user est "avatar_default"; on fait rien
                 if( file.includes("avatar_default.png")) {
@@ -339,10 +339,10 @@ exports.updateUser = (req, res, next) => {
                     })
                 }
                 // Puis update avatar dans BDD
-                console.log("file nouveau" + req.files[0].filename);     //OK
+                console.log("file nouveau" + req.file.filename);     //OK
                 db.Users.update( {
                     ...user,
-                    avatar: req.files[0].filename},
+                    avatar: req.file.filename},
                     {where: {id:req.params.id}})
                     .then( () => { console.log("Update avatar réussi")})
                     .catch(err => {

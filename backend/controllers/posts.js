@@ -24,25 +24,23 @@ exports.createPost = (req, res) => {
     }
     else {
         // s'il y a req file, enregistrer son URL; 
-        if (req.files) {
+        if (req.file) {
             // console.log(req.files);     //OK
-            for (let i=0; i<req.files.length; i++) {
-                file_url += (req.files[i].filename)+ " "        //séparer les noms avec espace
-            }
+            file_url = req.file.filename
             // console.log(file_url);          //OK
         }
         else { file_url = ""};
             // enregistrer dans table Posts
-            const post = db.Posts.create({
-                title: xss(req.body.title),
-                content: xss(req.body.content),
-                img_url: file_url,
-                userId: req.body.userId
+        const post = db.Posts.create({
+            title: xss(req.body.title),
+            content: xss(req.body.content),
+            img_url: file_url,
+            userId: req.body.userId
             })
-                .then( () => res.status(201).json("Votre article a été enregistré"))
-                .catch( err => {
-                    console.log(err);
-                    res.status(500).json("Créer post erreur")
+            .then( () => res.status(201).json("Votre article a été enregistré"))
+            .catch( err => {
+                console.log(err);
+                res.status(500).json("Créer post erreur")
                 })
     }
 }
@@ -81,17 +79,15 @@ exports.updatePost = (req, res) => {
             }
             else {
                 // si update avec photos,
-                if (req.files!= "") {          
-                    let filenames = post.img_url.split(' ');       // chercher nom du anciens photos
+                if (req.file!= "") {          
+                    let filenames = post.img_url;       // chercher nom du anciens photos
                     // console.log({filenames});           //OK
-                    for ( let i=0; i< filenames.length; i++) {
-                        fs.unlink(`images/${filenames[i]}`, () => {
-                            console.log("images supprimé")});         // les supprimer
-                        
-                    }
+                    fs.unlink(`images/${filenames}`, () => {
+                        console.log("images supprimé")});         // les supprimer
+
                     // puis récupérer nouveaux files
-                    for (let i=0; i<req.files.length; i++) {        
-                        newFile_url += (req.files[i].filename)+ " ";
+                           
+                        newFile_url += (req.file.filename);
                             // console.log({newFile_url}); //OK
                             // valider les informations entrée dans nouveau post
                         let regex = /[@&"()_$*€£`+=\/;#]+$/;
@@ -114,7 +110,7 @@ exports.updatePost = (req, res) => {
                                 }))
                         }
                                             
-                    }
+                    
                 }
                 // si update sans photo
                 else {
@@ -174,11 +170,11 @@ exports.deletePost = (req, res) => {
       .findOne({ where: { id: req.params.postId } })
       .then((post) => {     // chercher les images, video et effacer
             if (post.img_url !="") {
-                let filenames = post.img_url.split(' ');
-                console.log(filenames);
-                for ( let i=0; i< filenames.length; i++) {
-                    fs.unlink(`images/${filenames[i]}`, () => {console.log("images supprimé");});
-                }
+                let filenames = post.img_url
+                // console.log(filenames);
+                
+                fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+                
             }
       })
         .then(() => {
