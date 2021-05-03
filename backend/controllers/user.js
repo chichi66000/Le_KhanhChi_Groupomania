@@ -524,8 +524,7 @@ exports.forgotPassword = async (req, res, next) => {
                 db.Users.update (
                     {...userObject,
                         email: req.body.email,
-                        createPasswordResetToken: undefined
-                        // passwordResetExpires: expireDate,
+                        createPasswordResetToken: 'undefined'
                     },
                     {where: { email: req.body.email} }
                     )

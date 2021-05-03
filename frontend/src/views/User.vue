@@ -235,7 +235,7 @@ export default {
                         this.$store.dispatch('user/setCurrentUser', null)
                         // revenir au Home
                         Swal.fire("Votre compte a été supprimé. Retour à Home")
-                        this.$router.push("/home")
+                        this.$router.push("/")
                     })
                     // En cas d'erreur du password, envoyer message
                     .catch (error => {

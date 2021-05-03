@@ -39,7 +39,7 @@ export default {
     // props: ['commentaires', 'likes', 'posts'],
 
     async created() {
-      await axios.get(`api/auth/${this.id}`,
+      await axios.get(`api/auth/${this.id}`
         // {
         // headers: { Authorization: "Bearer " + localStorage.getItem('token')}
         // }
@@ -53,7 +53,11 @@ export default {
         })
         .catch(error => console.log(error));
     },
-}
+
+    methods: {
+      
+    }
+} 
 </script>
 <style scope lang="scss">
 text-right {

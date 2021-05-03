@@ -11,7 +11,7 @@
 
                 <div id="navbarContent" class="collapse navbar-collapse navbar-collapse-sm col  mx-auto text-center font-weight-bolder justify-self-center dropdown-menu-lg-right justify-content-between text-light">
                     <div class=" ">
-                        <router-link to="/home">HOME</router-link>
+                        <router-link to="/">HOME</router-link>
                     </div>
                     <div class=" collape navbar-collapse ">
                         <ul v-if="!user.user" class="navbar-nav ml-auto">
@@ -66,7 +66,7 @@ export default {
             localStorage.removeItem('pseudo')
             localStorage.removeItem('avatar')
             this.$store.dispatch('user/setCurrentUser', null)
-            this.$router.push('/home')
+            this.$router.push('/')
         }
     },
 

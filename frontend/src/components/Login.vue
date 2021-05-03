@@ -1,17 +1,17 @@
 <template>
-    <div class="container mt-5 m-auto text-center">
+    <div class="container mt-3 mb-3 mx-auto text-center">
         <!-- Afficher les erreurs -->
         <error v-if="error" :error = "error"/>
 
         <div> 
             
-            <div class="col-md-6 col-lg-6 my-2 m-auto col">
+            <div class="col-md-6 col-lg-6 mx-auto col">
                 <Logo />
             </div>
 
-            <h5 class="my-3 font-weight-bolder pink fs-3">Indentifiez-vous</h5>
+            <h5 class="mb-3 font-weight-bolder pink fs-3">Indentifiez-vous</h5>
 
-            <form class="form-group col col-md-8 col-lg-8 m-auto connexion text-center col shadow rounded mx-5 my-5 p-3"  @submit.prevent = "login">
+            <form class="form-group col col-md-8 col-lg-6 m-auto connexion text-center col shadow rounded mx-5 my-5 p-3"  @submit.prevent = "login">
                 <div class="form-group row ">
                     <label for="email" class="col col-form-label text-left pink font-weight-bolder fs-6">Email</label>
                     <div class="col-8">
@@ -89,7 +89,7 @@ export default {
                         this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
                         
                         // aller sur la page Home une fois connecté
-                        this.$router.push('/home')
+                        this.$router.push('/')
                     } )
                     .catch( (e) => { 
                         console.log(e);

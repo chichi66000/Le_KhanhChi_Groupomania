@@ -11,13 +11,7 @@ module.exports =async (req, res, next) => {
       req.user = user
 
       next()
-    });
-    // const userId = decodedToken.userId;
-    // if (req.body.userId && req.body.userId !== userId) {
-    //   return res.status(401).json("Invalid user ID") ;
-    // } else {
-    //   next();
-    // }
+    })
   } catch {
     res.status(401).json({
       error: new Error("Invalid request!"),
