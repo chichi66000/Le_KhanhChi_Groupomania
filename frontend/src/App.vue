@@ -1,5 +1,5 @@
 <template >
-  <div id="app" class="container-fluid">
+  <div id="app" class="container">
       <Navbar />
       <router-view ></router-view>
 
@@ -76,6 +76,19 @@ export default {
     .btn-secondary:hover,
     .btn-secondary:focus {
       background: #0000FF !important
+    }
+    .mini {
+        padding: 0.5rem !important;
+        margin:0 !important
+      }
+    @media screen and (max-width: 400px) {
+      .hidden {
+        display: none;
+      }
+      .mini {
+        padding: 0.5rem !important;
+        margin:0 !important
+      }
     }
     
 </style>

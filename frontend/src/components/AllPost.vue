@@ -6,21 +6,21 @@
                 <!-- Component pour créer nouveau publication -->
                 <AddPost :method="getAllPosts"/>
 
-                <h3 class="text-center mx-auto my-3 text-danger">Les actualités </h3>
+                <h3 class="text-center mx-auto my-3 pink">Les actualités </h3>
 
                 <hr class="text-primary">
 
                 <!-- Partie pour afficher les actualité  -->
-                <div :key="post.id" v-for="( post, index ) in posts" class="border  p-5 my-5 bg-white">
+                <div :key="post.id" v-for="( post, index ) in posts" class="mini border my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
-                        <div>
-                            <img class="b-avatar rounded-circle mx-2" :src="`http://localhost:5000/images/${post.User.avatar}`" :alt=" `avatar de ${post.User.pseudo}`" />
-                            <p >{{post.User.pseudo}}</p>
+                        <div class="hidden">
+                            <img class="b-avatar rounded-circle" :src="`http://localhost:5000/images/${post.User.avatar}`" :alt=" `avatar de ${post.User.pseudo}`" />
+                            <p class="font_superlight py-1">{{post.User.pseudo}}</p>
                             <p class="font_light"> publié {{post.updatedAt}}</p>   
                         </div>
 
                         <div>
-                            <h4 class="mx-2 px-2">{{post.title}}</h4>
+                            <h4 class="mx-auto">{{post.title}}</h4>
                         </div>
                         
 
@@ -52,7 +52,7 @@
                                             <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
                                                 <div class="mb-3">
                                                     <label for="recipient-name" class="col-form-label">Titre</label>
-                                                    <input v-model="post.title" type="text" class="form-control" id="titre" max="50" />
+                                                    <input v-model="post.title" type="text" class="form-control" :id="`titre${post.id}`" max="50" />
                                                         
                                                     
                                                     <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
@@ -60,7 +60,7 @@
 
                                                 <div class="mb-3">
                                                     <label for="message-text" class="col-form-label">Contenu</label>
-                                                    <textarea v-model="post.content" class="form-control" id="message-text" ></textarea>
+                                                    <textarea v-model="post.content" class="form-control" :id="`message-text${post.id}`" ></textarea>
                                                 </div>
 
                                             <!-- Zone pour modifier image et video -->
@@ -92,7 +92,7 @@
                     </div>
 
                     <!-- afficher le corps de l'article -->
-                    <div class="text-justify p-3">
+                    <div class=" p-3">
                         <p >{{post.content}}</p>
                     </div>
 
@@ -118,9 +118,13 @@
                     </div>
 
                     <!-- afficher les commentaires -->
-                    <div>
-                        <!-- ajouter commentaire -->
-                        <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
+                    <div >
+                        <div class="form-floating">
+                            <!-- ajouter commentaire -->
+                            <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
+                            <label :for="`commentaire${post.id}`">Ecrivez une commentaire</label>
+                        </div>
+                        
 
                         <!-- afficher commentaires -->
 
@@ -129,7 +133,7 @@
                                 <div class="align-self-center">
                                     <img  class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${commentaire.userAvatar}`" :alt=" `avatar de ${commentaire.userPseudo}`" />
 
-                                    <p class="text-primary font_superlight ml-3">{{commentaire.userPseudo}}</p>
+                                    <p class=" font_superlight ml-3">{{commentaire.userPseudo}}</p>
                                 </div>
                                 <!-- Les commentaires -->
                                 <p class="px-3 align-self-center">{{commentaire.commentaires}}</p>
@@ -334,11 +338,12 @@ export default {
     }
     .font_light {
         font-size: 0.7rem !important;
-        opacity: 0.5 !important;
+        /* opacity: 0.5 !important; */
     }
     .font_superlight {
-        font-size: 0.5rem !important;
-        opacity: 0.5 !important;
+        font-size: 0.7rem !important;
+        /* opacity: 0.5 !important; */
+        color: #0000FF !important;
     }
     .mini_photo {
         width: 5rem

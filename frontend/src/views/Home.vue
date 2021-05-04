@@ -7,7 +7,7 @@
 
           </div>
           <div>
-            <p class="pink" >Bonjour {{user.user.userNom}} </p>
+            <h4 class="pink" >Bonjour {{user.user.userNom}} </h4>
             <AllPost/>
           </div>
             
@@ -15,7 +15,7 @@
         <!-- Si user n'est pas connecté, l'inviter à se connecter -->
       <div v-else class="text-center my-5 mx-auto text-danger">
           <Logo class="my-5"/>
-          <h3 class="red my-5 ">Bienvenue au Groupomania, connectez - vous pour commencer </h3>
+          <h1 class="red my-5 ">Bienvenue au Groupomania, connectez - vous pour commencer </h1>
       </div>
 
       

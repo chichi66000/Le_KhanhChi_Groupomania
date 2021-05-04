@@ -23,8 +23,9 @@
                             <form action="/api/post/" class="modal-body px-4 my-1"  method="POST" enctype="multipart/form-data">
                                 <div class="modal-header" >
 
-                                    <div>
+                                    <div class="form-floating">
                                         <input v-model="title" class="form-control fs-5" id="staticBackdropLabel" type="text" placeholder="Titre" max="50"/>
+                                        <label for="staticBackdropLabel">Titre</label>
                                         <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
                                     </div>
 
@@ -32,24 +33,23 @@
 
                                 </div>
 
-                                <div class="mb-3 row ">
-                                    <textarea v-model="content" class="form-control px-1" rows="7" id="text" placeholder = "Votre message"></textarea>
+                                <div class="form-group">
+                                    <textarea v-model="content" class="form-control px-2" id="text " placeholder = "Votre message"></textarea>
+                                    <label for="text"></label>
                                 </div>
                                     
                                     <div class="input-group">
-                                        <!-- <div class="d-flex justify-content-between"> -->
+                                        
                                             <input @change="onChangeFile" type="file" ref="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                            
+                                            <label class="form-group"  id="inputGroupFileAddon03"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
 
-                                            <!-- <button class="btn btn-danger" @click="annuler">X</button> -->
-                                        <!-- </div> -->
-                                        <label class="form-group"  id="inputGroupFileAddon03"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
-                                        <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
+                                            <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
                                     </div>
 
                                 <!-- </div> -->
 
                                 <div class="modal-footer">
-                                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button> -->
 
                                     <button @click="handleSubmit"  id="closeModal"  data-bs-dismiss="modal" type="submit" class="my-4 text-center mx-auto btn-primary" >Enregistrer</button>
                                 </div>
@@ -80,6 +80,7 @@ export default {
         }
     },
     props: {
+        // fonction getAllPosts
         method: { type: Function },
     },
     methods: {
@@ -113,6 +114,7 @@ export default {
                         // fermer manuellement la modal 
                         // document.querySelector('.modal').hide('modal')           // ne marche pas
                         this.error=""
+                        // reload la page des publications
                         this.method()
                     })
                     .catch( err => {
