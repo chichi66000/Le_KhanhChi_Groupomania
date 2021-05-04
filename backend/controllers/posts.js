@@ -74,46 +74,13 @@ exports.updatePost = (req, res) => {
             // console.log({post});        //OK
 
             //Verifier si c'est bien le user avant de faire update
-            if (post.userId != req.params.id) {
+            if (post.userId != req.params.id ) {
                 res.status(400).json("Echec! Vous n'êtes pas auteur du pubication.")
             }
             else {
-                // si update avec photos,
-                if (req.file!= "") {          
-                    let filenames = post.img_url;       // chercher nom du anciens photos
-                    // console.log({filenames});           //OK
-                    fs.unlink(`images/${filenames}`, () => {
-                        console.log("images supprimé")});         // les supprimer
-
-                    // puis récupérer nouveaux files
-                           
-                        newFile_url += (req.file.filename);
-                            // console.log({newFile_url}); //OK
-                            // valider les informations entrée dans nouveau post
-                        let regex = /[@&"()_$*€£`+=\/;#]+$/;
-                
-                        if (validator.matches(req.body.title, regex)) {
-                            res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
-                            }
-                            //après validation, update post
-                        else {
-                            db.Posts.update({
-                                img_url: newFile_url,
-                                title: xss(req.body.title),
-                                content: xss(req.body.content),
-                                },
-                                {where: {id: req.params.postId}})
-                                .then( () => res.status(200).json("Update publication réussi"))
-                                .catch( err => res.status(500).json({
-                                    message: "Erreur en update publication",
-                                    err: err
-                                }))
-                        }
-                                            
+                if (!req.file) {
+                    console.log("no file")
                     
-                }
-                // si update sans photo
-                else {
                     // valider les informations entrée dans nouveau post
                     let regex = /[@&"()_$*€£`+=\/;#]+$/;
                     if (validator.matches(req.body.title, regex)) {
@@ -133,7 +100,101 @@ exports.updatePost = (req, res) => {
                                 err: err
                             }))
                     }
+                
                 }
+                else {
+                    console.log(req.file)
+                    // si update avec photos,
+                if (req.file != "undefined" || req.file !="") {          
+                    let filenames = post.img_url;       // chercher nom du anciens photos
+                    // console.log({filenames});           //OK
+                    fs.unlink(`images/${filenames}`, () => {
+                        console.log("images supprimé")});         // les supprimer
+
+                    // puis récupérer nouveaux files
+                           
+                        newFile_url += (req.file.filename);
+                            // console.log({newFile_url}); //OK
+                            // valider les informations entrée dans nouveau post
+                        let regex = /[@&"()_$*€£`+=\/;#]+$/;
+                
+                        if (validator.matches(req.body.title, regex)) {
+                            res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+                            }
+                //             //après validation, update post
+                        else {
+                            db.Posts.update({
+                                img_url: newFile_url,
+                                title: xss(req.body.title),
+                                content: xss(req.body.content),
+                                },
+                                {where: {id: req.params.postId}})
+                                .then( () => res.status(200).json("Update publication réussi"))
+                                .catch( err => res.status(500).json({
+                                    message: "Erreur en update publication",
+                                    err: err
+                                }))
+                        }
+                                            
+                    
+                }
+                }
+                // // si update avec photos,
+                // if (req.file != "undefined" || req.file !="") {          
+                //     let filenames = post.img_url;       // chercher nom du anciens photos
+                //     // console.log({filenames});           //OK
+                //     fs.unlink(`images/${filenames}`, () => {
+                //         console.log("images supprimé")});         // les supprimer
+
+                //     // puis récupérer nouveaux files
+                           
+                //         newFile_url += (req.file.filename);
+                //             // console.log({newFile_url}); //OK
+                //             // valider les informations entrée dans nouveau post
+                //         let regex = /[@&"()_$*€£`+=\/;#]+$/;
+                
+                //         if (validator.matches(req.body.title, regex)) {
+                //             res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+                //             }
+                // //             //après validation, update post
+                //         else {
+                //             db.Posts.update({
+                //                 img_url: newFile_url,
+                //                 title: xss(req.body.title),
+                //                 content: xss(req.body.content),
+                //                 },
+                //                 {where: {id: req.params.postId}})
+                //                 .then( () => res.status(200).json("Update publication réussi"))
+                //                 .catch( err => res.status(500).json({
+                //                     message: "Erreur en update publication",
+                //                     err: err
+                //                 }))
+                //         }
+                                            
+                    
+                // }
+                // si update sans photo
+                // else {
+                //     // valider les informations entrée dans nouveau post
+                //     let regex = /[@&"()_$*€£`+=\/;#]+$/;
+                //     if (validator.matches(req.body.title, regex)) {
+                //         res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+                //     }
+                //     // puis update post
+                //     else {
+                //         db.Posts.update({
+                //             ...post,
+                //             title: xss(req.body.title),
+                //             content: xss(req.body.content),
+                //         },
+                //         {where: {id: req.params.postId}})
+                //             .then( () => res.status(200).json("Update publication réussi"))
+                //             .catch( err => res.status(500).json({
+                //                 message: "Erreur en update publication",
+                //                 err: err
+                //             }))
+                //     }
+                // }
 
             }
         })
@@ -197,8 +258,36 @@ exports.deletePost = (req, res) => {
             .catch((error) => res.status(400).json({ error }));
         })
       .catch((error) => res.status(500).json({ error }));
-  };
+};
 
+// route pour supprimer image du post
+exports.deleteImagePost = (req, res) => {
+    // chercher le post par son id
+    db.Posts.findOne({ where: { id: req.params.postId } })
+        .then( post => {
+            let filename = req.params.image
+            // supprimer image dans la mémoire
+            fs.unlink(`images/${filename}`, () => {
+                console.log("Image supprimé")
+            })
+            db.Posts.update (
+                {
+                    ...post,
+                    img_url:""
+                },
+                {where: {id: req.params.postId }})
+                .then( () => res.status(200).json("Image/Video supprimé"))
+                .catch( err => {
+                    console.log(err)
+                    res.status(500).json("problème pour supprimer image de la publication")
+                })
+        })
+        .catch( err => {
+            console.log(err);
+            res.status(500).json("Problème pour chercher post")
+        })
+        
+};
 
 //====> Ajout ou suppresson de like <====\\
 exports.createLike = (req, res) => {

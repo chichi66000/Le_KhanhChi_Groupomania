@@ -2,9 +2,15 @@
     <div class="container">
         <!-- I user est connecté -->
       <div v-if="user.user">
-            <Logo class="text-left position-fixed my-5"/>
-            <p >Bonjour {{user.user.userNom}} </p>
+          <div class="">
+            <Logo class="text-left  my-5"/>
+
+          </div>
+          <div>
+            <p class="pink" >Bonjour {{user.user.userNom}} </p>
             <AllPost/>
+          </div>
+            
       </div>
         <!-- Si user n'est pas connecté, l'inviter à se connecter -->
       <div v-else class="text-center my-5 mx-auto text-danger">
@@ -17,7 +23,7 @@
 </template>
 
 <script>
-// import axios from '../axios'
+
 import { mapState } from 'vuex'
 import Logo from '../components/Logo'
 import AllPost from '../components/AllPost'
@@ -28,7 +34,6 @@ export default {
         Logo
     },
   
-    
     computed: {
       ...mapState ( { user: state => state.user} )
     }

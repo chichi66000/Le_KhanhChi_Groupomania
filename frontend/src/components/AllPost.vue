@@ -14,7 +14,7 @@
                 <div :key="post.id" v-for="( post, index ) in posts" class="border  p-5 my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
                         <div>
-                            <img class="b-avatar rounded-circle mx-2" :src="`http://localhost:5000/images/${post.User.avatar}`" />
+                            <img class="b-avatar rounded-circle mx-2" :src="`http://localhost:5000/images/${post.User.avatar}`" :alt=" `avatar de ${post.User.pseudo}`" />
                             <p >{{post.User.pseudo}}</p>
                             <p class="font_light"> publié {{post.updatedAt}}</p>   
                         </div>
@@ -29,9 +29,11 @@
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-pencil"></i>
                             </button>
+
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li :key="post.id"><button type="button"   :data-bs-target="`#modify${post.id}`" data-bs-toggle="modal" class="btn dropdown-item" >Modifier</button></li>
-                                <li @click="deletePost (index)"><a class="dropdown-item" href="#">Supprimer</a></li>
+                                <li v-if="currentUserId==post.userId" :key="post.id"><button type="button"   :data-bs-target="`#modify${post.id}`" data-bs-toggle="modal" class="btn dropdown-item " >Modifier</button></li>
+
+                                <li v-if="currentUserId==post.userId || user.user.isAdmin===true" @click="deletePost (index)"><a class="dropdown-item" href="#">Supprimer</a></li>
                             
                             </ul>
 
@@ -62,17 +64,15 @@
                                                 </div>
 
                                             <!-- Zone pour modifier image et video -->
-                                                <div v-if="post.img_url !=''">
-                                                    <img class="img" :src="`${post.img_url}`">
-                                                </div>
 
                                                 <div class="input-group">
                                         
-                                                    <input v-on="post.img_url" ref="file" type="file" class="form-control-file" :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                                    <input v-on="post.img_url" ref="file" type="file" class="form-control-file " :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
                                                     <label class="form-group"  :for="`inputFile${post.id}`">
                                                         <i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video
                                                     </label>
+
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
 
                                                 </div>
@@ -80,8 +80,9 @@
                                         </div>
 
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button @click="modifyPost (index)" :id="`submitModify${post.id}`" type="submit" class="btn btn-primary">Enregistrer</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+
+                                            <button @click="modifyPost (index)" :id="`submitModify${post.id}`" type="submit" data-bs-dismiss="modal" class="btn btn-primary">Enregistrer</button>
                                         </div>
                                     </div>
                                 </div>
@@ -99,12 +100,12 @@
                     <div v-if="post.img_url !='' "  class="">
                         <!-- image -->
                         <div v-if="post.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
-                            <img class="img img-fluid" :src="getImage(index)" />
+                            <img class="img img-fluid" :src="getImage(index)" :alt="`photo illustration ${post.title}`" />
                         </div>
 
                         <!-- video -->
                         <div v-else class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" :src="getImage (index)" allowfullscreen></iframe>
+                            <iframe class="embed-responsive-item" :src="getImage (index)" :alt="`video illustration ${post.title}`" allowfullscreen></iframe>
                         </div>
                         
                     </div>
@@ -126,7 +127,8 @@
                             <div :key="commentaire.id" v-for="commentaire in post.commentaires" class="d-flex rounded-pill border text-center my-3 py-1 ">
                                 <!-- afficher userAvatar et son pseudo -->
                                 <div class="align-self-center">
-                                    <img class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${commentaire.userAvatar}`" />
+                                    <img  class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${commentaire.userAvatar}`" :alt=" `avatar de ${commentaire.userPseudo}`" />
+
                                     <p class="text-primary font_superlight ml-3">{{commentaire.userPseudo}}</p>
                                 </div>
                                 <!-- Les commentaires -->
@@ -154,23 +156,16 @@ export default {
         AddPost,
         Error
     },
-    // props: {
-    //     value: {type: Object, required: true}
-    // },
+
     data () {
         return {
             posts: [],
             currentUserId:localStorage.getItem('id'),
             error: '',
-            // video: false,
-            // image: false,
-            // files: []
         }
     },
-    // props: ['likes', 'commentaires', 'posts'],
 
-// récupérer tous les publications => OK, (enregistrer dans store de vuex: pas OK)
-     created () {
+    created () {
         //récupérer tous les publications dès début
         this.getAllPosts()
             
@@ -191,12 +186,12 @@ export default {
 
         // supprimer post par user
         async deletePost (index) {
-            let postId = this.posts[index].id;
-            await axios.delete(`api/post/${postId}`)
+            let postId = this.posts[index].id;          //récupérer id du post
+            await axios.delete(`api/post/${postId}`)    // envoyer au server
                 .then( response => {
                     console.log(response);
                     Swal.fire('Votre publication a été supprimé');
-                    this.getAllPosts()
+                    this.getAllPosts()                  // reload les publications
                 })
                 .catch (err => {
                     console.log(err);
@@ -206,29 +201,39 @@ export default {
 
         // modify post par user
         async modifyPost (index) {
-            let postId = this.posts[index].id 
+            let postId = this.posts[index].id           // récupérer id du post
+            // Récupére le file d'image
             let inputFile = document.getElementById(`inputFile${postId}`).files[0]
-            console.log(inputFile)
+            console.log({inputFile})      
+            // envoyer tous les informations par FormData
             let form = new FormData();
-            form.append('image', inputFile)
-                
+            if ( inputFile != "undefined" || inputFile !="") {
+                form.append('image', inputFile)
                 form.append('title', this.posts[index].title)
                 form.append('content', this.posts[index].content)
-
+                console.log(form)
+            }
+            else {
+                form.append('title', this.posts[index].title)
+                form.append('content', this.posts[index].content)
+                console.log(form)
+            }
                 // envoyer formulaire par axios, recevoir la response
-                await axios.put(`/api/post/${postId}/${this.currentUserId}/update`, form)
-                    .then( response => {
-                        console.log(response);
+            await axios.put(`/api/post/${postId}/${this.currentUserId}/update`, form
+                
+            )
+                .then( response => {
+                    console.log(response);
                         // envoyer 1 message OK pour utilisateur
-                        this.$store.dispatch ('post/getAllPosts', response.data)
-                        Swal.fire("Votre article a été modifié")
-                        this.error=""
-                        this.getAllPosts()
+                    // this.$store.dispatch ('post/getAllPosts', response.data)
+                    Swal.fire("Votre article a été modifié")
+                    this.error=""
+                    this.getAllPosts()
                         
                     })
-                    .catch( err => {
-                        console.log(err);
-                        this.error = "Problème pour enregistrer votre article"
+                .catch( err => {
+                    console.log(err);
+                    this.error = "Problème pour enregistrer votre article"
                     })
                 
                     // fermer manuellement la modal
@@ -239,9 +244,11 @@ export default {
         
         // ajouter/ delete like du post
         async ajouteLike (index) {
+            // récupérer id du user et du post
             let userId = this.currentUserId;
             let postId = this.posts[index].id;
-            console.log({postId}); console.log({userId});       //OK
+
+            // envoyer en server et récupérer la response
             await axios.post(`api/post/${postId}/${userId}/like`, {
                 userId: userId, postId: postId
             })
@@ -263,10 +270,8 @@ export default {
             let userId = this.currentUserId;
             // récupérer la value de champs input choisi
             let saisie = document.getElementById(`commentaire${postId}`).value
-            console.log(this.$store.state.user.user.avatar)
-            console.log(this.$store.state.user.user.userPseudo)
 
-            // ajouter commentaire avec la touche enter puis envoyer au server
+            // ajouter commentaire avec la touche entrer puis envoyer au server
                 axios.post('/api/post/commentaire', {
                     commentaire: saisie,
                     userId: userId,
@@ -288,40 +293,20 @@ export default {
                         console.log(err);
                         this.error="Problème pour enregistrer votre commentaire"
                     })
-                
-            
         },
 
         // récupérer le nom de image pour afficher
         getImage(index) {
             let url = this.posts[index].img_url
-            console.log(url);
-            if (url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')) {
-                console.log("c'est image")
-                // this.image = true
-                return `http://localhost:5000/images/${url}`
-            }
-            else {
-                return `http://localhost:5000/images/${url}`
-            }
-            // console.log(url)
-        },
-
-        getVideo(index) {
-            let url = this.posts[index].img_url
-            if (url.split('.')[1] == ('avi' || 'mp4' || 'wav' || 'flv' || 'mov' || 'wmv' || 'movie' )) {
-                console.log("c'est video")
-                console.log(url);
-
-                // this.video = true
-                return `http://localhost:5000/images/${url}`
-            }
+            
+            return `http://localhost:5000/images/${url}`
+            
         },
     },
     computed: {
       ...mapState ( {
             user: state => state.user,
-            post: state => state.all_posts
+            // post: state => state.all_posts
       } ),
 
     },
@@ -355,5 +340,7 @@ export default {
         font-size: 0.5rem !important;
         opacity: 0.5 !important;
     }
-
+    .mini_photo {
+        width: 5rem
+    }
 </style>

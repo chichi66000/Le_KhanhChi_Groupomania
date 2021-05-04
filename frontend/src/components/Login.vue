@@ -6,7 +6,7 @@
         <div> 
             
             <div class="col-md-6 col-lg-6 mx-auto col">
-                <Logo />
+                <Logo class="my-5" />
             </div>
 
             <h5 class="mb-3 font-weight-bolder pink fs-3">Indentifiez-vous</h5>
@@ -27,8 +27,8 @@
                 
                 <button type="submit" class="btn btn-primary text-center" id="button">Connexion</button>
 
-                <p class=" forgot-password my-3 text-right">
-                    <router-link to="forgot">Forgot password</router-link>
+                <p class="  my-3 text-right">
+                    <router-link to="forgot" class="forgot-password">Mot de passe oublié?</router-link>
                 </p>
             </form>
             
@@ -43,11 +43,9 @@
 // les components
 import Logo from './Logo';
 import Error from './Error';
-// import user from '../store/user'
 
 // pour connexion avec backend et serveur
 import axios from '../axios'
-// import store from '../store'
 
 export default {
     name: "Login",
@@ -60,7 +58,6 @@ export default {
             email:"",
             password: "",
             error: "",
-            // store
         }
     },
 
@@ -73,18 +70,11 @@ export default {
                     email: this.email,
                     password: this.password
                 }
-                await axios.post('api/auth/login', user)   // post au serveur
+                await axios.post('api/auth/login', user)   //envoyer user au serveur
                     .then((response) => {
                         // récupérer token dans localStorage pour maintenir la session
                         localStorage.setItem('token', response.data.token);
                         localStorage.setItem('id', response.data.currentUser.userId);
-                        // localStorage.setItem('nom', response.data.currentUser.nom)
-                        // localStorage.setItem('email', response.data.currentUser.email)
-                        // localStorage.setItem('pseudo', response.data.currentUser.pseudo)
-                        // localStorage.setItem('avatar', response.data.currentUser.avatar)
-
-                        // console.log (response.data.currentUser.userId)   //OK
-                        // console.log (response.data.currentUser)         //OK
                         
                         this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
                         
@@ -103,12 +93,15 @@ export default {
 </script>
 
 <style scoped>
-
-.pink {
-    color: #16265e!important;
-    font-weight:900;
-    
-}
+    .forgot-password {
+        color:#0000FF !important
+    }
+    .forgot-password:hover,
+    .forgot-password:focus {
+        color: black !important;
+        opacity: 0.7;
+        font-weight: bold;
+    }
 </style>
 
 

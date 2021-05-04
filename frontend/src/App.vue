@@ -28,24 +28,13 @@ export default {
   data() {
       return {
         id: localStorage.getItem('id'),
-        // user: null
-        // store
-        // commentaires : [],
-        // likes: [],
-        // posts: [],
         currentUserId:localStorage.getItem('id')
       }   
     },
-    // props: ['commentaires', 'likes', 'posts'],
-
+    // récupérer le user et enregistrer dans store de vuex
     async created() {
-      await axios.get(`api/auth/${this.id}`
-        // {
-        // headers: { Authorization: "Bearer " + localStorage.getItem('token')}
-        // }
-      )
+      await axios.get(`api/auth/${this.id}`)
         .then( response => {
-          // this.user = response.data.currentUser
           console.log("nom" + response.data.currentUser.userNom)
           console.log("currentuser" + response.data.currentUser);
           this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
@@ -53,10 +42,6 @@ export default {
         })
         .catch(error => console.log(error));
     },
-
-    methods: {
-      
-    }
 } 
 </script>
 <style>
@@ -72,9 +57,7 @@ export default {
     color: #CF033C !important;
     font-weight:900;
   }
-    /* .button-blue {
-    color: white !important
-  } */
+    
     .btn-primary {
       background: #0000FF !important
     }
@@ -83,6 +66,18 @@ export default {
       background: #0000A0 !important;
       opacity: 0.7
     }
+    .dropdown-item:hover,
+    .dropdown-item:focus,
+    .form-control-file:hover,
+    .form-control-file:focus {
+      background: #0000FF !important ;
+      color: white !important;
+    }
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+      background: #0000FF !important
+    }
+    
 </style>
 
 
