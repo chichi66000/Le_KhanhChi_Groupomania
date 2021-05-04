@@ -1,6 +1,6 @@
 <template>
-    <div class="">
-        <img class = "img-fluid" src="../assets/images/icon1.png" alt="logo Groupomania"/>
+    <div >
+        <img class = "" src="../assets/images/icon-left-font-monochrome-black.svg" alt="logo Groupomania"/>
     </div>
 </template>
     
@@ -13,7 +13,7 @@ export default {
 
 <style scoped>
 img{
-    width: 40%;
+    width: 12rem;
     background: none;
 }
 </style>

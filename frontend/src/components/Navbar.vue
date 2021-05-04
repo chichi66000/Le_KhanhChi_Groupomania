@@ -1,51 +1,41 @@
 <template>
     <div class="container-fluid">
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-                <!-- <div class=" navbar-brand text-left col-1 col-sm-2 col-md-1 col-lg-1">
-                    <img class=" logo" src="../assets/images/icon-above-font.png" alt="icon entreprise Groupomania"/>
-                </div> -->
 
                 <button class="navbar-toggle" type = "button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls = "navbarContent" aria-expanded="false" aria-label = "Toggle navigation">
-                    <!-- <span class ="navbar-toggle-icon"></span> -->
                 </button>
 
                 <div id="navbarContent" class="collapse navbar-collapse navbar-collapse-sm col  mx-auto text-center font-weight-bolder justify-self-center dropdown-menu-lg-right justify-content-between text-light">
                     <div class=" ">
-                        <router-link to="/">HOME</router-link>
+                        <router-link to="/" class="color">ACCUEIL</router-link>
                     </div>
                     <div class=" collape navbar-collapse ">
                         <ul v-if="!user.user" class="navbar-nav ml-auto">
-                            <li class="nav-item px-5">
-                                <router-link to="/login">Login</router-link>
+                            <li class="nav-item px-5 ">
+                                <router-link to="/login" class="color">Connexion</router-link>
                             </li>
                             <li class="nav-item px-5">
-                                <router-link to="/signup">Signup</router-link>
+                                <router-link to="/signup" class="color">S'Inscrire</router-link>
                             </li>
                         </ul>
 
                         <ul v-if="user.user" class="navbar-nav m-auto">
                             <li class="nav-item px-4">
-                                <router-link to="/help">FAQ</router-link>
+                                <router-link to="/user" class="color">Profil</router-link>
                             </li>
                             <li class="nav-item px-4">
-                                <router-link to="/user">Profile</router-link>
+                                <router-link to="/help" class="color">FAQ</router-link>
                             </li>
+                            
                             <li class="nav-item px-4">
-                                <a href= "javascript:void(0)" @click = "handleClick">Logout</a>
+                                <a href= "javascript:void(0)" class="color" @click = "handleClick">Déconnexion</a>
                             </li>
                         </ul>
 
                     </div>
-
-                    <!-- <router-link to="/">Home  </router-link> 
-                    <router-link to="/help">FAQ  </router-link> 
-                    <router-link to="/user">Profile  </router-link> 
-                    <a class="" href="#">Déconnexion</a> -->
                 </div>
 
         </nav>
-
-        <!-- <router-view></router-view> -->
 
     </div>
 </template>
@@ -77,5 +67,13 @@ export default {
 </script>
 
 <style scoped>
-
+    .color {
+        color: #69ACF6 !important
+    }
+    .color:hover,
+    .color:focus {
+        opacity: 0.5;
+        color: #0000FF !important;
+        background: white;
+    }
 </style>

@@ -6,44 +6,51 @@
 
             <!-- formulaire de Signup -->
 
-            <div id="inscription" class="container m-auto text-center">
+            <div id="inscription" class="container mx-auto text-center">
 
-                <div class="col-md-6 col-lg-6 col m-auto">
-                        <Logo />
+                <div class="mx-auto">
+                        <Logo class="my-5" />
                 </div>
 
-                <h5 class="pink pb-5 fw-bold fs-3 m-auto text-center">Inscription</h5>
+                <h5 class="pink pb-5 fw-bold fs-3 mx-auto text-center">Inscription</h5>
 
                 <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="/signup" @submit.prevent = "inscriptionSubmit">
 
-                    <div class="form-group row">
+                    <div class="form-floating mb-3">
                         <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
+                        <label for="nom">Nom</label>
                     </div>
 
-                    <div class="form-group row ">
+                    <div class="form-floating mb-3">
                         <input type="text"  id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
+                        <label for="prenom">Prenom</label>
                     </div>
 
-                    <div class="form-group row ">
+                    <div class="form-floating mb-3">
                         <input type="text" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo" required class="form-control"/>
+                        <label for="pseudo">Pseudo</label>
                     </div>
 
-                    <div class="form-group row ">
+                    <div class="form-floating mb-3 ">
                         <input type="text"  id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>  
+                        <label for="fonction">Fonction</label>
                     </div>
 
-                    <div class="form-group row ">
+                    <div class="form-floating mb-3">
                         <input type="email"  id="email" name="email" v-model="email" placeholder="email" required class="form-control"/>
+                        <label for="email">Email</label>
                         <span>{{emailError}}</span>
                     </div>
 
-                    <div class="form-group row ">
-                        <input type="password" id="password" name="password" v-model="password" placeholder="password" required class="form-control"/>
+                    <div class="form-floating mb-3">
+                        <input type="password" id="password" name="password" v-model="password" placeholder="mot de passe" required class="form-control"/>
+                        <label for="password">Mot de passe</label>
                         <span>{{passwordError}}</span>
                     </div>
 
-                    <div class="form-group row ">
-                        <input type="password" id="passwordCheck" name="passwordCheck" v-model="passwordCheck" placeholder="confirmer password" required class="form-control"/>
+                    <div class="form-floating mb-3">
+                        <input type="password" id="passwordCheck" name="passwordCheck" v-model="passwordCheck" placeholder="confirmer mot de passe" required class="form-control"/>
+                        <label for="passewordCheck">Confirmer mot de passe</label>
                         <span>{{passwordCheckError}}</span>
                     </div>
             
@@ -56,10 +63,10 @@
 
                      <div class="form-group form-check">
                         <input type="checkbox" v-model="accept" id="accept" required class="form-check-input">
-                        <label class="form-check-label" for="accept">Accept conditions d'utilisation; </label>
+                        <label class="form-check-label" for="accept">Accept conditions d'utilisation </label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary text-center mb-5" id="button" >Valider</button>
+                    <button type="submit" class="btn btn-primary button-blue text-center mb-5" id="button" >Valider</button>
             
                 </form>
 
@@ -182,9 +189,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.pink {
-    color: #ea315f!important;
-    font-weight:900; 
-    margin-bottom: 2rem!important;
-}
+// .pink {
+//     color: #CF033C !important;
+//     font-weight:900;
+// }
+// .button-blue {
+//     color: #0000FF !important
+// }
 </style>

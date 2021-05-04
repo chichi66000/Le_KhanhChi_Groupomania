@@ -3,9 +3,9 @@
       <Navbar />
       <router-view ></router-view>
 
-      <div class="col justify-content-center">
-        <!-- <h3 >Bonjour, bienvenue à Groupomania, c'est App. Veuillez connecter</h3> -->
-      </div>
+      <!-- <div class="col justify-content-center">
+        
+      </div> -->
 
       <Footer/>
   </div>
@@ -59,14 +59,31 @@ export default {
     }
 } 
 </script>
-<style scope lang="scss">
-text-right {
-  text-align: right!important;
-}
-#app{
-  background: url(./assets/images/bg_grey.png);
-  background-size: cover;
-  min-height: 100vh;
-}
-
+<style>
+    text-right {
+      text-align: right!important;
+    }
+    #app{
+      background: #E4E6E9;
+      background-size: cover;
+      min-height: 100vh;
+    }
+    .pink {
+    color: #CF033C !important;
+    font-weight:900;
+  }
+    /* .button-blue {
+    color: white !important
+  } */
+    .btn-primary {
+      background: #0000FF !important
+    }
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: #0000A0 !important;
+      opacity: 0.7
+    }
 </style>
+
+
+
