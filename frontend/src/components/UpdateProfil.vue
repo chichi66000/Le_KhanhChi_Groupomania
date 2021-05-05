@@ -1,25 +1,25 @@
 <template>
     <div class="container-fluid">
-
+        <Logo class="my-3"/>
         <!-- Formulaire pour modifier profil -->
         <form class="form-group  mt-5 mb-5 col col-sm-12 col-md-8 col-lg-6 mx-auto text-center" method="post" enctype="multipart/form-data"  @submit.prevent = "changeProfil">
 
             <div class="form-group row ">
-                <label for="pseudo" class="col-form-label col-sm-2">Pseudo</label>
+                <label for="pseudo" class=" font-weight-bold col-form-label col-sm-2">Pseudo</label>
 
                 <input type="text" class="form-control col-sm-10" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo">
                 <span>{{pseudoError}}</span>
             </div>
 
             <div class="form-group row ">
-                <label for="fonction" class="col-form-label col-sm-2">Fonction</label>
+                <label for="fonction" class="col-form-label col-sm-2 font-weight-bold">Fonction</label>
 
                 <input type="text" class="form-control col-sm-10" id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z][A-Za-z' -]+">
                 <span>{{fonctionError}}</span>
             </div>
 
             <div class="form-group row ">
-                <label for="email" class="col-form-label col-sm-2">Email</label>
+                <label for="email" class="col-form-label col-sm-2 font-weight-bold">Email</label>
 
                 <input type="email" class="form-control col-sm-10" id="email" name="email" v-model="email" placeholder="email">
                 <span>{{emailError}}</span>
@@ -48,10 +48,13 @@ import { ref, } from 'vue'
 import * as yup from 'yup'; 
 import axios from '../axios';
 import Swal from 'sweetalert2'
+import Logo from './Logo'
 
 export default {
     name: "UpdateProfil",
-    
+    components: {
+        Logo,
+    },
     setup(){
         // Define a validation schema
         const error = ref([])

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
 
-    <h3 class="text-center my-3 text-info">FAQ</h3>
+    <h3 class="text-center my-3 pink">FAQ</h3>
 
     <!-- Foire au question -->
     <div class="">
@@ -58,6 +58,8 @@ export default {
 
 <style lang="scss" scoped>
   summary{
-    font-size: 1.5rem
+    font-size: 1.5rem;
+    color: #0000FF !important;
   }
+
 </style>

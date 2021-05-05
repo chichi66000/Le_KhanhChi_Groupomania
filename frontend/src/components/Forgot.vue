@@ -2,14 +2,17 @@
     <div class="text-center">
         <error v-if="error" :error ="error" class="mx-auto text-center my-5 col col-md-5 col-lg-4 col-xl-4" />
 
-        <form class="mx-auto text-center my-5 col col-md-5 col-lg-4 col-xl-4" @submit.prevent = "handleSubmit">
-            <h3 class="text-primary my-5">
+        <form class="mx-auto text-center my-5 col col-md-8 col-lg-6 col-xl-4" @submit.prevent = "handleSubmit">
+            <h3 class="pink my-5">
                 Forgot password
             </h3>
-            <div class="form-group">
+
+            <div class="form-floating">
                 <input id="email" required type="email" class="form-control" placeholder="Email" v-model="email">
+                <label for="email" class="form-group">Email</label>
             </div>
-            <button class="btn btn-primary">Valider</button>
+
+            <button class="btn btn-primary my-3">Valider</button>
         </form>
     </div>
 </template>

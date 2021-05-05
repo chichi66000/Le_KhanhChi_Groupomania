@@ -1,22 +1,27 @@
 <template>
     <div>
-        <h3 class="text-center my-5 mx-auto">Modifier votre password</h3>
+        <Logo class="my-3"/>
         
         <error class="text-center" v-if="error" :error = "error"/>
 
-        <form @submit.prevent="changePass" class="form-group my-5 text-center col col-md-5 col-lg-4 col-xl-4 mx-auto">
-            <div class="form-group">
+        <form @submit.prevent="changePass" class="form-group my-5 text-center col col-md-8 col-lg-6 col-xl-4 mx-auto">
 
-                <input type="password" class="form-control col-sm-10" id="oldPass" name="oldPass" v-model="oldPass" placeholder="ancien password" min="8" max="20">
+        <h3 class="text-center my-5 mx-auto pink">Modifier votre password</h3>
+
+            <div class="form-floating my-5">
+
+                <input type="password" class="form-control col-sm-10" id="oldPass" name="oldPass" v-model="oldPass" placeholder="mot de passe" min="8" max="20">
+                <label for="oldPass" class="form-group">mot de passe</label>
             </div>
 
-            <div class="form-group">
+            <div class="form-floating">
 
-                <input type="password" class="form-control col-sm-10" id="newPass" name="newPass" v-model="newPass" placeholder="nouveau password" min="8" max="20">
+                <input type="password" class="form-control col-sm-10" id="newPass" name="newPass" v-model="newPass" placeholder="nouveau mot de passe" min="8" max="20">
+                <label for="newPass" class="form-group">nouveau mot de passe</label>
                 <span>{{newpassError}}</span>
             </div>
 
-            <button class="btn btn-primary my-2">Valider</button>
+            <button class="btn btn-primary my-3">Valider</button>
         </form>
     </div>
 </template>
@@ -28,11 +33,13 @@ import {  useField, useForm } from 'vee-validate';
 // import { ref, } from 'vue'
 import * as yup from 'yup';     
 import Swal from 'sweetalert2'
+import Logo from './Logo'
 
 export default {
     name: "UpdatePass",
     components: {
-        Error
+        Error,
+        Logo
     },
     data () {
         return {

@@ -1,6 +1,8 @@
 <template>
     <div class="container">
-   
+        
+        <Logo class="my-5"/>
+
         <div class="container mx-auto mt-5 mb-5 col ">
             <error v-if="error" :error = "error"/>
     <!-- Profil user-->
@@ -8,7 +10,7 @@
             <!-- Partie afficher avatar -->
             <div class="row shadow rounded col d-flex mx-auto px-5 my-5">
                 <img class="monAvatar img-fluid my-2 rounded-circle " :alt="`avatar${user.user.userPseudo}`" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
-                <p class=" font-weight-bold"> {{user.user.userPseudo }} </p>
+                <p class="pink font-weight-bold"> {{user.user.userPseudo }} </p>
 
             </div>
 
@@ -184,11 +186,12 @@ import { mapState } from 'vuex'
 import axios from '../axios'
 import Swal from 'sweetalert2'
 import Error from '../components/Error';
-
+import Logo from '../components/Logo'
 export default {
     name: "User",
     components: {
-        Error
+        Error,
+        Logo
     },
     data () {
         return {
@@ -331,7 +334,7 @@ export default {
         // Récupérer le lien de l'images 
         getImage(index) {
             let url = this.userPosts[index].img_url
-            console.log(url);
+            
             if (url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')) {
                 
                 return `http://localhost:5000/images/${url}`

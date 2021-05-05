@@ -1,16 +1,25 @@
 <template>
-    <form class="mx-auto text-center my-5 col col-md-5 col-lg-4 col-xl-4" @submit.prevent = "handleSubmit">
-        <h3>Reset password</h3>
-        <div class="form-group">
-            <input type="password" id="password" placeholder="password" class="form-control" v-model="password" />
-            <span>{{passwordError}}</span>
-        </div>
-        <div class="form-group">
-            <input type="password" id="passwordConfirm" placeholder="passwordConfirm" class="form-control" v-model="passwordConfirm" />
-            <span>{{passwordConfirmError}}</span>
-        </div>
-        <button class="btn btn-primary">Valider</button>
-    </form>
+    <div>
+
+        <Logo class="my-3 text-left" />
+    
+        <form class="mx-auto text-center my-5 col col-md-5 col-lg-4 col-xl-4" @submit.prevent = "handleSubmit">
+            <h3 class="pink">Reset password</h3>
+
+            <div class="form-floating my-3">
+                <input type="password" id="password" placeholder="Mot de passe" class="form-control" v-model="password" />
+                <label for="password" class="form-group">Mot de passe</label>
+                <span>{{passwordError}}</span>
+            </div>
+
+            <div class="form-floating my-3">
+                <input type="password" id="passwordConfirm" placeholder="Confirmer mot de passe" class="form-control" v-model="passwordConfirm" />
+                <label for="passwordConfirm" class="form-group">Confirmer mot de passe</label>
+                <span>{{passwordConfirmError}}</span>
+            </div>
+            <button class="btn btn-primary">Valider</button>
+        </form>
+    </div>
 </template>
 
 <script>
@@ -19,15 +28,12 @@ import {  useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { ref, } from 'vue'
 import Swal from 'sweetalert2'
-
+import Logo from './Logo'
 export default {
     name: "Reset",
-    // data () { 
-    //     return { 
-    //         password: '',
-    //         passwordConfirm: ''
-    //     }
-    // },
+    components: {
+        Logo
+    },
     setup(){
         const error = ref([])
         const schema = yup.object ({
