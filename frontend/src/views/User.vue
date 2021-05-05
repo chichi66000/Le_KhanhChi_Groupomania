@@ -7,14 +7,14 @@
 
             <!-- Partie afficher avatar -->
             <div class="row shadow rounded col d-flex mx-auto px-5 my-5">
-                <img class="monAvatar img-fluid my-2 rounded-circle " alt="avatar" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
+                <img class="monAvatar img-fluid my-2 rounded-circle " :alt="`avatar${user.user.userPseudo}`" :src= "`http://localhost:5000/images/${user.user.avatar}`" />
                 <p class=" font-weight-bold"> {{user.user.userPseudo }} </p>
 
             </div>
 
             <!-- Partie afficher le profil et modifier -->
             <div class="col shadow rounded mx-auto mt-3 mb-3 px-5 py-5">
-                <h3 class="">A propos de moi</h3>
+                <h3 class="pink">A propos de moi</h3>
                 <p class="">Nom et prenom : <strong>{{ user.user.userNom }}</strong>  </p>
                 <p class="">Pseudo : <strong>{{ user.user.userPseudo }}</strong>  </p>
                 <!-- <p class="">Avatar : <strong>{{ user.user.avatar }}</strong>  </p> -->

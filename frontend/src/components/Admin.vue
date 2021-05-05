@@ -2,33 +2,33 @@
     <div>
         <error v-if="error" :error = "error"/>
 
-        <h3 class="text-center text-info my-5">Liste les utilitasateurs du site</h3>
+        <h3 class="text-center pink my-5">Liste les utilitasateurs du site</h3>
         <table class="table table-striped table-responsive  mx-auto my-5">
             <thead>
-                <tr class="text-center m-auto text-primary" >
-                    <th scope="col" >Id</th>
-                    <th scope="col" >Nom</th>
-                    <th scope="col" >Prénom</th>
-                    <th scope="col" >Pseudo</th>
-                    <th scope="col" >Email</th>
-                    <th scope="col" >Date entrée</th>
-                    <th scope="col" >Admin</th>
-                    <th scope="col" >Delete</th>
+                <tr class="text-center text-primary font-weight-bold mx-auto px-auto" >
+                    <td scope="col" class="col" >Id</td>
+                    <td scope="col" class="col">Nom</td>
+                    <td scope="col" class="col">Prénom</td>
+                    <td scope="col" class="col">Pseudo</td>
+                    <td scope="col" class="col-2">Email</td>
+                    <td scope="col" class="col-3">Date entrée</td>
+                    <td scope="col" class="col">Admin</td>
+                    <td scope="col" class="col-2">Delete</td>
                 </tr>
     
             </thead>
 
             <tbody>
         
-                <tr :key="user" v-for="(user, index) in users"  class=" m-auto">
-                    <td  > {{user.id}}</td>
-                    <td  >{{user.nom}}</td>
-                    <td  >{{user.prenom}}</td>
-                    <td  >{{user.pseudo}}</td>
-                    <td >{{user.email}}</td>
-                    <td  >{{user.createdAt}}</td>
-                    <td  class="btn-danger" @click = "adminChange(index)">{{user.isAdmin}}</td>
-                    <td  class="btn-danger" @click = "adminDelete(index)">Supprimer</td>
+                <tr :key="user" v-for="(user, index) in users"  class="text-center  ">
+                    <td  class="col">{{user.id}}</td>
+                    <td  class="col">{{user.nom}}</td>
+                    <td  class="col">{{user.prenom}}</td>
+                    <td  class="col">{{user.pseudo}}</td>
+                    <td class="col-2">{{user.email}}</td>
+                    <td  class="col-3">{{user.createdAt}}</td>
+                    <td  class="col btn-danger" @click = "adminChange(index)">{{user.isAdmin}}</td>
+                    <td  class="col-2 btn-danger" @click = "adminDelete(index)">Supprimer</td>
 
                 </tr>
             </tbody>
@@ -140,3 +140,12 @@ export default {
 
 }
 </script>
+
+<style scoped>
+    .text-primary {
+        color: #0000FF !important;
+    }
+    .btn-danger {
+        cursor: pointer;
+    }
+</style>

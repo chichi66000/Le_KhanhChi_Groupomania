@@ -59,7 +59,8 @@ export default {
   }
     
     .btn-primary {
-      background: #0000FF !important
+      background: #0000FF !important;
+      color: white !important
     }
     .btn-primary:hover,
     .btn-primary:focus {
