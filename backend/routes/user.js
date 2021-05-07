@@ -4,6 +4,8 @@ const multer = require('../middlewares/multer_config');
 const auth = require('../middlewares/auth');
 const userCtrl = require('../controllers/user');
 
+// Route pour refreshToken
+router.post('/refresh', userCtrl.refreshToken)
 
 // Incription user      => OK testé
 router.post("/signup", /*error , */ multer, userCtrl.signup);

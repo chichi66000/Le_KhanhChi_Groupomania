@@ -89,14 +89,9 @@
                                                     <textarea v-model="userPost.content" class="form-control" id="message-text" ></textarea>
                                                 </div>
 
-                                            <!-- Zone pour modifier image et video -->
-                                                <!-- <div v-if="userPost.img_url !=''">
-                                                    <img class="img" :src="`${post.img_url}`">
-                                                </div> -->
-
                                                 <div class="input-group">
                                         
-                                                    <input v-on="userPost.img_url" multiple ref="file" type="file" class="form-control-file" :id="`inputFile${userPost.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                                    <input v-on="userPost.img_url"  type="file" class="form-control-file" :id="`inputFile${userPost.id}`" aria-describedby = "inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
                                                     <label class="form-group"  :for="`inputFile${userPost.id}`"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
@@ -107,7 +102,8 @@
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary">Enregistrer</button>
+
+                                            <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary" data-bs-dismiss = "modal">Enregistrer</button>
                                         </div>
                                     </div>
                                 </div>
