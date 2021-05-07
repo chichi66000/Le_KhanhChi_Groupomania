@@ -12,10 +12,21 @@ import router from './router/index'
 //     //   }
 // })
 
-export default axios.create(
+
+
+const axiosInstance = axios.create(
     { baseURL: "http://localhost:5000/" },
     { withCredentials: true },
-    );
+);
+
+// axiosInstance.defaults.baseURL = "http://localhost:5000/";
+// axiosInstance.defaults.withCredentials = true;
+
+// export default axios.create(
+//     { baseURL: "http://localhost:5000/" },
+//     { withCredentials: true },
+
+//     );
 
     function saveToken(token, refreshToken) {
         localStorage.setItem('token', token);
@@ -46,15 +57,24 @@ export default axios.create(
         });
       }
 // Add a request interceptor
-axios.interceptors.request.use(
+axiosInstance.interceptors.request.use(
     // functiont config
     (config) => {
         const token = localStorage.getItem('token')
-        
+        if( token ) {
+
             config.headers.Authorization = `Bearer ${token}`;
+        }
+        // config.headers = {
+        //     'Authorization': `Bearer ${token}`,
+        //     'Accept': 'application/json',
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        // }
+        console.log({token})
+        console.log({config})
             
         
-        // config.headers['Content-Type'] = 'application/json';
+        config.headers['Content-Type'] = 'application/json';
        return config;
     },
     // function error
@@ -64,11 +84,13 @@ axios.interceptors.request.use(
 )
 
 // Add a response interceptor
-axios.interceptors.response.use (
+axiosInstance.interceptors.response.use (
     (response) => {
+        console.log({response})
         return response
     },
     (error) => {
+        console.log({error})
         // const originalRequest = error.config;
         const status = error.response ? error.response.status : null;
         // verifier si le refresh token est expired
@@ -98,4 +120,4 @@ axios.interceptors.response.use (
     }
 )
 
-// export default {service}  ;
+export default axiosInstance  ;
