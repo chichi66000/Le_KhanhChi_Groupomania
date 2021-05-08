@@ -107,7 +107,7 @@
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary">Enregistrer</button>
+                                            <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" data-bs-dismiss="modal" class="btn btn-primary">Enregistrer</button>
                                         </div>
                                     </div>
                                 </div>

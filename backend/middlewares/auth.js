@@ -6,7 +6,7 @@ module.exports =async (req, res, next) => {
     await jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
       console.log(err)
 
-      if (err) return res.sendStatus(403)
+      if (err) return res.sendStatus(401)
 
       req.user = user
 

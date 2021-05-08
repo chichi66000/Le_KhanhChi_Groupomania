@@ -48,6 +48,7 @@ export default {
     // props: [ 'user'],
 
     methods: {
+        // method pour logout
         handleClick (){
             localStorage.removeItem('token');
             localStorage.removeItem('id');

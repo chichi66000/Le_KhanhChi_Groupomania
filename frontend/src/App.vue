@@ -15,7 +15,7 @@
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
-import axios from './axios';
+import axiosInstance from './axios';
 // import store from './store'
 
 export default {
@@ -33,7 +33,7 @@ export default {
     },
     // récupérer le user et enregistrer dans store de vuex
     async created() {
-      await axios.get(`api/auth/${this.id}`)
+      await axiosInstance.get(`api/auth/${this.id}`)
         .then( response => {
           console.log("nom" + response.data.currentUser.userNom)
           console.log("currentuser" + response.data.currentUser);

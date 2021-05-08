@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import axios from '../axios'
+import axiosInstance from '../axios'
 import Error from './Error'
 import Swal from 'sweetalert2'
 
@@ -55,7 +55,7 @@ export default {
     },
     async created () {
         
-            await axios.get(`api/auth/admin/${this.id}`)
+            await axiosInstance.get(`api/auth/admin/${this.id}`)
                 .then (response => {
                     // console.log(response.data.users[0].id);     //OK
                     this.users = response.data.users
@@ -83,7 +83,7 @@ export default {
                 if (result.isConfirmed) {
                     let id = this.users[index].id;
                     console.log(id);        //OK
-                    axios.delete(`api/auth/adminDelete/${id}`)
+                    axiosInstance.delete(`api/auth/adminDelete/${id}`)
                         .then(response => {
                             console.log(response);
                             this.users.splice(index,1)
@@ -116,9 +116,9 @@ export default {
                     confirmButtonText: 'Yes'
                     }).then((result) => {
                     if (result.isConfirmed) {
-                        let id = this.users[index].id;
-                        console.log(id);        //OK
-                        axios.put(`api/auth/adminChange/${id}`)
+                        let userId = this.users[index].id;
+                        console.log(userId);        //OK
+                        axiosInstance.put(`api/auth/adminChange/${userId}/${this.id}`)
                             .then(response => {
                                 console.log(response);
                                 Swal.fire(

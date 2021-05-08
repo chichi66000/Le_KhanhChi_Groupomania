@@ -149,7 +149,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import axios from '../axios'
+import axiosInstance from '../axios'
 import Swal from 'sweetalert2'
 import AddPost from './AddPost'
 import Error from './Error'
@@ -169,7 +169,7 @@ export default {
         }
     },
 
-    created () {
+    async created () {
         //récupérer tous les publications dès début
         this.getAllPosts()
             
@@ -178,7 +178,7 @@ export default {
     methods: {
         // récupérer tous les publications
         async getAllPosts () {
-            await axios.get('api/post/')
+            await axiosInstance.get('api/post/')
             .then( response => {
                 this.posts = response.data;
             })
@@ -191,7 +191,7 @@ export default {
         // supprimer post par user
         async deletePost (index) {
             let postId = this.posts[index].id;          //récupérer id du post
-            await axios.delete(`api/post/${postId}`)    // envoyer au server
+            await axiosInstance.delete(`api/post/${postId}`)    // envoyer au server
                 .then( response => {
                     console.log(response);
                     Swal.fire('Votre publication a été supprimé');
@@ -223,7 +223,7 @@ export default {
                 console.log(form)
             }
                 // envoyer formulaire par axios, recevoir la response
-            await axios.put(`/api/post/${postId}/${this.currentUserId}/update`, form
+            await axiosInstance.put(`/api/post/${postId}/${this.currentUserId}/update`, form
                 
             )
                 .then( response => {
@@ -253,7 +253,7 @@ export default {
             let postId = this.posts[index].id;
 
             // envoyer en server et récupérer la response
-            await axios.post(`api/post/${postId}/${userId}/like`, {
+            await axiosInstance.post(`api/post/${postId}/${userId}/like`, {
                 userId: userId, postId: postId
             })
                 .then( response => {
@@ -276,7 +276,7 @@ export default {
             let saisie = document.getElementById(`commentaire${postId}`).value
 
             // ajouter commentaire avec la touche entrer puis envoyer au server
-                axios.post('/api/post/commentaire', {
+                axiosInstance.post('/api/post/commentaire', {
                     commentaire: saisie,
                     userId: userId,
                     postId: postId,

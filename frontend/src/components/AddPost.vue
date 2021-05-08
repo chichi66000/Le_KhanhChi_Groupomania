@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import axios from '../axios'
+import axiosInstance from '../axios'
 import Swal from 'sweetalert2'
 import Error from './Error';
 export default {
@@ -105,7 +105,7 @@ export default {
                 form.append('image', this.image)
 
                 // envoyer formulaire par axios, recevoir la response
-                await axios.post("/api/post/", form)
+                await axiosInstance.post("/api/post/", form)
                     .then( response => {
                         console.log(response);
                         // envoyer 1 message OK pour utilisateur
