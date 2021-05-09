@@ -1,9 +1,11 @@
 <template>
     <div class="container-fluid">
         <Logo class="my-3"/>
+
         <!-- Formulaire pour modifier profil -->
         <form class="form-group  mt-5 mb-5 col col-sm-12 col-md-8 col-lg-6 mx-auto text-center" method="post" enctype="multipart/form-data"  @submit.prevent = "changeProfil">
 
+            <!-- input pseudo -->
             <div class="form-group row ">
                 <label for="pseudo" class=" font-weight-bold col-form-label col-sm-2">Pseudo</label>
 
@@ -11,6 +13,7 @@
                 <span>{{pseudoError}}</span>
             </div>
 
+            <!-- input fonction -->
             <div class="form-group row ">
                 <label for="fonction" class="col-form-label col-sm-2 font-weight-bold">Fonction</label>
 
@@ -18,6 +21,7 @@
                 <span>{{fonctionError}}</span>
             </div>
 
+            <!-- input email -->
             <div class="form-group row ">
                 <label for="email" class="col-form-label col-sm-2 font-weight-bold">Email</label>
 
@@ -25,6 +29,7 @@
                 <span>{{emailError}}</span>
             </div>
 
+            <!-- input file upload -->
             <div class="form-group row ">
                 <label class="form-text" for="image">Image profil (jpg, png, jpeg) </label>
                 <input type="file" class="form-control-file pink" id="image" accept=".jpg, .png, .jpeg" name="image" @change="onChangeFile">
@@ -32,6 +37,7 @@
 
             </div>
 
+            <!-- button annuler et submit formulaire -->
             <div class="text-center ">
                 <button @click.prevent="annuler" type="submit" class="btn btn-primary text-center mb-5 mx-5" id="button" >Annuler</button>
                 <button type="submit" class="btn btn-primary text-center mb-5 " id="button" >Confirmer</button>
@@ -97,17 +103,21 @@ export default {
             console.log(this.avatar);
         },
 
+        // fonction pour changer le profil
         async changeProfil () {
+            // récupérer les champs inputs
             let email= this.email;
             let fonction = this.fonction;
             let pseudo = this.pseudo;
 
+            // mettre dans FormData 
             let form = new FormData();
             form.append("email", email);
             form.append("fonction", fonction);
             form.append("pseudo", pseudo);
             form.append("image", this.avatar)
 
+            // et envoyer au server
             await axios.put(`/api/auth/updateUser/${this.id}`, form)
                 .then( response => {
                     console.log(response);
@@ -115,6 +125,7 @@ export default {
                     axios.get(`api/auth/${this.id}`)
                         .then( response => {
                             console.log("currentuser" + response.data.currentUser);
+                            // update user dans vuex
                             this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
                         })
                         .catch(error => console.log(error))
@@ -126,6 +137,7 @@ export default {
                 })
         },
 
+        // fonction pour annuler action changeProfil
         annuler () {
             this.$router.push('/user')
         }

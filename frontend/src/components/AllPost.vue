@@ -3,6 +3,7 @@
         <div class="col shadow rounded mx-auto mt-3 mb-3 py-5">
                 <!-- afficher error -->
                 <error v-if="error" :error = "error"/>
+
                 <!-- Component pour créer nouveau publication -->
                 <AddPost :method="getAllPosts"/>
 
@@ -10,28 +11,30 @@
 
                 <hr class="text-primary">
 
-                <!-- Partie pour afficher les actualité  -->
+                <!-- Partie pour afficher les actualités  -->
                 <div :key="post.id" v-for="( post, index ) in posts" class="mini border my-5 bg-white">
                     <div class="d-flex justify-content-between mt-1 mb-1">
+
+                        <!-- image avatar et pseudo -->
                         <div class="hidden">
                             <img class="b-avatar rounded-circle" :src="`http://localhost:5000/images/${post.User.avatar}`" :alt=" `avatar de ${post.User.pseudo}`" />
                             <p class="font_superlight py-1">{{post.User.pseudo}}</p>
                             <p class="font_light"> publié {{post.updatedAt}}</p>   
                         </div>
 
+                        <!-- Titre -->
                         <div>
                             <h4 class="mx-auto">{{post.title}}</h4>
                         </div>
                         
-
-                        <!-- Si currentUser est auteur de l'article, il peut le modifier et supprimer -->
+                        <!-- Si currentUser est auteur de l'article ou admin, il peut le modifier et supprimer -->
                         <div v-if="currentUserId==post.userId || user.user.isAdmin===true" class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-pencil"></i>
                             </button>
 
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li v-if="currentUserId==post.userId" :key="post.id"><button type="button"   :data-bs-target="`#modify${post.id}`" data-bs-toggle="modal" class="btn dropdown-item " >Modifier</button></li>
+                                <li v-if="currentUserId==post.userId || user.user.isAdmin===true" :key="post.id"><button type="button"   :data-bs-target="`#modify${post.id}`" data-bs-toggle="modal" class="btn dropdown-item " >Modifier</button></li>
 
                                 <li v-if="currentUserId==post.userId || user.user.isAdmin===true" @click="deletePost (index)"><a class="dropdown-item" href="#">Supprimer</a></li>
                             
@@ -43,28 +46,33 @@
                             <div class="modal fade"  :id="`modify${post.id}`" tabindex="-1" aria-labelledby="modify" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-scrollable">
                                     <div class="modal-content">
+
+                                        <!-- header modal -->
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Modifier votre publication</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            
                                         </div>
+
+                                        <!-- body modal -->
                                         <div class="modal-body">
+
                                             <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
+
+                                                <!-- input titre -->
                                                 <div class="mb-3">
                                                     <label for="recipient-name" class="col-form-label">Titre</label>
                                                     <input v-model="post.title" type="text" class="form-control" :id="`titre${post.id}`" max="50" />
-                                                        
-                                                    
+
                                                     <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
                                                 </div>
 
+                                                <!-- textarea contenu -->
                                                 <div class="mb-3">
                                                     <label for="message-text" class="col-form-label">Contenu</label>
                                                     <textarea v-model="post.content" class="form-control" :id="`message-text${post.id}`" ></textarea>
                                                 </div>
 
-                                            <!-- Zone pour modifier image et video -->
-
+                                            <!-- input pour modifier image et video -->
                                                 <div class="input-group">
                                         
                                                     <input v-on="post.img_url" ref="file" type="file" class="form-control-file " :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
@@ -76,9 +84,11 @@
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
 
                                                 </div>
+
                                             </form>
                                         </div>
 
+                                        <!-- footer modal -->
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
 
@@ -98,6 +108,7 @@
 
                     <!-- afficher image et vidéo    -->
                     <div v-if="post.img_url !='' "  class="">
+
                         <!-- image -->
                         <div v-if="post.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
                             <img class="img img-fluid" :src="getImage(index)" :alt="`photo illustration ${post.title}`" />
@@ -119,26 +130,26 @@
 
                     <!-- afficher les commentaires -->
                     <div >
+
                         <div class="form-floating">
-                            <!-- ajouter commentaire -->
+                            <!--input ajouter commentaire -->
                             <input  @change="loadComment(index)" class="form-control " type="text" :id="`commentaire${post.id}`" name="commentaire" placeholder="Ecrivez une commentaire" />
                             <label :for="`commentaire${post.id}`">Ecrivez une commentaire</label>
                         </div>
-                        
 
                         <!-- afficher commentaires -->
-
                             <div :key="commentaire.id" v-for="commentaire in post.commentaires" class="d-flex rounded-pill border text-center my-3 py-1 ">
+
                                 <!-- afficher userAvatar et son pseudo -->
                                 <div class="align-self-center">
                                     <img  class="b-avatar rounded-circle ml-3 my-2" :src="`http://localhost:5000/images/${commentaire.userAvatar}`" :alt=" `avatar de ${commentaire.userPseudo}`" />
 
                                     <p class=" font_superlight ml-3">{{commentaire.userPseudo}}</p>
                                 </div>
+
                                 <!-- Les commentaires -->
                                 <p class="px-3 align-self-center">{{commentaire.commentaires}}</p>
                             </div>
-                        
                         
                     </div>
                 </div>
@@ -172,7 +183,6 @@ export default {
     async created () {
         //récupérer tous les publications dès début
         this.getAllPosts()
-            
     },
 
     methods: {
@@ -208,7 +218,7 @@ export default {
             let postId = this.posts[index].id           // récupérer id du post
             // Récupére le file d'image
             let inputFile = document.getElementById(`inputFile${postId}`).files[0]
-            console.log({inputFile})      
+
             // envoyer tous les informations par FormData
             let form = new FormData();
             if ( inputFile != "undefined" || inputFile !="") {
@@ -234,7 +244,7 @@ export default {
                     this.error=""
                     this.getAllPosts()
                         
-                    })
+                })
                 .catch( err => {
                     console.log(err);
                     this.error = "Problème pour enregistrer votre article"
@@ -242,8 +252,6 @@ export default {
                 
                     // fermer manuellement la modal
                     // document.getElementById(`modify${postId}`).modal('hide')
-                        
- 
         },
         
         // ajouter/ delete like du post
@@ -269,9 +277,10 @@ export default {
 
         // récupérer value de input commentaire et créer commentaire
         loadComment (index) {
-            
+            //récupérer id du post et du user
             let postId = this.posts[index].id 
             let userId = this.currentUserId;
+
             // récupérer la value de champs input choisi
             let saisie = document.getElementById(`commentaire${postId}`).value
 
@@ -288,8 +297,10 @@ export default {
                         console.log(response)
                         // ajouter ce commentaire dans le tableau commentaire du post
                         this.posts[index].commentaires.unshift(saisie)
+
                         // update/reload la page
                         this.getAllPosts()
+
                         // réinitialiser la champs input => vide
                         document.getElementById(`commentaire${postId}`).value=""   
                     })
@@ -302,11 +313,10 @@ export default {
         // récupérer le nom de image pour afficher
         getImage(index) {
             let url = this.posts[index].img_url
-            
             return `http://localhost:5000/images/${url}`
-            
         },
     },
+    
     computed: {
       ...mapState ( {
             user: state => state.user,

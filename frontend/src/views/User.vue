@@ -19,8 +19,8 @@
                 <h3 class="pink">A propos de moi</h3>
                 <p class="">Nom et prenom : <strong>{{ user.user.userNom }}</strong>  </p>
                 <p class="">Pseudo : <strong>{{ user.user.userPseudo }}</strong>  </p>
-                <!-- <p class="">Avatar : <strong>{{ user.user.avatar }}</strong>  </p> -->
 
+                <!-- Les buttons pour modifier profil et password -->
                 <div class="text-center d-flex flex-column mx-auto">
                     <button class="col col-md-6 col-lg-4 mx-auto btn btn-primary mb-3 text-center" @click.prevent = "updateUser">MODIFIER PROFIL</button> 
                     <button class="col col-md-6 col-lg-4 mx-auto btn btn-primary mb-3 text-center" @click.prevent = "updatePass">MODIFIER PASSWORD</button>
@@ -51,7 +51,7 @@
                                 <!-- Le titre -->
                                 <h4 class="font-weight-bold">{{userPost.title}}</h4>
 
-                                <!-- Si currentUser est auteur de l'article, il peut le modifier et supprimer -->
+                                <!-- Si currentUser est auteur de l'article ou si c'est admin, il peut le modifier et supprimer -->
                                 <div v-if="id==userPost.userId || user.user.isAdmin===true" class="dropdown">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-pencil"></i>
@@ -69,42 +69,43 @@
                             <div class="modal fade"  :id="`modify${userPost.id}`" tabindex="-1" aria-labelledby="modify" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-scrollable">
                                     <div class="modal-content">
+
+                                        <!-- header modal-->
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Modifier votre publication</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            
                                         </div>
+
+                                        <!-- body modal-->
                                         <div class="modal-body">
                                             <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
+
+                                                <!--Input Titre -->
                                                 <div class="mb-3">
                                                     <label for="recipient-name" class="col-form-label">Titre</label>
                                                     <input v-model="userPost.title" type="text" class="form-control" id="titre" max="50" />
-                                                        
-                                                    
                                                     <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
                                                 </div>
 
+                                                <!--Textarea Contenu -->
                                                 <div class="mb-3">
                                                     <label for="message-text" class="col-form-label">Contenu</label>
                                                     <textarea v-model="userPost.content" class="form-control" id="message-text" ></textarea>
                                                 </div>
 
-                                            <!-- Zone pour modifier image et video -->
-                                                <!-- <div v-if="userPost.img_url !=''">
-                                                    <img class="img" :src="`${post.img_url}`">
-                                                </div> -->
-
+                                                <!-- input umpoad file -->
                                                 <div class="input-group">
-                                        
                                                     <input v-on="userPost.img_url" multiple ref="file" type="file" class="form-control-file" :id="`inputFile${userPost.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
 
                                                     <label class="form-group"  :for="`inputFile${userPost.id}`"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
-
                                                 </div>
+
                                             </form>
+
                                         </div>
 
+                                        <!-- footer modal -->
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" data-bs-dismiss="modal" class="btn btn-primary">Enregistrer</button>
@@ -114,7 +115,7 @@
 
                             </div>
 
-                            <!-- Le contenu -->
+                            <!-- Le contenu du publication-->
                             <div>
                                 <p class="p-2 "> {{userPost.content}}</p>
                                 
@@ -122,6 +123,7 @@
 
                             <!-- Les images -->
                             <div v-if="userPost.img_url !='' "  class="">
+
                                 <!-- image -->
                                 <div v-if="userPost.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
                                     <img class="img img-fluid" :src="getImage(index)" />
@@ -196,7 +198,6 @@ export default {
     data () {
         return {
             id: localStorage.getItem('id'),
-            // url:'',
             error: '',
             userPosts: [],
             url_img: [],
@@ -207,11 +208,12 @@ export default {
       ...mapState ( { user: state => state.user} ),
     },
     
+    // récupérer les publications du user
     async created () {
         this.getUserPosts()
     },
     methods: {
-        // user supprimer son compte 
+        // user supprimer son compte avec modèle sweatalert2
         async deleteUser () {
             console.log(this.id)        //OK
             // Utiliser sweatalert2 pour demander confirmation du password avant tout 
@@ -244,7 +246,7 @@ export default {
                     .catch (error => {
                         console.log(error);
                         Swal.fire("Password incorrect, veuillez réessayer")
-                        })        
+                    })        
             }
         },
 
@@ -276,7 +278,6 @@ export default {
                 for (let i =0; i< this.userPosts.length; i++) {
                     this.url_img.push(this.userPosts[i].img_url) 
                 }
-                // console.log("url_img" + this.url_img);      //OK 
             })
             .catch( err => {
                 console.log(err);
@@ -286,9 +287,11 @@ export default {
 
         // modify post par user
         async modifyPost (index) {
+            // récupérer id du post et le file de input
             let postId = this.userPosts[index].id 
             let inputFile = document.getElementById(`inputFile${postId}`).files[0]
 
+            // mettre dans FormData et envoyer au server
             let form = new FormData();
             
                 form.append('image', inputFile)
@@ -311,9 +314,6 @@ export default {
                     })
                 
                     // fermer manuellement la modal
-                    // document.getElementById(`modify${postId}`).modal('hide')
-                        
- 
         },
 
         // supprimer post par user

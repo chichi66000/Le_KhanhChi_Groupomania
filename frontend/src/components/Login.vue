@@ -12,12 +12,14 @@
             <h5 class="mb-3 font-weight-bolder pink fs-3">Indentifiez-vous</h5>
 
             <form class="form-group col col-md-8 col-lg-6 m-auto connexion text-center col shadow rounded mx-5 my-5 p-3"  @submit.prevent = "login">
+                
                 <div class="form-group row ">
                     <label for="email" class="col col-form-label text-left pink font-weight-bolder fs-6">Email</label>
                     <div class="col-8">
                         <input type="email" class="form-control" id="email" v-model="email" placeholder="email">
                     </div>
                 </div>
+
                 <div class="form-group row">
                     <label for="password" class="col col-form-label text-left pink font-weight-bolder fs-6">Mot de passe</label>
                     <div class="col-8">
@@ -31,11 +33,8 @@
                     <router-link to="forgot" class="forgot-password">Mot de passe oublié?</router-link>
                 </p>
             </form>
-            
-
         </div>
 
-        
     </div> 
 </template>
 

@@ -3,10 +3,6 @@
       <Navbar />
       <router-view ></router-view>
 
-      <!-- <div class="col justify-content-center">
-        
-      </div> -->
-
       <Footer/>
   </div>
 </template>>
@@ -14,9 +10,7 @@
 <script>
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-
 import axiosInstance from './axios';
-// import store from './store'
 
 export default {
   name: 'App',
@@ -31,7 +25,7 @@ export default {
         currentUserId:localStorage.getItem('id')
       }   
     },
-    // récupérer le user et enregistrer dans store de vuex
+    // récupérer le user login et enregistrer dans store de vuex
     async created() {
       await axiosInstance.get(`api/auth/${this.id}`)
         .then( response => {

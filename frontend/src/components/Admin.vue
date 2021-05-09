@@ -2,6 +2,7 @@
     <div>
         <error v-if="error" :error = "error"/>
 
+        <!-- tableau liste des utilisateurs -->
         <h3 class="text-center pink my-5">Liste les utilitasateurs du site</h3>
         <table class="table table-striped table-responsive  mx-auto my-5">
             <thead>
@@ -53,23 +54,25 @@ export default {
             error: '',
         }
     },
+    // récupérer les users
     async created () {
-        
+        this.getAllUsers()         
+    },
+
+    methods: {
+        // method pour récupérer tous les users
+        async getAllUsers () {
             await axiosInstance.get(`api/auth/admin/${this.id}`)
                 .then (response => {
-                    // console.log(response.data.users[0].id);     //OK
-                    this.users = response.data.users
-                    // console.log(this.users)                 //OK
-                    // console.log(this.users[0].nom)          //OK       
+                    this.users = response.data.users       
                 })
                 .catch ( err => {
                     console.log(err);
                     this.error = "Problème pour récupérer les utilisateurs. Réessayer plus tard"
-                }) 
-    },
+                })
+        },
 
-    methods: {
-        // supprimer user par admin
+        // supprimer user par admin, avec modèle de sweatalert2
         async adminDelete (index) {
             await Swal.fire({
                 title: 'Vous êtes sûr?',
@@ -80,31 +83,34 @@ export default {
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
-                if (result.isConfirmed) {
+                if (result.isConfirmed) {       // click sur button confirmer
                     let id = this.users[index].id;
-                    console.log(id);        //OK
+
+                    // envoyer au server pour supprimer user
                     axiosInstance.delete(`api/auth/adminDelete/${id}`)
                         .then(response => {
                             console.log(response);
-                            this.users.splice(index,1)
+                            // this.users.splice(index,1)  // supprimer user dans la liste
                             Swal.fire(
                                 'Supprimé!',
                                 'Utilisateur supprimé.',
                                 'success'
                             )
+                            this.getAllUsers()      // reload des users
                         })
                         .catch( err => { console.log(err);
                         this.error = "Problème pour supprimer utilisateur. Réessayer plus tard"})
-                    
                 }
             })
         },
 
         // changer le status admin pour les users
         async adminChange(index) {
+            // si cet user est déjà admin, on ne peut pas faire le changement
             if ( this.users[index].isAdmin == true) {
                 Swal.fire("Cet utilisateur est déjà admin du site")
             }
+            // si user n'est pas  admin, utiliser modèle de sweatalert2 pour confirmer choix
             else {
                 await Swal.fire({
                     title: 'Vous êtes sûr de passer cet utilsateur en admin?',
@@ -115,9 +121,11 @@ export default {
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes'
                     }).then((result) => {
+                        // avec button confimer
                     if (result.isConfirmed) {
+                        //prendre id de user
                         let userId = this.users[index].id;
-                        console.log(userId);        //OK
+                        // envoyer au server pour changer en admin
                         axiosInstance.put(`api/auth/adminChange/${userId}/${this.id}`)
                             .then(response => {
                                 console.log(response);
@@ -126,12 +134,11 @@ export default {
                                     'Admin ajouté.',
                                     'success'
                                 )
-                                if ( this.users[index].isAdmin == false) { this.users[index].isAdmin = true; console.log(this.users[index].isAdmin);}    
-                                
+                                // reload le taleau users
+                                this.getAllUsers()  
                             })
                             .catch( err => { console.log(err);
                             this.error = "Problème pour attribuer le rôle admin pour utilisateur. Réessayer plus tard"})
-                        
                     }
                 }) 
             }

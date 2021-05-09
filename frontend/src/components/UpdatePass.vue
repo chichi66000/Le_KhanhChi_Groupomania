@@ -4,18 +4,19 @@
         
         <error class="text-center" v-if="error" :error = "error"/>
 
+        <!-- Formulaire pour changer password -->
         <form @submit.prevent="changePass" class="form-group my-5 text-center col col-md-8 col-lg-6 col-xl-4 mx-auto">
 
         <h3 class="text-center my-5 mx-auto pink">Modifier votre password</h3>
 
+            <!-- input password -->
             <div class="form-floating my-5">
-
                 <input type="password" class="form-control col-sm-10" id="oldPass" name="oldPass" v-model="oldPass" placeholder="mot de passe" min="8" max="20">
                 <label for="oldPass" class="form-group">mot de passe</label>
             </div>
 
+            <!-- input nouveau password -->
             <div class="form-floating">
-
                 <input type="password" class="form-control col-sm-10" id="newPass" name="newPass" v-model="newPass" placeholder="nouveau mot de passe" min="8" max="20">
                 <label for="newPass" class="form-group">nouveau mot de passe</label>
                 <span>{{newpassError}}</span>
@@ -50,13 +51,12 @@ export default {
         }
     },
     setup() {
-        // Define a validation schema
-        // const error = ref([])
+        // Define a validation schema pour password
         const schema = yup.object({ 
             newPass: yup.string()
                 .min(8, 'Password doit avoir au minimum 8 characters')
                 .max(20, 'Password doit avoir au maximum 20 characters')
-                .required('Password is required')
+                .required('Password est demandé')
                 .matches(
                     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
                 ,
@@ -73,6 +73,7 @@ export default {
         };
     },
     methods: {
+        // fonction pour changer password
         async changePass () {
             await axios.put(`api/auth/updatePassword/${this.id}`, {
                 oldPass: this.oldPass,

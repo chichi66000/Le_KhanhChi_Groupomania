@@ -4,56 +4,62 @@
             <!-- Afficher les erreurs -->
             <error v-if="error" :error = "error"/>
 
-            <!-- formulaire de Signup -->
-
             <div id="inscription" class="container mx-auto text-center">
-
                 <div class="mx-auto">
                         <Logo class="my-5" />
                 </div>
 
+            <!-- formulaire de Signup -->
                 <h5 class="pink pb-5 fw-bold fs-3 mx-auto text-center">Inscription</h5>
 
                 <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="/signup" @submit.prevent = "inscriptionSubmit">
 
+                    <!-- input nom -->
                     <div class="form-floating mb-3">
                         <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
                         <label for="nom">Nom</label>
                     </div>
 
+                    <!-- input prenom -->
                     <div class="form-floating mb-3">
                         <input type="text"  id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
                         <label for="prenom">Prenom</label>
                     </div>
 
+                    <!-- input pseudo -->
                     <div class="form-floating mb-3">
                         <input type="text" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo" required class="form-control"/>
                         <label for="pseudo">Pseudo</label>
                     </div>
 
+                    <!-- input fonction -->
                     <div class="form-floating mb-3 ">
                         <input type="text"  id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>  
                         <label for="fonction">Fonction</label>
                     </div>
 
+                    <!-- input email -->
                     <div class="form-floating mb-3">
                         <input type="email"  id="email" name="email" v-model="email" placeholder="email" required class="form-control"/>
                         <label for="email">Email</label>
                         <span>{{emailError}}</span>
                     </div>
 
+                    <!-- input passsword -->
                     <div class="form-floating mb-3">
                         <input type="password" id="password" name="password" v-model="password" placeholder="mot de passe" required class="form-control"/>
                         <label for="password">Mot de passe</label>
                         <span>{{passwordError}}</span>
                     </div>
 
+                    <!-- input confirmer password -->
                     <div class="form-floating mb-3">
                         <input type="password" id="passwordCheck" name="passwordCheck" v-model="passwordCheck" placeholder="confirmer mot de passe" required class="form-control"/>
                         <label for="passewordCheck">Confirmer mot de passe</label>
                         <span>{{passwordCheckError}}</span>
                     </div>
             
+                    <!-- input upload file avatar -->
                     <div class="form-group row ">
                         <label class="form-text pink" for="avatar">Image profil (jpg, png, jpeg) </label>
                         <input type="file" class="form-control-file pink" id="avatar" accept=".jpg, .png, .jpeg" name="image" @change="onChangeFile">
@@ -61,6 +67,7 @@
 
                     </div>
 
+                    <!-- input select condition d'utilisation -->
                      <div class="form-group form-check">
                         <input type="checkbox" v-model="accept" id="accept" required class="form-check-input">
                         <label class="form-check-label" for="accept">Accept conditions d'utilisation </label>
@@ -76,6 +83,7 @@
 
 <script>
 import Logo from "../components/Logo";
+import Swal from 'sweetalert2'
 // pour valider formulaire
 import {  useField, useForm } from 'vee-validate';
 import { ref, } from 'vue'
@@ -103,9 +111,8 @@ export default {
         }
     },
     setup () {
-        // Define a validation schema
+        // Define a validation schema avec yup
         const errors = ref([])
-        // const toggle = ref(false);
 
         const schema = yup.object({
         email: yup.string()
@@ -155,13 +162,12 @@ export default {
             try {
                 // créer utilisateur
                 
-                    let nom = this.nom;
-                    let prenom= this.prenom
-                    let email= this.email;
-                    let password= this.password;
-                    let fonction = this.fonction
-                    let pseudo = this.pseudo
-                    // avatar: this.avatar
+                let nom = this.nom;
+                let prenom= this.prenom
+                let email= this.email;
+                let password= this.password;
+                let fonction = this.fonction
+                let pseudo = this.pseudo
                 
                 let form = new FormData();
                 form.append("nom", nom);
@@ -172,9 +178,10 @@ export default {
                 form.append("pseudo", pseudo);
                 form.append("image", this.avatar)
 
+                // envoyer formulaire au server
                 await axios.post('api/auth/signup', form) 
-                    .then((response) => {                            // récupérer la response du server
-                        alert( " Signup réussi, veuillez login avec votre email et password")
+                    .then((response) => {                   // récupérer la response du server
+                        Swal.fire( " Signup réussi, veuillez login avec votre email et password")
                         console.log(response)
                         this.$router.push("/login")              //login et aller au Home
                         })
@@ -189,11 +196,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-// .pink {
-//     color: #CF033C !important;
-//     font-weight:900;
-// }
-// .button-blue {
-//     color: #0000FF !important
-// }
+
 </style>

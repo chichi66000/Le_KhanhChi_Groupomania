@@ -10,6 +10,8 @@
                         <router-link to="/" class="color">ACCUEIL</router-link>
                     </div>
                     <div class=" collape navbar-collapse ">
+
+                        <!-- si user n'est pas connecté -->
                         <ul v-if="!user.user" class="navbar-nav ml-auto">
                             <li class="nav-item px-5 ">
                                 <router-link to="/login" class="color">Connexion</router-link>
@@ -19,6 +21,7 @@
                             </li>
                         </ul>
 
+                        <!-- si user est connecté -->
                         <ul v-if="user.user" class="navbar-nav m-auto">
                             <li class="nav-item px-4">
                                 <router-link to="/user" class="color">Profil</router-link>
@@ -45,10 +48,9 @@ import { mapState } from 'vuex'
 
 export default {
     name: "Navbar",
-    // props: [ 'user'],
 
     methods: {
-        // method pour logout
+        // method pour logout, supprimer tous dans localStorage et store
         handleClick (){
             localStorage.removeItem('token');
             localStorage.removeItem('id');
@@ -57,6 +59,7 @@ export default {
             localStorage.removeItem('pseudo')
             localStorage.removeItem('avatar')
             this.$store.dispatch('user/setCurrentUser', null)
+            //revenir à HOME
             this.$router.push('/')
         }
     },
