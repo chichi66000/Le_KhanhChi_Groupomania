@@ -1,6 +1,8 @@
+// middleware pour gérer les files images et video
 const multer = require('multer');
 
 const MIME_TYPE = {
+    //mimetype pour image
     'image/jpg': 'jpg',
     'image/jpeg': 'jpg',
     'image/png': 'png',
@@ -14,7 +16,7 @@ const MIME_TYPE = {
     'video/x-ms-wmv': 'wmv',
     'video/x-sgi-movie': 'movie'
 }
-// var maxSize = 15*1000*1000           // 15Mo environ 1 video de 2 minutes
+
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, 'images')
@@ -27,9 +29,10 @@ const storage = multer.diskStorage({
         callback(null, finalname )
     }
 })
-
+// stocker 1 seul image  la fois
 module.exports = multer ({storage: storage}).single("image")
 
+// fonction pour valider le mimetype
 function mimetypeValid(extension, req) {
     if( extension!='jpg' && extension !='png' && extension != 'jpeg' && extension != 'gif' && extension != 'wav' && extension != 'flv' && extension != 'mp4' && extension != 'mov' && extension != 'avi' && extension != 'wmv' && extension != 'movie') 
     {

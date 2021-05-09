@@ -1,3 +1,4 @@
+// config automatique de sequelize, ne rien changer
 'use strict';
 
 const fs = require('fs');

@@ -1,22 +1,7 @@
+// modele table Users
 'use strict';
 
-// const {
-//   Model
-// } = require('sequelize');
 const db = require('../server'); // fichier où se trouve l'instance sequelize
-// const { Sequelize, DataTypes, Model } = require('sequelize');
-// const sequelize = new Sequelize();
-
-// class User extends Model {
-  /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-  //  static associate(models) {
-    // define association here
-    // }
-// }
 
 const Sequelize = require('sequelize');
 module.exports = function (sequelize, DataTypes) {

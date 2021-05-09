@@ -1,3 +1,4 @@
+// modèle de table likes
 const Sequelize = require("sequelize");
 module.exports = function (sequelize, DataTypes) {
   const likes = sequelize.define(

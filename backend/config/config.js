@@ -1,3 +1,4 @@
+// fichier config pour connection Sequelize 
 const fs = require('fs');
 require("dotenv").config();
 

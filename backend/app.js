@@ -15,7 +15,8 @@ const limiter = rateLimit({
 });
 const expressSanitizer = require('express-sanitizer');
 
-require('dotenv').config(); // load .env file pour garder secret les infos confidentiels
+// load .env file pour garder secret les infos confidentiels
+require('dotenv').config(); 
 
 // setHeader
 app.use((req, res, next) => {
@@ -24,19 +25,19 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTION');
     next();
 })
-// parse requests of content-type - application/json
 app.use(helmet());
 app.use(cors({origin: 'http://localhost:8080'}));
 app.use(limiter);
 app.use (expressSanitizer());
 
+// parse requests of content-type - application/json
 app.use(bodyParser.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-// imports les routes user 
+// imports les routes user et post
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/posts');
 

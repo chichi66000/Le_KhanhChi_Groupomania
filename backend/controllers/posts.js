@@ -7,13 +7,8 @@ const Sequelize = require('sequelize');
 const association = require('../models/association').association
 const sequelize = require('../models/index').sequelize;
 const models = association(sequelize);
-// const Op = require( sequelize);
 
-// const { json } = require("sequelize");
-
-
-
-// route pour créer 1 post
+// ===> route pour créer 1 post <===
 exports.createPost = (req, res) => {
     let file_url = "";
     let regex = /[@&"()_$*€£`+=\/;#]+$/;
@@ -25,11 +20,11 @@ exports.createPost = (req, res) => {
     else {
         // s'il y a req file, enregistrer son URL; 
         if (req.file) {
-            // console.log(req.files);     //OK
+            
             file_url = req.file.filename
-            // console.log(file_url);          //OK
         }
         else { file_url = ""};
+
             // enregistrer dans table Posts
         const post = db.Posts.create({
             title: xss(req.body.title),
@@ -45,42 +40,43 @@ exports.createPost = (req, res) => {
     }
 }
 
-// route pour récupérer tous les publications
+// ===> route pour récupérer tous les publications <===
 exports.getAllPosts = (req, res) => {
-    models.posts
-      .findAll({
+    // chercher les posts avec likes et commentaires et user
+    models.posts.findAll({
         include: [ 
             {model: models.likes},
             {model: models.commentaires},
             {model: models.users,
-            attributes: ['avatar', 'pseudo']}
+                    attributes: ['avatar', 'pseudo']}
          ],
         order: [
             ["id", "DESC"],
             [models.commentaires, "id", 'DESC']
         ],
       })
+      // envoyer tous les posts au client side
       .then((posts) => {
         res.status(200).json(posts);
       })
       .catch((error) => res.status(500).json(error));
-  };
+};
 
+
+// ===> routes pour update 1 post <===
 exports.updatePost = (req, res) => {
     let newFile_url=""
-    
+    // chercher le post avec son id
     db.Posts.findOne ( { where:  { id: req.params.postId}} )
         .then( (post) => {
-            // console.log({post});        //OK
 
             //Verifier si c'est bien le user avant de faire update
             if (post.userId != req.params.id ) {
                 res.status(400).json("Echec! Vous n'êtes pas auteur du pubication.")
             }
             else {
+                // update sans file
                 if (!req.file) {
-                    console.log("no file")
-                    
                     // valider les informations entrée dans nouveau post
                     let regex = /[@&"()_$*€£`+=\/;#]+$/;
                     if (validator.matches(req.body.title, regex)) {
@@ -102,42 +98,40 @@ exports.updatePost = (req, res) => {
                     }
                 
                 }
+                // update avec file
                 else {
                     console.log(req.file)
                     // si update avec photos,
-                if (req.file != "undefined" || req.file !="") {          
-                    let filenames = post.img_url;       // chercher nom du anciens photos
-                    // console.log({filenames});           //OK
-                    fs.unlink(`images/${filenames}`, () => {
-                        console.log("images supprimé")});         // les supprimer
+                    if (req.file != "undefined" || req.file !="") {          
+                        let filenames = post.img_url;       // chercher nom du anciens photos
+                        // les supprimer
+                        fs.unlink(`images/${filenames}`, () => {
+                            console.log("images supprimé")});         
 
-                    // puis récupérer nouveaux files
-                           
-                        newFile_url += (req.file.filename);
-                            // console.log({newFile_url}); //OK
-                            // valider les informations entrée dans nouveau post
-                        let regex = /[@&"()_$*€£`+=\/;#]+$/;
-                
-                        if (validator.matches(req.body.title, regex)) {
-                            res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+                        // puis récupérer nouveaux files
+                            
+                            newFile_url = (req.file.filename);
+                                // valider les informations entrée dans nouveau post
+                            let regex = /[@&"()_$*€£`+=\/;#]+$/;
+                            if (validator.matches(req.body.title, regex)) {
+                                res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+                                }
+
+                            //après validation, update post
+                            else {
+                                db.Posts.update({
+                                    img_url: newFile_url,
+                                    title: xss(req.body.title),
+                                    content: xss(req.body.content),
+                                    },
+                                    {where: {id: req.params.postId}})
+                                    .then( () => res.status(200).json("Update publication réussi"))
+                                    .catch( err => res.status(500).json({
+                                        message: "Erreur en update publication",
+                                        err: err
+                                    }))
                             }
-                //             //après validation, update post
-                        else {
-                            db.Posts.update({
-                                img_url: newFile_url,
-                                title: xss(req.body.title),
-                                content: xss(req.body.content),
-                                },
-                                {where: {id: req.params.postId}})
-                                .then( () => res.status(200).json("Update publication réussi"))
-                                .catch( err => res.status(500).json({
-                                    message: "Erreur en update publication",
-                                    err: err
-                                }))
-                        }
-                                            
-                    
-                }
+                    }
                 }
             }
         })
@@ -150,9 +144,9 @@ exports.updatePost = (req, res) => {
         })
 }
 
-// route pour récupérer post d'un user
+// ===> route pour récupérer post d'un user <===
 exports.getUserPosts = (req, res) => {
-    // console.log(req.params.id);         //OK
+    // chercher tous les posts, likes, commentaires du user avec son id
     models.posts
       .findAll({
         where: {userId: req.params.id},
@@ -160,12 +154,13 @@ exports.getUserPosts = (req, res) => {
             {model: models.likes},
             {model: models.commentaires},
             {model: models.users,
-            attributes: ['avatar', 'pseudo']}
+                    attributes: ['avatar', 'pseudo']}
         ],
         order: [
             ["id", "DESC"], [models.commentaires, "id", 'DESC']
         ],
       })
+      // envoyer tous au client side
       .then((posts) => {
         res.status(200).json(posts);
       })
@@ -173,25 +168,27 @@ exports.getUserPosts = (req, res) => {
 }
 
 
-// route pour supprimer post
+// ===> route pour supprimer post <===
 exports.deletePost = (req, res) => {
+    // chercher post avec son id
     db.Posts
       .findOne({ where: { id: req.params.postId } })
-      .then((post) => {     // chercher les images, video et effacer
+      .then((post) => {     
+          // chercher les images, video et effacer
             if (post.img_url !="") {
                 let filenames = post.img_url
-                // console.log(filenames);
-                
                 fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
-                
             }
       })
+        // supprimer dans table likes
         .then(() => {
             db.likes.destroy({ where: { postId: req.params.postId } });
         })
+        // supprimer dans table commentaires
         .then(() => {
             db.commentaires.destroy({ where: { postId: req.params.postId } });
         })
+        // supprimer dans table posts
         .then(() => {
             db.Posts
             .destroy({ where: { id: req.params.postId } })
@@ -203,43 +200,17 @@ exports.deletePost = (req, res) => {
       .catch((error) => res.status(500).json({ error }));
 };
 
-// route pour supprimer image du post
-// exports.deleteImagePost = (req, res) => {
-//     // chercher le post par son id
-//     db.Posts.findOne({ where: { id: req.params.postId } })
-//         .then( post => {
-//             let filename = req.params.image
-//             // supprimer image dans la mémoire
-//             fs.unlink(`images/${filename}`, () => {
-//                 console.log("Image supprimé")
-//             })
-//             db.Posts.update (
-//                 {
-//                     ...post,
-//                     img_url:""
-//                 },
-//                 {where: {id: req.params.postId }})
-//                 .then( () => res.status(200).json("Image/Video supprimé"))
-//                 .catch( err => {
-//                     console.log(err)
-//                     res.status(500).json("problème pour supprimer image de la publication")
-//                 })
-//         })
-//         .catch( err => {
-//             console.log(err);
-//             res.status(500).json("Problème pour chercher post")
-//         })
-        
-// };
 
 //====> Ajout ou suppresson de like <====\\
 exports.createLike = (req, res) => {
+    // chercher post avec id du user et du post
     db.likes.findOne ( {where: {
         postId: req.params.postId,
         userId : req.params.userId
     }} )
         .then ( likes => {
             if (likes) {
+                // si ce user est déjà like ce post => supprimer ce like dans table likes
                 db.likes.destroy ( { where: {
                     postId: req.params.postId,
                     userId : req.params.userId
@@ -250,6 +221,7 @@ exports.createLike = (req, res) => {
                         res.status(500).json( 'Problème pour enlever likes du post')
                     })
             }
+                // si ce user n'a pas like ce post => ajouter ce like dans table likes
             else {
                 db.likes.create ({
                     postId: req.params.postId,
@@ -266,9 +238,9 @@ exports.createLike = (req, res) => {
             console.log(err);
             res.status(500).json("problème récupérer likes")
         })
-}
+};
 
-// récupérer les likes
+// ===> récupérer les likes <===
 exports.getLike = (req, res) => {
     models.likes
       .findAll({ where: { postId: req.params.postId } })
@@ -279,14 +251,16 @@ exports.getLike = (req, res) => {
   };
 
 
-// Création commentaire
+// ===> Création commentaire <===
 exports.createCommentaire = (req, res) => {
     let regex = /[@&"()_$§*€£`+=\/;#]+$/;
+    // valider la commentaire
     if (validator.matches(req.body.commentaire, regex)) {
     res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
     }
     else {
         console.log(req.body.commentaire)
+        // créer le commentaire
         db.commentaires.create({
             commentaires: xss(req.body.commentaire),
             postId: req.body.postId,
@@ -304,6 +278,7 @@ exports.createCommentaire = (req, res) => {
 
 // route pour récupérer les commentaires du publication
 exports.getCommentaires = (req, res) => {
+    // chercher tous les commentaires du post avec postId
     db.commentaires.findAll ( 
         { where: {postId: req.params.postId}},
         {order: [["id", "DESC"]]},)

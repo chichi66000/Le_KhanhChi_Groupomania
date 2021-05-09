@@ -1,3 +1,4 @@
+// config pour envoyer email au user ( pour les routes de forgot et reset password)
 const nodemailer = require ('nodemailer');
 
 const sendEmail = async options => {

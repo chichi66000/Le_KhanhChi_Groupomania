@@ -1,8 +1,8 @@
+// modèle de table Posts
 'use strict';
 
-// const db = require('../server'); // fichier où se trouve l'instance sequelize
 const Sequelize = require('sequelize');
-// const database = require('./index');
+
 module.exports = (sequelize, DataTypes) => {
   const posts = sequelize.define(
     "Posts", {

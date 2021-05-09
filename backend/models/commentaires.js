@@ -1,3 +1,4 @@
+// la table commentaires
 const Sequelize = require("sequelize");
 module.exports = function (sequelize, DataTypes) {
   const commentaires = sequelize.define(

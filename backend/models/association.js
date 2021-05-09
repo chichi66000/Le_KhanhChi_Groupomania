@@ -4,7 +4,7 @@ var _users = require('./users');
 var _likes = require('./likes');
 var _commentaires = require('./commentaires');
 
-
+// fonction définir les relations entre tables
 function association (sequelize) {
     var posts = _posts(sequelize, DataTypes);
     var users = _users(sequelize, DataTypes);
