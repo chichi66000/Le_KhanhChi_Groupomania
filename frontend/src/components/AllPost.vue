@@ -191,6 +191,7 @@ export default {
             await axiosInstance.get('api/post/')
             .then( response => {
                 this.posts = response.data;
+                this.$store.dispatch('post/getAllPosts', response.data)
             })
             .catch( err => {
                 console.log(err);
