@@ -5,7 +5,7 @@ const auth = require('../middlewares/auth');
 const userCtrl = require('../controllers/user');
 
 // Route pour refreshToken
-router.post('/refresh', userCtrl.refreshToken)
+router.post('/refresh/:id', userCtrl.refreshToken)
 
 // Incription user      => OK testé
 router.post("/signup", /*error , */ multer, userCtrl.signup);

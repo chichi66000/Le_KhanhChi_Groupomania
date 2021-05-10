@@ -22,12 +22,13 @@ require('dotenv').config(); // load .env file pour garder secret les infos confi
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTION');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Credentials', true)
     next();
 })
 // parse requests of content-type - application/json
 app.use(helmet());
-app.use(cors({origin: 'http://localhost:8080'}));
+app.use(cors({origin: 'http://localhost:8080'}, {credentials: true}));
 app.use(limiter);
 app.use (expressSanitizer());
 

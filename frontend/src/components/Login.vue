@@ -71,7 +71,9 @@ export default {
                     email: this.email,
                     password: this.password
                 }
-                await axiosInstance.post('api/auth/login', user)   //envoyer user au serveur
+                await axiosInstance.post('api/auth/login', 
+                   user, {credentials: 'include'}
+                 )   //envoyer user au serveur
                     .then((response) => {
                         // récupérer token dans localStorage pour maintenir la session
                         localStorage.setItem('token', response.data.token);

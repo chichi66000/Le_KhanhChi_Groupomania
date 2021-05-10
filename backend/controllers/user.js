@@ -130,15 +130,18 @@ exports.login = (req, res, next) => {
 
                         // console.log( {refreshToken})
                         /* On créer le cookie contenant le refresh token */
-                        res.cookie('refreshtoken', refreshToken, {
+                        res.cookie('refreshtoken', refreshToken,
+                         {
                             httpOnly: true,
-                            secure: true,
+                            secure: false,
+                            sameSite:false,
+                            // path: "/",
+                            // domain: "/",
                             maxAge: "144000"    // 24h
-                        });
-                        
+                        }
+                        )
 
-                        res.status(200).json({ // si mdp correct, renvoyer id
-                        
+                        res.status(200).json({ // si mdp correct, envoyer user, token                       
                             currentUser: {
                             userNom: user.nom,
                             email: user.email, 
@@ -147,7 +150,6 @@ exports.login = (req, res, next) => {
                             avatar: user.avatar,
                             isAdmin: user.isAdmin
                             },
-                        
                             token,
                             
                             refreshToken
@@ -163,30 +165,22 @@ exports.login = (req, res, next) => {
 
 // route pour refresh un token expires
 exports.refreshToken = (req, res) => {
-    let token = req.cookies.token;
+    let token = req.cookies.refreshtoken;
+    console.log({token})
     if (!token){
         return res.status(403).send()
     }
     else {
-        console.log({token})
-        // verify le token
-        try {
-            jwt.verify(token, process.env.SECRET_TOKEN)
-        }
-        catch (e) {return res.status(401), console.log(e)}
-        //retrieve the refresh token from cookies
-        let refreshToken = req.cookies.refreshToken
-
         //verify the refresh token
         try{
-            jwt.verify(refreshToken, process.env.REFRESH_TOKEN)
+            jwt.verify(token, process.env.REFRESH_TOKEN)
         }
         catch(e){
             console.log(e);
             return res.status(401).send(); 
         }
 
-        // creerun nouveau token
+        // creer un nouveau token et envoyer au frontend
         let newToken = jwt.sign(
             {userId: req.params.id },
             process.env.SECRET_TOKEN, 
