@@ -1,33 +1,21 @@
 import axios from "axios"
+var tough = require('tough-cookie');
+// var Cookie = tough.Cookie;
+var cookiejar = new tough.CookieJar();
 // import { refreshToken } from "../../backend/controllers/user"
 // import router from './router/index'
 
-// export default axios.create({
-//     baseURL: "http://localhost:5000/",
-//     // headers: {
-//     //     common: {
-//     //         Authorization: `Bearer ${localStorage.getItem('token')}`  
-//     //     }
-        
-//     //   }
-// })
+const axiosInstance = axios.create({
+    baseURL: "http://localhost:5000/" ,
+    withCredentials: true ,
+    credentials: 'include',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+    }
+    });
 
-
-
-const axiosInstance = axios.create(
-    { baseURL: "http://localhost:5000/" },
-    { withCredentials: true },
-    {credentials: 'include'}
-);
-
-// axiosInstance.defaults.baseURL = "http://localhost:5000/";
-// axiosInstance.defaults.withCredentials = true;
-
-// export default axios.create(
-//     { baseURL: "http://localhost:5000/" },
-//     { withCredentials: true },
-
-//     );
 
     // function saveToken(token, refreshToken) {
     //     localStorage.setItem('token', token);
@@ -59,23 +47,25 @@ const axiosInstance = axios.create(
     //   }
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
-    // functiont config
+    // function config
     (config) => {
         const token = localStorage.getItem('token')
         if( token ) {
 
             config.headers.Authorization = `Bearer ${token}`;
         }
+        cookiejar.getCookies(config.url, function(err, cookies) {
+            config.headers.cookie = cookies.join('; ');console.log("err ", err) ; console.log('cookie ', cookies) })
         // config.headers = {
         //     'Authorization': `Bearer ${token}`,
         //     'Accept': 'application/json',
         //     'Content-Type': 'application/x-www-form-urlencoded'
         // }
-        console.log({token})
         console.log({config})
+        
 
         config.headers['Content-Type'] = 'application/json';
-       return config;
+        return config;
     },
     // function error
     error => {
@@ -86,25 +76,26 @@ axiosInstance.interceptors.request.use(
 // Add a response interceptor
 axiosInstance.interceptors.response.use (
     (response) => {
-        console.log({response})
-        return response
+        console.log(response)
+        return response;
     },
-    (error) => {        // si error 
+     (error) => {        // si error 
         console.log({error})
         const id = localStorage.getItem('id')
         const originalRequest = error.config;
         const status = error.response ? error.response.status : null;
         // si le status = 401 , unauthorization
-        if (status == 401) {
+        if (status === 401) {
             originalRequest._retry = true;
             // envoyer au server le cookie refreshToken pour demander 1 nouveau token
-            return axios.post(`http://localhost:5000/api/auth/refresh/${id}`, {
-                credentials: 'include'
-            })
-                .then( res => {
+            
+            return axiosInstance.post(`http://localhost:5000/api/auth/refresh/${id}`, { withCredentials: true, credentials: 'include'}
+            )
+                .then( response => {
                     // recevoir le token du server, et stocker dans localstorage pour authentifier 
-                    if(res.status === 201) {
-                        localStorage.setItem('token', res.data.token);
+                    if(response.status === 201) {
+                        console.log('newtoken ', response.data )
+                        localStorage.setItem('token', response.data);
                         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
                         return axios(originalRequest);
                     }
@@ -118,4 +109,4 @@ axiosInstance.interceptors.response.use (
     }
 )
 
-export default axiosInstance  ;
+export default axiosInstance

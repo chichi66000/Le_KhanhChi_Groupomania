@@ -137,7 +137,7 @@ exports.login = (req, res, next) => {
                             sameSite:false,
                             // path: "/",
                             // domain: "/",
-                            maxAge: "144000"    // 24h
+                            maxAge: "2592000"    // 1 month
                         }
                         )
 
@@ -165,31 +165,42 @@ exports.login = (req, res, next) => {
 
 // route pour refresh un token expires
 exports.refreshToken = (req, res) => {
-    let token = req.cookies.refreshtoken;
-    console.log({token})
-    if (!token){
-        return res.status(403).send()
+    console.log(req.cookies)
+    console.log("userid " + req.params.id)
+    let refreshtoken = req.cookies.refreshtoken;
+    console.log(refreshtoken)        // => Object nulle prototype
+    
+    if (!refreshtoken){
+        return res.status(403).send("veuillez connecter")
     }
     else {
         //verify the refresh token
+        
         try{
-            jwt.verify(token, process.env.REFRESH_TOKEN)
+            jwt.verify(refreshtoken, process.env.REFRESH_TOKEN)
         }
         catch(e){
             console.log(e);
-            return res.status(401).send(); 
+            return res.status(401).send("error avec ce token"); 
         }
 
         // creer un nouveau token et envoyer au frontend
-        let newToken = jwt.sign(
+        let newToken = jwt.sign(            
             {userId: req.params.id },
             process.env.SECRET_TOKEN, 
-            {expiresIn: "1m",}
-        )
+            {expiresIn: "2m",})
+        
 
-        res.cookie("token", newToken, {secure: true, httpOnly: true})
+        res.status(201).json(newToken)
     
     }
+};
+
+// route pour logout
+exports.logout = (req, res) => {
+    res.clearCookie('refreshtoken')
+    res.send('supprimer cookie')
+    res.redirect('/');
 };
 
 //route pour supprimer un user

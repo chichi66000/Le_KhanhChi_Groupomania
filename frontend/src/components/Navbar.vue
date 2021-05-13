@@ -42,21 +42,27 @@
     
 <script>
 import { mapState } from 'vuex'
-
+// import axios from '../axios'
 export default {
     name: "Navbar",
     // props: [ 'user'],
 
     methods: {
-        handleClick (){
-            localStorage.removeItem('token');
-            localStorage.removeItem('id');
-            localStorage.removeItem('nom');
-            localStorage.removeItem('email')
-            localStorage.removeItem('pseudo')
-            localStorage.removeItem('avatar')
-            this.$store.dispatch('user/setCurrentUser', null)
-            this.$router.push('/')
+        async handleClick (){
+            // await axios.post ('/api/auth/logout', {}, { withCredentials: true })
+            //     .then(response=> {
+                    // console.log(response)
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('id');
+                    localStorage.removeItem('nom');
+                    localStorage.removeItem('email')
+                    localStorage.removeItem('pseudo')
+                    localStorage.removeItem('avatar')
+                    this.$store.dispatch('user/setCurrentUser', null)
+                    this.$router.push('/')
+                // })
+                // .catch( err => {console.log(err)})
+            
         }
     },
 
