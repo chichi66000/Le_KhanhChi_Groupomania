@@ -110,13 +110,13 @@
                     <div v-if="post.img_url !='' "  class="">
 
                         <!-- image -->
-                        <div v-if="post.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
-                            <img class="img img-fluid" :src="getImage(index)" :alt="`photo illustration ${post.title}`" />
+                        <div v-if="post.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')" class="text-center">
+                            <img class="img img-fluid mx-auto" :src="getImage(index)" :alt="`photo illustration ${post.title}`" />
                         </div>
 
                         <!-- video -->
-                        <div v-else class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" :src="getImage (index)" :alt="`video illustration ${post.title}`" allowfullscreen></iframe>
+                        <div v-else class="embed-responsive embed-responsive-16by9 text-center">
+                            <iframe class="embed-responsive-item mx-auto" :src="getImage (index)" :alt="`video illustration ${post.title}`" allowfullscreen></iframe>
                         </div>
                         
                     </div>

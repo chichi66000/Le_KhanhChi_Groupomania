@@ -6,31 +6,28 @@
         <form class="form-group  mt-5 mb-5 col col-sm-12 col-md-8 col-lg-6 mx-auto text-center" method="post" enctype="multipart/form-data"  @submit.prevent = "changeProfil">
 
             <!-- input pseudo -->
-            <div class="form-group row ">
-                <label for="pseudo" class=" font-weight-bold col-form-label col-sm-2">Pseudo</label>
-
+            <div class="form-floating my-3">
                 <input type="text" class="form-control col-sm-10" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo">
+                <label for="pseudo" class=" font-weight-bold form-group col-sm-2">Pseudo</label>
                 <span>{{pseudoError}}</span>
             </div>
 
             <!-- input fonction -->
-            <div class="form-group row ">
-                <label for="fonction" class="col-form-label col-sm-2 font-weight-bold">Fonction</label>
-
+            <div class="form-floating my-3">
                 <input type="text" class="form-control col-sm-10" id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z][A-Za-z' -]+">
+                <label for="fonction" class="form-group col-sm-2 font-weight-bold">Fonction</label>
                 <span>{{fonctionError}}</span>
             </div>
 
             <!-- input email -->
-            <div class="form-group row ">
-                <label for="email" class="col-form-label col-sm-2 font-weight-bold">Email</label>
-
+            <div class="form-floating my-3">
                 <input type="email" class="form-control col-sm-10" id="email" name="email" v-model="email" placeholder="email">
+                <label for="email" class="form-group col-sm-2 font-weight-bold">Email</label>
                 <span>{{emailError}}</span>
             </div>
 
             <!-- input file upload -->
-            <div class="form-group row ">
+            <div class="form-group row my-3">
                 <label class="form-text" for="image">Image profil (jpg, png, jpeg) </label>
                 <input type="file" class="form-control-file pink" id="image" accept=".jpg, .png, .jpeg" name="image" @change="onChangeFile">
                 <span id="error_file" class="text-center text-danger fw-bold"></span>
@@ -38,7 +35,7 @@
             </div>
 
             <!-- button annuler et submit formulaire -->
-            <div class="text-center ">
+            <div class="text-center my-3 mx-auto">
                 <button @click.prevent="annuler" type="submit" class="btn btn-primary text-center mb-5 mx-5" id="button" >Annuler</button>
                 <button type="submit" class="btn btn-primary text-center mb-5 " id="button" >Confirmer</button>
             </div>

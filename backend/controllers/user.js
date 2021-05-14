@@ -111,22 +111,40 @@ exports.login = (req, res) => {
                     }
                     // si mdp correct, renvoyer user, et token
                     else {
-                    res.status(200).json({ 
-                        currentUser: {
+
+                        let refreshToken = jwt.sign(      // un refreshtoken pour cookie
+                            {userId: user.id },
+                            process.env.REFRESH_TOKEN, 
+                            {expiresIn: "24h",})
+                        
+                        let token = jwt.sign(            // un token permet la connexion
+                            {userId: user.id },
+                            process.env.SECRET_TOKEN, 
+                            {expiresIn: "1m",})
+
+                        /* On créer le cookie contenant le refresh token */
+                        res.cookie('refreshtoken', refreshToken,
+                        {
+                            httpOnly: true,
+                            secure: false,
+                            sameSite:false,
+                            // path: "/",
+                            // domain: "/",
+                            maxAge: "86400000"    // 24h en milisecond
+                        })
+
+                        res.status(200).json({ // si mdp correct, envoyer user, token                       
+                            currentUser: {
                             userNom: user.nom,
                             email: user.email, 
                             userPseudo: user.pseudo,
                             userId: user.id,
                             avatar: user.avatar,
                             isAdmin: user.isAdmin
-                        },
-                        token: jwt.sign(            // un token permet la connexion
-                            {userId: user.id },
-                            process.env.SECRET_TOKEN, 
-                            {expiresIn: "24h",})
-                    });
-                    console.log("Utilisateur login réussi")
-                            
+                            },
+                            token,
+                            refreshToken
+                        });
                     };
                 })
                 .catch((error) => res.status(500).json({error}))
@@ -134,9 +152,49 @@ exports.login = (req, res) => {
         .catch((error) => res.status(500).json({error})) // erreur de serveur pour la requete
 }
 
-// ====> route pour supprimer un user <===
+
+// route pour refresh un token expires
+exports.refreshToken = (req, res) => {
+    // console.log(req.cookies)
+    // console.log("userid " + req.params.id)
+    let refreshtoken = req.cookies.refreshtoken;
+    // console.log(refreshtoken)        // => Object nulle prototype
+    
+    if (!refreshtoken){
+        return res.status(403).send("veuillez connecter")
+    }
+    else {
+        //verify the refresh token
+        
+        try{
+            jwt.verify(refreshtoken, process.env.REFRESH_TOKEN)
+        }
+        catch(e){
+            console.log(e);
+            return res.status(401).send("error avec ce token"); 
+        }
+
+        // creer un nouveau token et envoyer au frontend
+        let newToken = jwt.sign(            
+            {userId: req.params.id },
+            process.env.SECRET_TOKEN, 
+            {expiresIn: "2m",})
+        // envoyer au client
+        res.status(201).json(newToken)
+    
+    }
+};
+
+// route pour logout
+exports.logout = (req, res) => {
+    res.clearCookie('refreshtoken')
+    res.send('supprimer cookie')
+    res.redirect('/');
+};
+
+//route pour supprimer un user
 exports.deleteUser = (req, res) => {
-    // chercher user avec son id
+
     db.Users.findOne({where: {id: req.params.id}})
         .then( user => {
             console.log("user" + user);      //OK

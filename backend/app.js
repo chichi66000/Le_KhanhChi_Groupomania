@@ -2,6 +2,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require('path');
+const cookieParser = require('cookie-parser')
 const app = express();
 
 
@@ -20,13 +21,20 @@ require('dotenv').config();
 
 // setHeader
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTION');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Credentials', true)
     next();
 })
+
+// utiliser le cookie-parser
+app.use(cookieParser())
+
+// parse requests of content-type - application/json
+app.use(cors({origin: 'http://localhost:8080'}, {credentials: true}));
+
 app.use(helmet());
-app.use(cors({origin: 'http://localhost:8080'}));
 app.use(limiter);
 app.use (expressSanitizer());
 
@@ -36,8 +44,8 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 // imports les routes user et post
+
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/posts');
 
