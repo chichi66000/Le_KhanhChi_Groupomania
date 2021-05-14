@@ -181,15 +181,15 @@ exports.deletePost = (req, res) => {
             }
       })
         // supprimer dans table likes
-        .then(() => {
+    .then(() => {
             db.likes.destroy({ where: { postId: req.params.postId } });
         })
         // supprimer dans table commentaires
-        .then(() => {
+    .then(() => {
             db.commentaires.destroy({ where: { postId: req.params.postId } });
         })
         // supprimer dans table posts
-        .then(() => {
+    .then(() => {
             db.Posts
             .destroy({ where: { id: req.params.postId } })
             .then(() =>
@@ -197,7 +197,7 @@ exports.deletePost = (req, res) => {
             )
             .catch((error) => res.status(400).json({ error }));
         })
-      .catch((error) => res.status(500).json({ error }));
+    .catch((error) => res.status(500).json({ error }));
 };
 
 

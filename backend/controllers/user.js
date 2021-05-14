@@ -5,10 +5,16 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
 // sequelize pour base de donnée
-const sequelize = require('sequelize');
-const db = require('../models');
-const Op = require( 'sequelize');
-const { Sequelize } = require('sequelize');
+// const sequelize = require('sequelize');
+// const db = require('../models');
+// const Op = require( 'sequelize');
+// const { Sequelize } = require('sequelize');
+
+const db = require('../models')
+const Sequelize = require('sequelize');
+const association = require('../models/association').association
+const sequelize = require('../models/index').sequelize;
+const models = association(sequelize);
 
 // middlewaire poue envoyer email pour reset/update password
 const sendEmail = require('./email');
@@ -218,29 +224,35 @@ exports.deleteUser = (req, res) => {
                         if( !filename.includes("avatar_default.png")) {
                             console.log(filename);
                             fs.unlink(`images/${filename}`, () => {
-                                //puis supprimer le user
-                                db.Users.destroy ({where: {id:req.params.id}})
-                                    .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-                                    .catch((error) => res.status(400).json({error}))
+                                console.log("Avatar supprimé")
                             })
-                        }
-                        else {
-                            // si user n'a pas son avatar => supprimer directement user
-                            db.Users.destroy ({where: {id:req.params.id}})
-                                .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-                                .catch((error) => {
-                                        console.log(error)
-                                        res.status(400).json({message: "Problème pour supprimer user"})
-                                }) 
                         }
                     }
                 })
-        })
                 .catch( error => { 
                     console.log(error);
                     res.status(500).json( { message: "Problème comparer le password"})
                 })
-            
+        })
+
+        // supprimer dans table commentaires
+        .then(() => {
+            db.commentaires.destroy({ where: { userId: req.params.id } });
+        })
+        // supprimer les likes de ce user 
+        .then( () => {
+            db.likes.destroy ( {where: {userId: req.params.id}} )
+        })
+        // supprimer dans table posts
+        .then( () => {
+            db.Posts.destroy ({ where: {userId: req.params.id}})
+        })
+        // supprimer ce user
+        .then( () => {
+            db.Users.destroy ({where: {id:req.params.id}})
+            .then( () => res.status(200).json("utilisateur supprimé"))
+        })
+               
         .catch(error => { 
             console.log(error); 
             res.status(500).json( { message: "Problème pour trouver user, réessayer plus tard"})
@@ -257,21 +269,27 @@ exports.adminDelete = (req, res) => {
             if( !filename.includes("avatar_default.png")) {
                 console.log(filename);
                 fs.unlink(`images/${filename}`, () => {
-                    db.Users.destroy ({where: {id:req.params.id}})
-                        .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-                        .catch((error) => res.status(400).json({error}))
+                    console.log("avatar supprimer")
                 })
-            }
-            // si c'est un avatar default; supprimer le compte user
-            else { 
-                db.Users.destroy ({where: {id:req.params.id}})
-                    .then(() => res.status(200).json({message: "utilisateur supprimé"}))
-                    .catch((error) => {
-                    console.log(error)
-                    res.status(400).json({message: "Problème pour supprimer user"})
-                                      }) 
-            }
-                          
+                
+            }        
+        })
+        // supprimer dans table commentaires
+        .then(() => {
+            db.commentaires.destroy({ where: { userId: req.params.id } });
+        })
+        // supprimer les likes de ce user 
+        .then( () => {
+            db.likes.destroy ( {where: {userId: req.params.id}} )
+        })
+        // supprimer dans table posts
+        .then( () => {
+            db.Posts.destroy ({ where: {userId: req.params.id}})
+        })
+        // supprimer ce user
+        .then( () => {
+            db.Users.destroy ({where: {id:req.params.id}})
+            .then( () => res.status(200).json("utilisateur supprimé par admin"))
         })
         .catch ( err => { console.log(err); res.status(500).json("User non trouvé")})
 }
