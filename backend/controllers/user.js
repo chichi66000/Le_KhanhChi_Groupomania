@@ -165,10 +165,10 @@ exports.login = (req, res, next) => {
 
 // route pour refresh un token expires
 exports.refreshToken = (req, res) => {
-    console.log(req.cookies)
-    console.log("userid " + req.params.id)
+    // console.log(req.cookies)
+    // console.log("userid " + req.params.id)
     let refreshtoken = req.cookies.refreshtoken;
-    console.log(refreshtoken)        // => Object nulle prototype
+    // console.log(refreshtoken)        // => Object nulle prototype
     
     if (!refreshtoken){
         return res.status(403).send("veuillez connecter")
@@ -189,8 +189,7 @@ exports.refreshToken = (req, res) => {
             {userId: req.params.id },
             process.env.SECRET_TOKEN, 
             {expiresIn: "2m",})
-        
-
+        // envoyer au client
         res.status(201).json(newToken)
     
     }

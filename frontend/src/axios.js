@@ -3,7 +3,7 @@ var tough = require('tough-cookie');
 // var Cookie = tough.Cookie;
 var cookiejar = new tough.CookieJar();
 // import { refreshToken } from "../../backend/controllers/user"
-// import router from './router/index'
+import router from './router/index'
 // import createAuthRefreshInterceptor from 'axios-auth-refresh';
 
 const axiosInstance = axios.create({
@@ -20,21 +20,20 @@ const axiosInstance = axios.create({
 // Add a response interceptor
 axiosInstance.interceptors.response.use (
     (response) => {
-        console.log(response)
         return response;
     },
-    (error) => {        // si error 
+    // si error dans la response
+    (error) => {         
        
-        console.log({error})
         const id = localStorage.getItem('id')
         const originalRequest = error.config;
-        originalRequest._retry = true;
+        // originalRequest._retry = true;
         const status = error.response ? error.response.status : null;
         // si le status = 401 , unauthorization
         if (status === 401) {
             originalRequest._retry = true;
+
             // envoyer au server le cookie refreshToken pour demander 1 nouveau token
-            
             return axiosInstance.post(`http://localhost:5000/api/auth/refresh/${id}`, { withCredentials: true, credentials: 'include'}
             )
                 .then( response => {
@@ -45,9 +44,15 @@ axiosInstance.interceptors.response.use (
                         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
                         return axiosInstance(originalRequest);
                     }
+                    // si refreshtoken est invalide ou expiré;
+                    if(response.status=== 401 || response.status === 403) {
+                        alert('votre session est expiré. Veuillez connecter')
+                        router.push('/login')   // demander login  
+                    }
                 })
                 .catch( e => {
                     console.log(e)
+                    
                 })
         }
         return Promise.reject(error);
