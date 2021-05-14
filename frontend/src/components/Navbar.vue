@@ -58,12 +58,8 @@ export default {
                     console.log(response)
                     localStorage.removeItem('token');
                     localStorage.removeItem('id');
-                    localStorage.removeItem('nom');
-                    localStorage.removeItem('email')
-                    localStorage.removeItem('pseudo')
-                    localStorage.removeItem('avatar')
                     this.$store.dispatch('user/setCurrentUser', null)
-                    this.$router.push('/')
+                    this.$router.push('/')      //revenir à Home
                 })
                 .catch( err => {console.log(err)})
             
