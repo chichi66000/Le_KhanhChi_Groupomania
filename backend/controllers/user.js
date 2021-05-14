@@ -137,7 +137,7 @@ exports.login = (req, res, next) => {
                             sameSite:false,
                             // path: "/",
                             // domain: "/",
-                            maxAge: "2592000"    // 1 month
+                            maxAge: "86400000"    // 24h en milisecond
                         }
                         )
 
