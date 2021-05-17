@@ -209,7 +209,7 @@ exports.deleteUser = (req, res) => {
                         return res.status(401).json({ error: 'Mot de passe incorrect'})
                     }
                     
-                    // Si password est le même
+                    // Si password est le même, chercher avatar et effacer
                     else {
                         const filename = user.avatar
                         //si user a son avatar => effacer dans le mémoire                  
@@ -257,22 +257,17 @@ exports.deleteUser = (req, res) => {
                         console.log("user n'a pas de publication")
                     }
                     else {
-                        if (!posts) {
-                            console.log("user n'a pas de publication")
-                        }
-                        else {
-                            // chercher les images, video et effacer
-                            for ( let i=0; i<posts.length; i++) {
-                                if (posts[i].img_url !="") {
-                                let filenames = posts[i].img_url
-                                fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
-                                }
+                            // chercher les images, video et effacer dans mémoire
+                        for ( let i=0; i<posts.length; i++) {
+                            if (posts[i].img_url !="") {
+                            let filenames = posts[i].img_url
+                            fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
                             }
-                            
-                            db.Posts.destroy({ where: { userId: req.params.id } })
                         }
+                            //supprimer les publications
+                        db.Posts.destroy({ where: { userId: req.params.id } })
+                        
                     }     
-                    
                 })
 
         // supprimer ce user
@@ -344,31 +339,7 @@ exports.adminDelete = (req, res) => {
                     }     
                     
                 })
-        // // chercher les publications de ce user
-        // db.Posts.findOne({ where: { userId: req.params.id } })
-        //     .then((post) => {     
-        //         // chercher les images, video et effacer
-        //             if (post.img_url !="") {
-        //                 let filenames = post.img_url
-        //                 fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
-        //             }
-        //     })
-        // // supprimer dans table likes
-        //     .then(() => {
-        //             db.likes.destroy({ where: { userId: req.params.id } });
-        //         })
-        //         // supprimer dans table commentaires
-        //     .then(() => {
-        //             db.commentaires.destroy({ where: { userId: req.params.id } });
-        //         })
-        //         // supprimer dans table posts
-        //     .then(() => {
-        //             db.Posts
-        //             .destroy({ where: { userId: req.params.id } })
-        //             .then(() =>
-        //                 res.status(200).json({ message: "Publications supprimée !" })
-        //             )
-        //         })
+        
         // supprimer ce user
         .then( () => {
             db.Users.destroy ({where: {id:req.params.id}})
@@ -385,7 +356,7 @@ exports.adminChange = (req, res) => {
         .then( user => {
             // si ce n'est pas un admin, envoyer error
             if (user.isAdmin == false) {
-                res.status(400).json("Vous n'êtes pas admin, vous ne pouvez pas modifier les utilisateurs")
+              return res.status(400).json("Vous n'êtes pas admin, vous ne pouvez pas modifier les utilisateurs")
             }
             // si c'est bien admin, en chercher utilisateur pour attribuer son rôle
             else {
@@ -459,16 +430,15 @@ exports.updatePassword = (req, res) => {
                             })
                         })
                         .catch( err => {
-                        console.log(err);
-                        res.status(500).json( {message: "Problème pour update password"})
-                    })
+                            console.log(err);
+                            res.status(500).json( {message: "Problème pour update password"})
+                        })
                     }
                 })
                 .catch( err => {
                     console.log(err);
                     res.status(500).json( { message: "Problème pour comparer les passwords"})
-                }) 
-                        
+                })        
         })
         .catch( err => { 
             console.log(err);
@@ -492,7 +462,7 @@ exports.updateUser = (req, res) => {
                 const file = user.avatar;
                 // si avatar du user est "avatar_default"; on fait rien
                 if( file.includes("avatar_default.png")) {
-                    console.log("file avatar rien à effacer");
+                    console.log("file avatar_default rien à effacer");
                 }
                 // si non, on supprimer avatar dans le fichier images
                 else {
@@ -525,7 +495,7 @@ exports.updateUser = (req, res) => {
                         if (user) {return res.status(400).json({message: "Email déjà utilisé"})}
 
                         // si email n'est pas encore dans BDD, update user avec nouvel email
-                        newEmail = req.body.email; console.log("Email updatesera" + newEmail);
+                        newEmail = req.body.email; 
                         db.Users.update({...user, email:newEmail}, {where: {id:req.params.id}})
                             .then( () => { console.log("Update email réussi")})
                             .catch(err => {
@@ -545,7 +515,7 @@ exports.updateUser = (req, res) => {
                         if (user) {return res.status(400).json({message: "Pseudo déjà utilisé"})}
 
                         // si pseudo n'est pas encore dans BDD, update user avec pseudo
-                        newPseudo = req.body.pseudo; console.log("Pseudo update sera " + newPseudo);
+                        newPseudo = req.body.pseudo;
                         db.Users.update( {...user, pseudo: newPseudo}, {where: {id:req.params.id}})
                             .then( () => {console.log("Update pseudo réussi")})
                             .catch(err => {
@@ -718,7 +688,7 @@ exports.resetPassword = async (req, res) => {
                     }
                 })
                     if ( !user ) {          // si pas user
-                            res.status(400).json({ message: "Token invalid, user non trouvé"})
+                           return res.status(400).json({ message: "Token invalid, user non trouvé"})
                         }
                     else {                  
                         // 3) Si user est présent, Update nouveau password
