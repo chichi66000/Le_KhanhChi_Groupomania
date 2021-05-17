@@ -4,9 +4,9 @@ const multer = require('multer');
 const MIME_TYPE = {
     //mimetype pour image
     'image/jpg': 'jpg',
-    'image/jpeg': 'jpg',
+    'image/jpeg': 'jpeg',
     'image/png': 'png',
-    'image.gif': 'gif',
+    'image/gif': 'gif',
     // mimetype pour video/audio
     'audio/x-wav': 'wav',
     'video/x-flv': 'flv',
@@ -36,6 +36,6 @@ module.exports = multer ({storage: storage}).single("image")
 function mimetypeValid(extension, req) {
     if( extension!='jpg' && extension !='png' && extension != 'jpeg' && extension != 'gif' && extension != 'wav' && extension != 'flv' && extension != 'mp4' && extension != 'mov' && extension != 'avi' && extension != 'wmv' && extension != 'movie') 
     {
-        req.body.errorMessage = "Le format d'image n'est pas valid!"
+        req.body.errorMessage = "Le format d'image n'est pas valide!"
     }
 }

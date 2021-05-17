@@ -65,32 +65,46 @@ exports.signup = ((req, res) => {
                          
                     }
                     else {          // pas de pseudo
-                        
-                        bcrypt.hash(userData.password,10)   // hash password, puis créer user
-                            .then( hash => {
-                            // s'il n'y a pas photo, prendre nom de l'image avatar default,
-                            //  si non prendre le nom de requete file
-                                let avatarName = "";
-                                if ( req.file) { avatarName = req.file.filename}
-                                else { avatarName = "avatar_default.png"} 
+                        // crypter email
+                        // key and iv   
+                            var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
+                            console.log("key ", key)
+                            var iv = "1234567890123456";
+                        // create a aes256 cipher based on our key and iv
+                        var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+                        // update the cipher with our email
+                        cipher.update(userData.email, "ascii");
+                        // save the encryption as base64-encoded
+                        var emailHash = cipher.final("base64");
+                        console.log("emailHash " + emailHash)
+                            
+                            bcrypt.hash(userData.password,10)   // hash password, puis créer user
+                                .then( hash => {
+                                // s'il n'y a pas photo, prendre nom de l'image avatar default,
+                                //  si non prendre le nom de requete file
+                                    let avatarName = "";
+                                    if ( req.file) { avatarName = req.file.filename}
+                                    else { avatarName = "avatar_default.png"} 
 
-                                // créer user
-                                const newUser = db.Users.create({
-                                    email: userData.email,
-                                    nom: userData.nom,
-                                    prenom: userData.prenom,
-                                    password: hash,
-                                    fonction: userData.fonction,
-                                    pseudo: userData.pseudo,
-                                    isAdmin: 0, 
-                                    avatar: avatarName
-                                });
-                                console.log("newuser" + newUser);
-                                res.status(201).json( { message: "Utilisateur crée avec succès"})
-                            })
-                            .catch( () => { 
-                                res.status(400).json( {messsage: " Problème pour crée utilisateur" });   
-                        } )
+                                    // créer user
+                                    const newUser = db.Users.create({
+                                        email: emailHash,
+                                        nom: userData.nom,
+                                        prenom: userData.prenom,
+                                        password: hash,
+                                        fonction: userData.fonction,
+                                        pseudo: userData.pseudo,
+                                        isAdmin: 0, 
+                                        avatar: avatarName
+                                    });
+                                    res.status(201).json( { message: "Utilisateur crée avec succès"})
+                                })
+                                .catch( () => { 
+                                    res.status(400).json( {messsage: " Problème pour crée utilisateur" });   
+                                } )
+                        
+                        
+                        
                     }
                 })  
             }
@@ -101,9 +115,13 @@ exports.signup = ((req, res) => {
 
 //une route pour login
 exports.login = (req, res) => {
+    // crypter email avec bcrypt afin de comparer avec celui dans BDD
+    let emailLogin = crypto.createHmac('sha256', process.env.EMAIL_CRYPTO).update(req.body.email).digest('hex')
+    console.log("email " + emailLogin)
+
     db.Users.findOne( {
         // chercher user avec son email
-        where: {email: req.body.email}})// trouver utilisateur avec email unique
+        where: {email: emailLogin}})// trouver utilisateur avec email unique
         .then( (user) => {
             if(!user) { // si user n'existe pas dans bdd
                 return res.status(401).json({error: 'Utilisateur non trouvé'}) // renvoyer message erreur

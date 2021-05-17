@@ -78,7 +78,7 @@ exports.updatePost = (req, res) => {
                 // update sans file
                 if (!req.file) {
                     // valider les informations entrée dans nouveau post
-                    let regex = /[@&"()_$*€£`+=\/;#]+$/;
+                    let regex = /[<>{}|@&"'()_$*€£`+=\/;#]+$/;
                     if (validator.matches(req.body.title, regex)) {
                        return res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
                     }
