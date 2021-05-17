@@ -34,7 +34,7 @@
                             </button>
 
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li v-if="currentUserId==post.userId || user.user.isAdmin===true" :key="post.id"><button type="button"   :data-bs-target="`#modify${post.id}`" data-bs-toggle="modal" class="btn dropdown-item " >Modifier</button></li>
+                                <li v-if="currentUserId==post.userId" :key="post.id"><button type="button"   :data-bs-target="`#modify${post.id}`" data-bs-toggle="modal" class="btn dropdown-item " >Modifier</button></li>
 
                                 <li v-if="currentUserId==post.userId || user.user.isAdmin===true" @click="deletePost (index)"><a class="dropdown-item" href="#">Supprimer</a></li>
                             

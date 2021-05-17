@@ -183,6 +183,7 @@ export default {
                     .then((response) => {                   // récupérer la response du server
                         Swal.fire( " Signup réussi, veuillez login avec votre email et password")
                         console.log(response)
+                        this.error=""
                         this.$router.push("/login")              //login et aller au Home
                         })
                     .catch((e) => { 

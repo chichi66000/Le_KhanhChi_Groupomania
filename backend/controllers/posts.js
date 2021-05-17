@@ -15,7 +15,7 @@ exports.createPost = (req, res) => {
     
     // valider les entrées du req 
     if (validator.matches(req.body.title, regex)) {
-        res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+      return  res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
     }
     else {
         // s'il y a req file, enregistrer son URL; 
@@ -72,7 +72,7 @@ exports.updatePost = (req, res) => {
 
             //Verifier si c'est bien le user avant de faire update
             if (post.userId != req.params.id ) {
-                res.status(400).json("Echec! Vous n'êtes pas auteur du pubication.")
+              return  res.status(400).json("Echec! Vous n'êtes pas auteur du pubication.")
             }
             else {
                 // update sans file
@@ -80,7 +80,7 @@ exports.updatePost = (req, res) => {
                     // valider les informations entrée dans nouveau post
                     let regex = /[@&"()_$*€£`+=\/;#]+$/;
                     if (validator.matches(req.body.title, regex)) {
-                        res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+                       return res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
                     }
                     // puis update post
                     else {
@@ -114,7 +114,7 @@ exports.updatePost = (req, res) => {
                                 // valider les informations entrée dans nouveau post
                             let regex = /[@&"()_$*€£`+=\/;#]+$/;
                             if (validator.matches(req.body.title, regex)) {
-                                res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+                               return res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
                                 }
 
                             //après validation, update post
@@ -256,7 +256,7 @@ exports.createCommentaire = (req, res) => {
     let regex = /[@&"()_$§*€£`+=\/;#]+$/;
     // valider la commentaire
     if (validator.matches(req.body.commentaire, regex)) {
-    res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
+    return res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
     }
     else {
         console.log(req.body.commentaire)

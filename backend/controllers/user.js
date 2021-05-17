@@ -44,7 +44,7 @@ exports.signup = ((req, res) => {
     if(!validator.isAlpha(userData.nom, ["fr-FR"])) {return res.status(400).json({message: " Nom ne peut être que les lettres"})}
     if (!validator.isAlpha(userData.prenom, ["fr-FR"])) {return res.status(400).json({message: " Prenom ne peut être que les lettres"})}
     if (!validator.isAlphanumeric(userData.pseudo, ["fr-FR"])) {return res.status(400).json({message: " Pseudo doit être en lettre ou chiffre"})}
-    if (userData.fonction.length > 0 &&  (!validator.isAlpha(userData.fonction, ["fr-FR"])) ) {return res.status(400).json({message: " veuillez entrer un format valid"}) }   
+    if (userData.fonction.length > 0 &&  (!validator.isAlpha(userData.fonction, ["fr-FR"])) ) {return res.status(400).json({message: " veuillez entrer que les lettres"}) }   
     
         // valider password avec password-validator
     if(!schema.validate(userData.password)) {return res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
@@ -106,14 +106,12 @@ exports.login = (req, res) => {
         where: {email: req.body.email}})// trouver utilisateur avec email unique
         .then( (user) => {
             if(!user) { // si user n'existe pas dans bdd
-                console.log('Utilisateur non trouvé');
                 return res.status(401).json({error: 'Utilisateur non trouvé'}) // renvoyer message erreur
             }
             // si user est trouvé, comparer le mot de passe entrée avec celui dans bdd
             bcrypt.compare(req.body.password, user.password) 
                 .then((valid) => {
                     if(!valid) {// si mdp n'est pas valid, renvoyer error
-                        console.log('Mot de passe incorrect')
                         return res.status(401).json({ error: 'Mot de passe incorrect'})
                     }
                     // si mdp correct, renvoyer user, et token
@@ -135,8 +133,6 @@ exports.login = (req, res) => {
                             httpOnly: true,
                             secure: false,
                             sameSite:false,
-                            // path: "/",
-                            // domain: "/",
                             maxAge: "86400000"    // 24h en milisecond
                         })
 
@@ -162,10 +158,7 @@ exports.login = (req, res) => {
 
 // route pour refresh un token expires
 exports.refreshToken = (req, res) => {
-    // console.log(req.cookies)
-    // console.log("userid " + req.params.id)
     let refreshtoken = req.cookies.refreshtoken;
-    // console.log(refreshtoken)        // => Object nulle prototype
     
     if (!refreshtoken){
         return res.status(403).send("veuillez connecter")
@@ -186,7 +179,7 @@ exports.refreshToken = (req, res) => {
             {userId: req.params.id },
             process.env.SECRET_TOKEN, 
             {expiresIn: "2m",})
-        // envoyer au client
+        // envoyer au client nouveau token
         res.status(201).json(newToken)
     
     }
@@ -194,12 +187,12 @@ exports.refreshToken = (req, res) => {
 
 // route pour logout
 exports.logout = (req, res) => {
-    res.clearCookie('refreshtoken')
+    res.clearCookie('refreshtoken')         //supprimer le cookie refreshtoken
     res.send('supprimer cookie')
-    res.redirect('/');
+    res.redirect('/');                      // redirect sur home
 };
 
-//route pour supprimer un user
+//route pour user supprimer son compte
 exports.deleteUser = (req, res) => {
 
     db.Users.findOne({where: {id: req.params.id}})
@@ -207,14 +200,12 @@ exports.deleteUser = (req, res) => {
             console.log("user" + user);      //OK
             console.log(req.body.password);
             if(!user) { // si user n'existe pas dans bdd
-                console.log('Utilisateur non trouvé');
                 return res.status(401).json({error: 'Utilisateur non trouvé'}) // renvoyer message erreur
             }
             // si trouvé user, comparer password du requête avec celui dans BDD
             bcrypt.compare(req.body.password, user.password)
                 .then( valid => {
                     if (!valid) {           // si c'est pas le même password
-                        console.log('Mot de passe incorrect')
                         return res.status(401).json({ error: 'Mot de passe incorrect'})
                     }
                     
@@ -235,31 +226,47 @@ exports.deleteUser = (req, res) => {
                     res.status(500).json( { message: "Problème comparer le password"})
                 })
         })
-        // chercher les publications de ce user
-        db.Posts.findOne({ where: { userId: req.params.id } })
-            .then((post) => {     
-                // chercher les images, video et effacer
-                    if (post.img_url !="") {
-                        let filenames = post.img_url
-                        fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+
+            //supprimer les likes de ce user
+            db.likes.findAll({ where: { userId: req.params.id } })
+                .then( likes => {
+                    // si user n'a pas de like
+                    if (!likes) { console.log("User n'a pas like")}
+                    // si user a des likes, supprimer ses likes
+                    else {
+                        db.likes.destroy({ where: { userId: req.params.id } });
                     }
-            })
-        // supprimer dans table likes
-            .then(() => {
-                    db.likes.destroy({ where: { userId: req.params.id } });
                 })
-                // supprimer dans table commentaires
-            .then(() => {
-                    db.commentaires.destroy({ where: { userId: req.params.id } });
+
+            // supprimer les commentaires du user
+            db.commentaires.findAll({ where: { userId: req.params.id } })
+                .then(commentaires => {
+                    // pas de commentaires
+                    if (! commentaires) { console.log("Pas de commentaire de ce user")}
+                    // commentaires trouvé
+                    else {
+                        db.commentaires.destroy({ where: { userId: req.params.id } });
+                    }
                 })
-                // supprimer dans table posts
-            .then(() => {
-                    db.Posts
-                    .destroy({ where: { userId: req.params.id } })
-                    .then(() =>
-                        res.status(200).json({ message: "Publications supprimée !" })
-                    )
+            
+            // chercher les publications de ce user
+            db.Posts.findOne({ where: { userId: req.params.id } })
+                .then((post) => {
+                    //si user n'a pas de publication
+                    if (!post) {
+                        console.log("user n'a pas de publication")
+                    }
+                    else {
+                        // chercher les images, video et effacer
+                        if (post.img_url !="") {
+                            let filenames = post.img_url
+                            fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+                        }
+                        db.Posts.destroy({ where: { userId: req.params.id } })
+                    }     
+                    
                 })
+
         // supprimer ce user
         .then( () => {
             db.Users.destroy ({where: {id:req.params.id}})
@@ -378,7 +385,7 @@ exports.updatePassword = (req, res) => {
                 .then( valid => {
                     // si password pas correct => erreur
                     if (! valid) {
-                        res.status(400).json( { message: "Password incorrect"})
+                      return  res.status(400).json( { message: "Password incorrect"})
                     }
                     // 3) If password correct, update user with new hash password
                     else {
@@ -394,7 +401,7 @@ exports.updatePassword = (req, res) => {
                             const token = jwt.sign(            
                                 {userId: user.id },
                                 process.env.SECRET_TOKEN, 
-                                {expiresIn: "24h",});
+                                {expiresIn: "1m",});
                                     
                             res.status(200).json( {
                                     message: "Password reset avec succès",
@@ -465,7 +472,7 @@ exports.updateUser = (req, res) => {
                 db.Users.findOne({where: {email:req.body.email}})
                     .then( user => {
                         // si email est déjà utilisé, envoyer 400
-                        if (user) { res.status(400).json({message: "Email déjà utilisé"})}
+                        if (user) {return res.status(400).json({message: "Email déjà utilisé"})}
 
                         // si email n'est pas encore dans BDD, update user avec nouvel email
                         newEmail = req.body.email; console.log("Email updatesera" + newEmail);
@@ -485,7 +492,7 @@ exports.updateUser = (req, res) => {
                 db.Users.findOne({where: {pseudo:req.body.pseudo}})
                     .then( user => {
                         // si pseudo est déjà utilisé, envoyer 400
-                        if (user) { res.status(400).json({message: "Pseudo déjà utilisé"})}
+                        if (user) {return res.status(400).json({message: "Pseudo déjà utilisé"})}
 
                         // si pseudo n'est pas encore dans BDD, update user avec pseudo
                         newPseudo = req.body.pseudo; console.log("Pseudo update sera " + newPseudo);
@@ -530,7 +537,7 @@ exports.getOneUser = (req, res) => {
     db.Users.findOne( {where: { id: req.params.id}})
         .then((user) => {
             //user non trouvé => erreur
-            if(! user) {res.status(404).json({message: "Utilisateur non trouvé"}
+            if(! user) {return res.status(404).json({message: "Utilisateur non trouvé"}
             )}
             // user trouvé => envoyer la response avec user
             else {
@@ -556,7 +563,7 @@ exports.getAllUser = (req, res) => {
     db.Users.findOne ( { where: { id: req.params.id }})
         .then( user => {
             // s'il n'est pas admin; interdit les actions
-            if(user.isAdmin === false) { res.status(400).json("Vous n'êtes pas admin")}
+            if(user.isAdmin === false) {return res.status(400).json("Vous n'êtes pas admin")}
             else {
             // si user est admin, chercher tous les user, trier par id 
                 db.Users.findAll( {
@@ -564,7 +571,7 @@ exports.getAllUser = (req, res) => {
                 },
                 {order: ["id"] })
                     .then((users) => {
-                        if (! users) { res.status(404).json({ message:"Utilisateur non trouvé" })}
+                        if (! users) {return res.status(404).json({ message:"Utilisateur non trouvé" })}
                         // renvoyer liste des users
                         res.status(200).json( {users})
                     })
@@ -583,7 +590,7 @@ exports.forgotPassword = async (req, res) => {
     const user = await db.Users.findOne ( { where: {email: req.body.email } })
     try {
         // user pas trouvé
-        if ( ! user ) { res.status(404).json({ message: " Utilisateur non trouvé avec email "})}
+        if ( ! user ) {return res.status(404).json({ message: " Utilisateur non trouvé avec email "})}
 
         // 2) User trouvé => Generate random reset token
         else { 
@@ -605,7 +612,7 @@ exports.forgotPassword = async (req, res) => {
                 },
                 {where: { email: req.body.email} }
                 )
-                .then( () => res.status(200).json( { message: " Reset Token réussi"}))
+                .then( () => { console.log(" Reset Token réussi")})
                 .catch( error => {
                     res.status(404).json({message: "Problème pour update token user"});
                     console.log(error);
@@ -614,7 +621,7 @@ exports.forgotPassword = async (req, res) => {
             // 3) Send token to user email
             const resetURL = `${req.protocol}://${process.env.GROUPO_HOST}/reset/${resetToken}`;
                 // avec ce message, format HTML
-            const message = `<p>Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 2 heurs) </p> <br> <a href="${resetURL}">${resetURL}</a>  <br> Si ce n'est pas le cas, ignorez ce message</p>`  ;
+            const message = `<p>Password oublié? Cliquez sur ce link pour changer votre password (valabe pour 1 heure) </p> <br> <a href="${resetURL}">${resetURL}</a>  <br> Si ce n'est pas le cas, ignorez ce message</p>`  ;
 
             // envoyer email à user 
             await sendEmail( {
@@ -622,7 +629,7 @@ exports.forgotPassword = async (req, res) => {
                 subject: "Groupomania, reset password ( valide pour 2 heures )",
                 message
             })
-                .then( () => res.status(200).json( { message: "Verifier votre email pour reset password"}))
+                .then( () => {return res.status(200).json( { message: "Verifier votre email pour reset password"})}) 
                 .catch ( err => {
                     console.log(err)
                     res.status(500).json({ message: "Problème pour envoyer email"})
@@ -634,8 +641,8 @@ exports.forgotPassword = async (req, res) => {
                         },
                         {where: { email: req.body.email} }
                         )
-                        .then( () => res.status(200).json( { message: " ResetToken effacé"}))
-                        .catch( (e) =>{console.log(e);res.status(404).json({message: "Problème pour effacé resetToken user"})}) 
+                        .then( () =>console.log(" ResetToken effacé") )
+                        .catch( (e) =>{console.log(e);res.json({message: "Problème pour effacé resetToken user"})}) 
                 })
         }
     } catch (err) { console.log(err) }
@@ -650,7 +657,7 @@ exports.resetPassword = async (req, res) => {
         jwt.verify(resetToken, 'RANDOM_TOKEN_SECRET', function (err) {
             if (err) { 
                 console.log(err);
-                res.status(400).json({message: "token expired"})
+               return res.status(400).json({message: "token expired"})
             }
             else {
                 // 2) Si token est encore valide, comparer avec celui dans BDD
@@ -678,7 +685,7 @@ exports.resetPassword = async (req, res) => {
                                 const token = jwt.sign(            
                                     {userId: user.id },
                                     process.env.SECRET_TOKEN, 
-                                    {expiresIn: "24h",});
+                                    {expiresIn: "1m",});
                                         
                                 res.status(200).json( {
                                         message: "Password reset avec succès",
