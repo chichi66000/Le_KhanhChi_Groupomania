@@ -250,19 +250,27 @@ exports.deleteUser = (req, res) => {
                 })
             
             // chercher les publications de ce user
-            db.Posts.findOne({ where: { userId: req.params.id } })
-                .then((post) => {
+            db.Posts.findAll({ where: { userId: req.params.id } })
+                .then((posts) => {
                     //si user n'a pas de publication
-                    if (!post) {
+                    if (!posts) {
                         console.log("user n'a pas de publication")
                     }
                     else {
-                        // chercher les images, video et effacer
-                        if (post.img_url !="") {
-                            let filenames = post.img_url
-                            fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+                        if (!posts) {
+                            console.log("user n'a pas de publication")
                         }
-                        db.Posts.destroy({ where: { userId: req.params.id } })
+                        else {
+                            // chercher les images, video et effacer
+                            for ( let i=0; i<posts.length; i++) {
+                                if (posts[i].img_url !="") {
+                                let filenames = posts[i].img_url
+                                fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+                                }
+                            }
+                            
+                            db.Posts.destroy({ where: { userId: req.params.id } })
+                        }
                     }     
                     
                 })
@@ -294,31 +302,73 @@ exports.adminDelete = (req, res) => {
                 
             }        
         })
-        // chercher les publications de ce user
-        db.Posts.findOne({ where: { userId: req.params.id } })
-            .then((post) => {     
-                // chercher les images, video et effacer
-                    if (post.img_url !="") {
-                        let filenames = post.img_url
-                        fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+        //supprimer les likes de ce user
+            db.likes.findAll({ where: { userId: req.params.id } })
+                .then( likes => {
+                    // si user n'a pas de like
+                    if (!likes) { console.log("User n'a pas like")}
+                    // si user a des likes, supprimer ses likes
+                    else {
+                        db.likes.destroy({ where: { userId: req.params.id } });
                     }
-            })
-        // supprimer dans table likes
-            .then(() => {
-                    db.likes.destroy({ where: { userId: req.params.id } });
                 })
-                // supprimer dans table commentaires
-            .then(() => {
-                    db.commentaires.destroy({ where: { userId: req.params.id } });
+
+            // supprimer les commentaires du user
+            db.commentaires.findAll({ where: { userId: req.params.id } })
+                .then(commentaires => {
+                    // pas de commentaires
+                    if (! commentaires) { console.log("Pas de commentaire de ce user")}
+                    // commentaires trouvé
+                    else {
+                        db.commentaires.destroy({ where: { userId: req.params.id } });
+                    }
                 })
-                // supprimer dans table posts
-            .then(() => {
-                    db.Posts
-                    .destroy({ where: { userId: req.params.id } })
-                    .then(() =>
-                        res.status(200).json({ message: "Publications supprimée !" })
-                    )
+            
+            // chercher les publications de ce user
+            db.Posts.findAll({ where: { userId: req.params.id } })
+                .then((posts) => {
+                    //si user n'a pas de publication
+                    if (!posts) {
+                        console.log("user n'a pas de publication")
+                    }
+                    else {
+                        // chercher les images, video et effacer
+                        for ( let i=0; i<posts.length; i++) {
+                            if (posts[i].img_url !="") {
+                            let filenames = posts[i].img_url
+                            fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+                            }
+                        }
+                        
+                        db.Posts.destroy({ where: { userId: req.params.id } })
+                    }     
+                    
                 })
+        // // chercher les publications de ce user
+        // db.Posts.findOne({ where: { userId: req.params.id } })
+        //     .then((post) => {     
+        //         // chercher les images, video et effacer
+        //             if (post.img_url !="") {
+        //                 let filenames = post.img_url
+        //                 fs.unlink(`images/${filenames}`, () => {console.log("images supprimé");});
+        //             }
+        //     })
+        // // supprimer dans table likes
+        //     .then(() => {
+        //             db.likes.destroy({ where: { userId: req.params.id } });
+        //         })
+        //         // supprimer dans table commentaires
+        //     .then(() => {
+        //             db.commentaires.destroy({ where: { userId: req.params.id } });
+        //         })
+        //         // supprimer dans table posts
+        //     .then(() => {
+        //             db.Posts
+        //             .destroy({ where: { userId: req.params.id } })
+        //             .then(() =>
+        //                 res.status(200).json({ message: "Publications supprimée !" })
+        //             )
+        //         })
         // supprimer ce user
         .then( () => {
             db.Users.destroy ({where: {id:req.params.id}})
