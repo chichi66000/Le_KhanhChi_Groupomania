@@ -31,7 +31,7 @@ schema
     .has().digits(1)                                // Doit contenir au moins 1 chiffres
     .has().not().spaces()                           // Doit contenir aucun espace
     .is().not().oneOf(["Passw0rd", "Password123"])  // Mot de passes blacklistés
-    .has(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)  // regex pour password fort
+    .has(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$/)  // regex pour password fort
 
 // créer une route pour enregistrer nouvel utilisateur
 
@@ -40,27 +40,28 @@ exports.signup = ((req, res) => {
     console.log(userData)       // OK
 
         // Valider les données du email, nom, prénom, fonction avec validator
-    if( !validator.isEmail(userData.email)) { res.status(400).json({message: " Email invalid"})}
-    if(!validator.isAlpha(userData.nom, ["fr-FR"])) { res.status(400).json({message: " Nom invalid"})}
-    if ( !validator.isAlpha(userData.prenom, ["fr-FR"])) { res.status(400).json({message: " Prenom invalid"})}
-    if (userData.fonction.length > 0) {if ( !validator.isAlpha(userData.fonction, ["fr-FR"]))  { res.status(400).json({message: " veuillez entrer un format valid"})} }   
+    if( !validator.isEmail(userData.email)) {return res.status(400).json({message: " Email invalid"})}
+    if(!validator.isAlpha(userData.nom, ["fr-FR"])) {return res.status(400).json({message: " Nom ne peut être que les lettres"})}
+    if (!validator.isAlpha(userData.prenom, ["fr-FR"])) {return res.status(400).json({message: " Prenom ne peut être que les lettres"})}
+    if (!validator.isAlphanumeric(userData.pseudo, ["fr-FR"])) {return res.status(400).json({message: " Pseudo doit être en lettre ou chiffre"})}
+    if (userData.fonction.length > 0 &&  (!validator.isAlpha(userData.fonction, ["fr-FR"])) ) {return res.status(400).json({message: " veuillez entrer un format valid"}) }   
     
         // valider password avec password-validator
-    if(!schema.validate(userData.password)) { res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
+    if(!schema.validate(userData.password)) {return res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
        
         // après valider les donnée, chercher si email est déjà utilisé ; si non crée user
     else { db.Users.findOne ( {  where: { email: userData.email }})
         .then( user => { 
                 // si trouvé user dans BDD avec email => email déjà utilisé
             if( user) {
-                res.status(400).json({message: " email déjà utilisé"}); 
+              return  res.status(400).json({message: " email déjà utilisé"}); 
             }
             else {  // email n'est pas dans BDD
                 // vérifier si pseudo est déjà présente dans BDD 
                 db.Users.findOne ( { where: { pseudo : userData.pseudo}})
                 .then( user => { 
                     if (user) {     // pseudo trouvé dans BDD
-                        res.status(400).json({ message: " pseudo deja utilisé"});
+                       return res.status(400).json({ message: " pseudo deja utilisé"});
                          
                     }
                     else {          // pas de pseudo

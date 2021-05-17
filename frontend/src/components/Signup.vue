@@ -16,25 +16,25 @@
 
                     <!-- input nom -->
                     <div class="form-floating mb-3">
-                        <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
+                        <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z'ïîûüùéèêëôöàäâÿç -]+" class="form-control"/>
                         <label for="nom">Nom</label>
                     </div>
 
                     <!-- input prenom -->
                     <div class="form-floating mb-3">
-                        <input type="text"  id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>
+                        <input type="text"  id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required pattern="[A-Za-z'ïîûüùéèêëôöàäâÿç -]+" class="form-control"/>
                         <label for="prenom">Prenom</label>
                     </div>
 
                     <!-- input pseudo -->
                     <div class="form-floating mb-3">
-                        <input type="text" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo" required class="form-control"/>
+                        <input type="text" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo" required class="form-control" pattern="[A-Za-z0-9'ïîûüùéèêëôöàäâÿç -]+"/>
                         <label for="pseudo">Pseudo</label>
                     </div>
 
                     <!-- input fonction -->
                     <div class="form-floating mb-3 ">
-                        <input type="text"  id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z][A-Za-z' -]+" class="form-control"/>  
+                        <input type="text"  id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z'ïîûüùéèêëôöàäâÿç -]+" class="form-control"/>  
                         <label for="fonction">Fonction</label>
                     </div>
 
@@ -119,15 +119,15 @@ export default {
                 .required('Veuillez remplir votre email')
                 .email('Email invalid'),
         password: yup.string()
-                .min(8, 'Password doit avoir au minimum 8 characters')
-                .max(20, 'Password doit avoir au maximum 20 characters')
-                .required('Password is required')
+                .min(8, 'Mot de passe doit avoir au minimum 8 characters')
+                .max(20, 'Mot de passe doit avoir au maximum 20 characters')
+                .required('Mot de passe est demandé')
                 .matches(
-                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
+                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
                 ,
         passwordCheck: yup.string()
-                .oneOf([yup.ref('password'), null], 'Passwords must match')
-                .required('Confirm Password is required'),
+                .oneOf([yup.ref('password'), null], 'Mot de passe doit être le même ')
+                .required('Confirmer votre mot de passe'),
         });
 
     // Create a form context with the validation schema
@@ -187,7 +187,7 @@ export default {
                         })
                     .catch((e) => { 
                         console.log(e);
-                        this.error = "Veuillez corriger les erreurs" })
+                        this.error = "Email/pseudo déjà utilisé" })
             }catch (err) { console.log("error" + err) }     
         },
         
