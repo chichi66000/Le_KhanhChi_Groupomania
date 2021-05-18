@@ -61,6 +61,10 @@ exports.signup = ((req, res) => {
     const userData = req.body;
     console.log(userData)       // OK
 
+    // crypter email entrée
+    let emailHash = encrypt(userData.email)
+    console.log(emailHash + " email")
+
         // Valider les données du email, nom, prénom, fonction avec validator
     if( !validator.isEmail(userData.email)) {return res.status(400).json({message: " Email invalid"})}
     if(!validator.isAlpha(userData.nom, ["fr-FR"])) {return res.status(400).json({message: " Nom ne peut être que les lettres"})}
@@ -72,7 +76,7 @@ exports.signup = ((req, res) => {
     if(!schema.validate(userData.password)) {return res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
        
         // après valider les donnée, chercher si email est déjà utilisé ; si non crée user
-    else { db.Users.findOne ( {  where: { email: userData.email }})
+    else { db.Users.findOne ( {  where: { email: emailHash }})
         .then( user => { 
                 // si trouvé user dans BDD avec email => email déjà utilisé
             if( user) {
@@ -87,21 +91,7 @@ exports.signup = ((req, res) => {
                          
                     }
                     else {          // pas de pseudo
-                        // crypter email
-                        // key and iv   
-                            // var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
-                            // console.log("key ", key)
-                            // var iv = "1234567890123456";
-                        // create a aes256 cipher based on our key and iv
-                        // var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-                        // // update the cipher with our email
-                        // cipher.update(userData.email, "ascii");
-                        // // save the encryption as base64-encoded
-                        // var emailHash = cipher.final("base64");
-                        // console.log("emailHash " + emailHash)
-
-                            let emailHash = encrypt(userData.email)
-                            console.log(emailHash + " email")
+                        
                             bcrypt.hash(userData.password,10)   // hash password, puis créer user
                                 .then( hash => {
                                 // s'il n'y a pas photo, prendre nom de l'image avatar default,
@@ -118,7 +108,7 @@ exports.signup = ((req, res) => {
                                         password: hash,
                                         fonction: userData.fonction,
                                         pseudo: userData.pseudo,
-                                        isAdmin: 1, 
+                                        isAdmin: 0, 
                                         avatar: avatarName
                                     });
                                     res.status(201).json( { message: "Utilisateur crée avec succès"})
@@ -655,8 +645,19 @@ exports.getAllUser = (req, res) => {
                 {order: ["id"] })
                     .then((users) => {
                         if (! users) {return res.status(404).json({ message:"Utilisateur non trouvé" })}
+                        //decrypter email avant d'envoyer au frontend
+                        // for ( let i=0; i< users.length; i++ ) {
+                        //     let allUser = [];
+                        //     let oneUser = {
+                        //         id: users[i].id,
+                        //         email: decrypt(users[i].email) 
+                        //     }
+                        //     allUser.push(oneUser)
+                        //     return allUser
+                        // }
+                        
                         // renvoyer liste des users
-                        res.status(200).json( {users})
+                            res.status(200).json({ users})
                     })
                     .catch((error) => res.status(404).json({error}))
             }
@@ -669,8 +670,11 @@ exports.getAllUser = (req, res) => {
 
 // ===> route pour forgot password <===
 exports.forgotPassword = async (req, res) => {
-    // 1) Get user based on email
-    const user = await db.Users.findOne ( { where: {email: req.body.email } })
+    // encrypt email entrée
+    let emailLogin = encrypt(req.body.email)
+
+    // comparer ce email avec celui dans BDD user based on email
+    const user = await db.Users.findOne ( { where: {email: emailLogin } })
     try {
         // user pas trouvé
         if ( ! user ) {return res.status(404).json({ message: " Utilisateur non trouvé avec email "})}
@@ -683,6 +687,7 @@ exports.forgotPassword = async (req, res) => {
                     {userId: user.id },
                     process.env.SECRET_TOKEN, 
                     {expiresIn: "1h",});
+
                 // hash ce token pour plus de sécurité     
                 const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex')
                 console.log({resetToken}, { resetTokenHash});      //OK
@@ -690,10 +695,10 @@ exports.forgotPassword = async (req, res) => {
                 // update BDD avec ce resetTokenHash
             db.Users.update (
                 {...userObject,
-                    email: req.body.email,
+                    email: emailLogin,
                     createPasswordResetToken: resetTokenHash
                 },
-                {where: { email: req.body.email} }
+                {where: { email: emailLogin} }
                 )
                 .then( () => { console.log(" Reset Token réussi")})
                 .catch( error => {
@@ -719,10 +724,10 @@ exports.forgotPassword = async (req, res) => {
                 // en cas de pb d'envoie, réinitialiser le colonne resetPassword à undefined
                     db.Users.update (
                         {...userObject,
-                            email: req.body.email,
+                            email: emailLogin,
                             createPasswordResetToken: 'undefined'
                         },
-                        {where: { email: req.body.email} }
+                        {where: { email: emailLogin} }
                         )
                         .then( () =>console.log(" ResetToken effacé") )
                         .catch( (e) =>{console.log(e);res.json({message: "Problème pour effacé resetToken user"})}) 
