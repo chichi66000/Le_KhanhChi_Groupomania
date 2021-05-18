@@ -476,7 +476,7 @@ exports.updateUser = (req, res) => {
     // console.log(req.body);  // Ok
     let avatarName = "";
     let newPseudo = "";
-    let newEmail = "";
+    
     let newFonction = "";
 
     // Chercher user avec son ID
@@ -514,14 +514,26 @@ exports.updateUser = (req, res) => {
             //si update avec email: vérifier si email est déjà utilisé dans BDD?
             if (req.body.email.length >0 && req.body.email !="undefined") {
                 console.log("Il y a email dans update");
-                db.Users.findOne({where: {email:req.body.email}})
+
+                // crypter email entrée afin de comparer avec celui dans BDD
+                // key and iv   
+                var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
+                var iv = "1234567890123456";
+                // create a aes256 cipher based on our key and iv
+                var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+                // update the cipher with our email
+                cipher.update(req.body.email, "ascii");
+                // save the encryption as base64-encoded
+                var emailLogin = cipher.final("base64");
+
+                db.Users.findOne({where: {email: emailLogin}})
                     .then( user => {
                         // si email est déjà utilisé, envoyer 400
                         if (user) {return res.status(400).json({message: "Email déjà utilisé"})}
 
                         // si email n'est pas encore dans BDD, update user avec nouvel email
-                        newEmail = req.body.email; 
-                        db.Users.update({...user, email:newEmail}, {where: {id:req.params.id}})
+                        
+                        db.Users.update({...user, email: emailLogin}, {where: {id:req.params.id}})
                             .then( () => { console.log("Update email réussi")})
                             .catch(err => {
                                 console.log(err);
