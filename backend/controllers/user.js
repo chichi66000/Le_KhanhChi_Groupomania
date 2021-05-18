@@ -115,9 +115,16 @@ exports.signup = ((req, res) => {
 
 //une route pour login
 exports.login = (req, res) => {
-    // crypter email avec bcrypt afin de comparer avec celui dans BDD
-    let emailLogin = crypto.createHmac('sha256', process.env.EMAIL_CRYPTO).update(req.body.email).digest('hex')
-    console.log("email " + emailLogin)
+    // crypter email entrée afin de comparer avec celui dans BDD
+    // key and iv   
+    var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
+    var iv = "1234567890123456";
+    // create a aes256 cipher based on our key and iv
+    var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+    // update the cipher with our email
+    cipher.update(req.body.email, "ascii");
+    // save the encryption as base64-encoded
+    var emailLogin = cipher.final("base64");
 
     db.Users.findOne( {
         // chercher user avec son email
@@ -157,7 +164,7 @@ exports.login = (req, res) => {
                         res.status(200).json({ // si mdp correct, envoyer user, token                       
                             currentUser: {
                             userNom: user.nom,
-                            email: user.email, 
+                            email: req.body.email, 
                             userPseudo: user.pseudo,
                             userId: user.id,
                             avatar: user.avatar,
