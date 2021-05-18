@@ -33,6 +33,28 @@ schema
     .is().not().oneOf(["Passw0rd", "Password123"])  // Mot de passes blacklistés
     .has(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$/)  // regex pour password fort
 
+
+// function pour crypter et decrypter email
+// key et iv pour crypto
+let key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
+let iv = "1234567890123456";
+algorithm = 'aes-256-ctr'
+
+//function pour encrypter
+function encrypt(text){
+var cipher = crypto.createCipheriv(algorithm,key, iv)
+var crypted = cipher.update(text,'utf8','hex')
+crypted += cipher.final('hex');
+return crypted;
+}
+
+// function pour decrypter
+function decrypt(text){
+var decipher = crypto.createDecipheriv(algorithm,key, iv)
+var dec = decipher.update(text,'hex','utf8')
+dec += decipher.final('utf8');
+return dec;
+}
 // créer une route pour enregistrer nouvel utilisateur
 
 exports.signup = ((req, res) => {
@@ -67,17 +89,19 @@ exports.signup = ((req, res) => {
                     else {          // pas de pseudo
                         // crypter email
                         // key and iv   
-                            var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
-                            console.log("key ", key)
-                            var iv = "1234567890123456";
+                            // var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
+                            // console.log("key ", key)
+                            // var iv = "1234567890123456";
                         // create a aes256 cipher based on our key and iv
-                        var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-                        // update the cipher with our email
-                        cipher.update(userData.email, "ascii");
-                        // save the encryption as base64-encoded
-                        var emailHash = cipher.final("base64");
-                        console.log("emailHash " + emailHash)
-                            
+                        // var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+                        // // update the cipher with our email
+                        // cipher.update(userData.email, "ascii");
+                        // // save the encryption as base64-encoded
+                        // var emailHash = cipher.final("base64");
+                        // console.log("emailHash " + emailHash)
+
+                            let emailHash = encrypt(userData.email)
+                            console.log(emailHash + " email")
                             bcrypt.hash(userData.password,10)   // hash password, puis créer user
                                 .then( hash => {
                                 // s'il n'y a pas photo, prendre nom de l'image avatar default,
@@ -94,7 +118,7 @@ exports.signup = ((req, res) => {
                                         password: hash,
                                         fonction: userData.fonction,
                                         pseudo: userData.pseudo,
-                                        isAdmin: 0, 
+                                        isAdmin: 1, 
                                         avatar: avatarName
                                     });
                                     res.status(201).json( { message: "Utilisateur crée avec succès"})
@@ -117,15 +141,16 @@ exports.signup = ((req, res) => {
 exports.login = (req, res) => {
     // crypter email entrée afin de comparer avec celui dans BDD
     // key and iv   
-    var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
-    var iv = "1234567890123456";
+    // var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
+    // var iv = "1234567890123456";
     // create a aes256 cipher based on our key and iv
-    var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-    // update the cipher with our email
-    cipher.update(req.body.email, "ascii");
-    // save the encryption as base64-encoded
-    var emailLogin = cipher.final("base64");
+    // var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+    // // update the cipher with our email
+    // cipher.update(req.body.email, "ascii");
+    // // save the encryption as base64-encoded
+    // var emailLogin = cipher.final("base64");
 
+    let emailLogin = encrypt(req.body.email)
     db.Users.findOne( {
         // chercher user avec son email
         where: {email: emailLogin}})// trouver utilisateur avec email unique
@@ -203,7 +228,7 @@ exports.refreshToken = (req, res) => {
         let newToken = jwt.sign(            
             {userId: req.params.id },
             process.env.SECRET_TOKEN, 
-            {expiresIn: "2m",})
+            {expiresIn: "2h",})
         // envoyer au client nouveau token
         res.status(201).json(newToken)
     
@@ -590,7 +615,7 @@ exports.updateUser = (req, res) => {
 
 // ===> route pour récupérer 1 utilisateur (pour page profil) <===
 exports.getOneUser = (req, res) => {
-    
+
     db.Users.findOne( {where: { id: req.params.id}})
         .then((user) => {
             //user non trouvé => erreur
@@ -598,16 +623,17 @@ exports.getOneUser = (req, res) => {
             )}
             // user trouvé => envoyer la response avec user
             else {
-                console.log("usernom" + user.nom)   //OK
+                console.log("email " + user.email)
+                let emailDecrypt = decrypt(user.email)
+                
                 let currentUser = {
                     userNom: user.nom,
                     userId: user.id,
                     userPseudo: user.pseudo,
-                    email: user.email,
+                    email: emailDecrypt,
                     avatar: user.avatar,
                     isAdmin: user.isAdmin
                 }
-                console.log(currentUser.avatar)    //OK
                 res.status(200).json({currentUser});
             }
         })

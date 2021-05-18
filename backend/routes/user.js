@@ -6,6 +6,7 @@ const userCtrl = require('../controllers/user');
 
 // Route pour refreshToken
 router.post('/refresh/:id', userCtrl.refreshToken)
+
 // route logout et supprimer refreshtoken
 router.post('/logout', userCtrl.logout)
 
