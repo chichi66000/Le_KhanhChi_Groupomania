@@ -67,10 +67,10 @@ exports.signup = ((req, res) => {
 
         // Valider les données du email, nom, prénom, fonction avec validator
     if( !validator.isEmail(userData.email)) {return res.status(400).json({message: " Email invalid"})}
-    if(!validator.isAlpha(userData.nom, ["fr-FR"])) {return res.status(400).json({message: " Nom ne peut être que les lettres"})}
-    if (!validator.isAlpha(userData.prenom, ["fr-FR"])) {return res.status(400).json({message: " Prenom ne peut être que les lettres"})}
-    if (!validator.isAlphanumeric(userData.pseudo, ["fr-FR"])) {return res.status(400).json({message: " Pseudo doit être en lettre ou chiffre"})}
-    if (userData.fonction.length > 0 &&  (!validator.isAlpha(userData.fonction, ["fr-FR"])) ) {return res.status(400).json({message: " veuillez entrer que les lettres"}) }   
+    if(!validator.matches(userData.nom, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Nom ne peut être que les lettres"})}
+    if (!validator.matches(userData.prenom, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Prenom ne peut être que les lettres"})}
+    if (!validator.matches(userData.pseudo, /^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Pseudo doit être en lettre ou chiffre"})}
+    if (userData.fonction.length > 0 &&  (!validator.matches(userData.fonction, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) ) {return res.status(400).json({message: " veuillez entrer que les lettres"}) }   
     
         // valider password avec password-validator
     if(!schema.validate(userData.password)) {return res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}

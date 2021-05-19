@@ -16,47 +16,51 @@
 
                     <!-- input nom -->
                     <div class="form-floating mb-3">
-                        <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required pattern="[A-Za-z'ïîûüùéèêëôöàäâÿç -]+" class="form-control"/>
+                        <input type="text"  id="nom" name="nom" placeholder="nom" v-model="nom" required class="form-control"/>
                         <label for="nom">Nom</label>
+                        <span class="text-danger">{{nomError}}</span>
                     </div>
 
                     <!-- input prenom -->
                     <div class="form-floating mb-3">
-                        <input type="text"  id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required pattern="[A-Za-z'ïîûüùéèêëôöàäâÿç -]+" class="form-control"/>
+                        <input type="text"  id="prenom" name="prenom" v-model="prenom" placeholder="prénom" required  class="form-control"/>
                         <label for="prenom">Prenom</label>
+                        <span class="text-danger">{{prenomError}}</span>
                     </div>
 
                     <!-- input pseudo -->
                     <div class="form-floating mb-3">
-                        <input type="text" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo" required class="form-control" pattern="[A-Za-z0-9'ïîûüùéèêëôöàäâÿç -]+"/>
+                        <input type="text" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo" required  class="form-control"/>
                         <label for="pseudo">Pseudo</label>
+                        <span class="text-danger">{{pseudoError}}</span>
                     </div>
 
                     <!-- input fonction -->
                     <div class="form-floating mb-3 ">
-                        <input type="text"  id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z'ïîûüùéèêëôöàäâÿç -]+" class="form-control"/>  
+                        <input type="text"  id="fonction" name="fonction" v-model="fonction" placeholder="fonction" class="form-control"/>  
                         <label for="fonction">Fonction</label>
+                        <span class="text-danger">{{fonctionError}}</span>
                     </div>
 
                     <!-- input email -->
                     <div class="form-floating mb-3">
                         <input type="email"  id="email" name="email" v-model="email" placeholder="email" required class="form-control"/>
                         <label for="email">Email</label>
-                        <span>{{emailError}}</span>
+                        <span class="text-danger">{{emailError}}</span>
                     </div>
 
                     <!-- input passsword -->
                     <div class="form-floating mb-3">
                         <input type="password" id="password" name="password" v-model="password" placeholder="mot de passe" required class="form-control"/>
                         <label for="password">Mot de passe</label>
-                        <span>{{passwordError}}</span>
+                        <span class="text-danger">{{passwordError}}</span>
                     </div>
 
                     <!-- input confirmer password -->
                     <div class="form-floating mb-3">
                         <input type="password" id="passwordCheck" name="passwordCheck" v-model="passwordCheck" placeholder="confirmer mot de passe" required class="form-control"/>
                         <label for="passewordCheck">Confirmer mot de passe</label>
-                        <span>{{passwordCheckError}}</span>
+                        <span class="text-danger">{{passwordCheckError}}</span>
                     </div>
             
                     <!-- input upload file avatar -->
@@ -101,10 +105,10 @@ export default {
     },
     data() {
         return {
-            nom:'',
-            prenom:'',
-            pseudo:'',
-            fonction:'',
+            // nom:'',
+            // prenom:'',
+            // pseudo:'',
+            // fonction:'',
             avatar:'',
             error: '',
             accept: false
@@ -115,6 +119,17 @@ export default {
         const errors = ref([])
 
         const schema = yup.object({
+        nom: yup.string()
+                .required("Veuillez remplir votre nom")
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
+        prenom: yup.string()
+                .required("Veuillez remplir votre prénom")
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
+        pseudo: yup.string()
+                .required("Veuillez choisir votre pseudo")
+                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Veuillez ne pas entrer d'espace et les charactères spéciaux. Utiliser ' ou - pour séparer les mots"),
+        fonction: yup.string()
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
         email: yup.string()
                 .required('Veuillez remplir votre email')
                 .email('Email invalid'),
@@ -135,12 +150,24 @@ export default {
         validationSchema: schema,
         });
         // No need to define rules for fields
+        const { value: nom, errorMessage: nomError } = useField('nom');
+        const { value: prenom, errorMessage: prenomError } = useField('prenom');
+        const { value: pseudo, errorMessage: pseudoError } = useField('pseudo');
+        const { value: fonction, errorMessage: fonctionError } = useField('fonction');
         const { value: email, errorMessage: emailError } = useField('email');
         const { value: password, errorMessage: passwordError } = useField('password');
         const { value: passwordCheck, errorMessage: passwordCheckError } = useField('passwordCheck');
 
         return {
             errors,
+            nom,
+            nomError,
+            prenom,
+            prenomError,
+            pseudo,
+            pseudoError,
+            fonction,
+            fonctionError,
             email,
             emailError,
             password,
