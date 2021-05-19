@@ -121,13 +121,13 @@ export default {
         const schema = yup.object({
         nom: yup.string()
                 .required("Veuillez remplir votre nom")
-                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactères spéciaux"),
         prenom: yup.string()
                 .required("Veuillez remplir votre prénom")
-                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactères spéciaux"),
         pseudo: yup.string()
                 .required("Veuillez choisir votre pseudo")
-                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Veuillez ne pas entrer d'espace et les charactères spéciaux. Utiliser ' ou - pour séparer les mots"),
+                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Ne pas utiliser les charactères spéciaux"),
         fonction: yup.string()
                 .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
         email: yup.string()

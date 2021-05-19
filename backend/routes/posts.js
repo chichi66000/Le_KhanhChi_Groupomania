@@ -17,9 +17,6 @@ router.put("/:postId/:id/update", auth, multer, postCtrl.updatePost);
 //====> Suppression d'une publication <====\\               // OK testé
 router.delete("/:postId", auth, postCtrl.deletePost);
 
-//====> Suppression d'une image <====\\               // OK testé
-// router.delete("/:image/:postId", auth, postCtrl.deleteImagePost);
-
 //====> Récupèration des publications de l'utilisateur <====\\      // OK testé
 router.get("/:id", auth, postCtrl.getUserPosts);
 

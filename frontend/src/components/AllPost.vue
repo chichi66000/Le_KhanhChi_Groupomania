@@ -59,16 +59,16 @@
                                             <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
 
                                                 <!-- input titre -->
-                                                <div class="mb-3">
+                                                <!-- <div class="mb-3">
                                                     <label for="recipient-name" class="col-form-label">Titre</label>
                                                     <input v-model="post.title" type="text" class="form-control" :id="`titre${post.id}`" max="50" />
 
                                                     <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- textarea contenu -->
                                                 <div class="mb-3">
-                                                    <label for="message-text" class="col-form-label">Contenu</label>
+                                                    <label for="message-text" class="col-form-label">Message</label>
                                                     <textarea v-model="post.content" class="form-control" :id="`message-text${post.id}`" ></textarea>
                                                 </div>
 
@@ -85,15 +85,13 @@
 
                                                 </div>
 
+                                                <div class="text-center my-3">
+                                                    <button @click="modifyPost (index)" :id="`submitModify${post.id}`" type="submit" data-bs-dismiss="modal" class="btn btn-primary">Enregistrer</button>
+                                                </div>
+
                                             </form>
                                         </div>
 
-                                        <!-- footer modal -->
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-
-                                            <button @click="modifyPost (index)" :id="`submitModify${post.id}`" type="submit" data-bs-dismiss="modal" class="btn btn-primary">Enregistrer</button>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -224,12 +222,10 @@ export default {
             let form = new FormData();
             if ( inputFile != "undefined" || inputFile !="") {
                 form.append('image', inputFile)
-                form.append('title', this.posts[index].title)
                 form.append('content', this.posts[index].content)
                 console.log(form)
             }
             else {
-                form.append('title', this.posts[index].title)
                 form.append('content', this.posts[index].content)
                 console.log(form)
             }

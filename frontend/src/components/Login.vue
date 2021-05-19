@@ -45,7 +45,6 @@ import Error from './Error';
 
 // pour connexion avec backend et serveur
 import axiosInstance from '../axios'
-// import axiosInstance from '../axios';
 
 export default {
     name: "Login",

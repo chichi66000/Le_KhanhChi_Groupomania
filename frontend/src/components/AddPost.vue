@@ -28,11 +28,11 @@
                                 <div class="modal-header" >
 
                                     <!-- input titre -->
-                                    <div class="form-floating">
+                                    <!-- <div class="form-floating">
                                         <input v-model="title" class="form-control fs-5" id="staticBackdropLabel" type="text" placeholder="Titre" max="50"/>
                                         <label for="staticBackdropLabel">Titre</label>
                                         <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
-                                    </div>
+                                    </div> -->
 
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
 
@@ -41,7 +41,7 @@
                                 <!-- textarea pour contenu -->
                                 <div class="form-group">
                                     <textarea v-model="content" class="form-control px-2" id="text " placeholder = "Votre message"></textarea>
-                                    <label for="text"></label>
+                                    <label for="text">Message</label>
                                 </div>
                                     
                                 <!-- input file upload -->
@@ -79,7 +79,6 @@ export default {
     },
     data () {
         return {
-            title: '',
             content:'',
             id: localStorage.getItem('id'),
             image: '',
@@ -101,14 +100,13 @@ export default {
         // fonction pour submit formulaire add post
         async handleSubmit () {
             // s'il y a rien dans ensemble des champs, on fait rien...
-            if (this.title.length==0 && this.content ==0 && this.$refs.file.files.length ==0) {
+            if (this.content ==0 && this.$refs.file.files.length ==0) {
                 Swal.fire("Vous n'avez rien à nous dire ? ")
             }
             else {
             // si non, envoyer les infos par FormData
             console.log(this.image)
                 let form = new FormData();
-                form.append('title', this.title)
                 form.append('content', this.content)
                 form.append('userId', this.id)
                 form.append('image', this.image)

@@ -78,14 +78,18 @@
 
                                         <!-- body modal-->
                                         <div class="modal-body">
-                                            <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
+                                            <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
 
                                                 <!--Input Titre -->
-                                                <div class="mb-3">
+                                                <!-- <div class="mb-3">
                                                     <label for="recipient-name" class="col-form-label">Titre</label>
-                                                    <input v-model="userPost.title" type="text" class="form-control" id="titre" max="50" />
-                                                    <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
-                                                </div>
+                                                    <input v-model="userPost.title" name="title" type="text" required pattern="[a-zA-z0-9]+" class="form-control" :id="`inputTitle${userPost.id}`" max="50" />
+                                                        <div :id="`errorTitle${userPost.id}`" class="invalid-feedback">
+                                                        No characters
+                                                        </div>
+                                                    <span class="text-danger">{{titleError}}</span>
+                                                    
+                                                </div> -->
 
                                                 <!--Textarea Contenu -->
                                                 <div class="mb-3">
@@ -101,18 +105,24 @@
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
                                                 </div>
 
-                                            </form>
+                                                <div class="text-center">
+                                                    <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary mx-auto my-5" data-bs-dismiss = "modal" >Enregistrer</button>
+                                                </div>
+                                                
+                                        </form>    
 
                                         </div>
 
                                         <!-- footer modal -->
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
 
 
-                                            <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary" data-bs-dismiss = "modal">Enregistrer</button>
+                                            <!-- <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary" data-bs-dismiss = "modal">Enregistrer</button> -->
 
                                         </div>
+                                    
+
                                     </div>
                                 </div>
 
@@ -192,6 +202,12 @@ import axios from '../axios'
 import Swal from 'sweetalert2'
 import Error from '../components/Error';
 import Logo from '../components/Logo'
+
+// pour valider formulaire
+// import {  useField, useForm } from 'vee-validate';
+// import { ref, } from 'vue'
+// import * as yup from 'yup';
+
 export default {
     name: "User",
     components: {
@@ -207,6 +223,9 @@ export default {
             lien: []
         }
     },
+
+    
+
     computed: {
       ...mapState ( { user: state => state.user} ),
     },
@@ -273,7 +292,7 @@ export default {
             await axios.get(`api/post/${this.id}`)      //demander les posts du server
             .then( response => {
                 // console.log(response.data);
-                this.$store.dispatch('post/setCurrentUserPosts', response.data)     //pas OK
+                // this.$store.dispatch('post/setCurrentUserPosts', response.data)     //pas OK
                 this.error=""
                 this.userPosts = response.data;         //mettre la reponse du server dans data
                 
@@ -290,6 +309,7 @@ export default {
 
         // modify post par user
         async modifyPost (index) {
+            
             // récupérer id du post et le file de input
             let postId = this.userPosts[index].id 
             let inputFile = document.getElementById(`inputFile${postId}`).files[0]
@@ -298,7 +318,7 @@ export default {
             let form = new FormData();
             
                 form.append('image', inputFile)
-                form.append('title', this.userPosts[index].title)
+                // form.append('title', this.userPosts[index].title)
                 form.append('content', this.userPosts[index].content)
 
                 // envoyer formulaire par axios, recevoir la response
@@ -315,8 +335,6 @@ export default {
                         console.log(err);
                         this.error = "Problème pour enregistrer votre article"
                     })
-                
-                    // fermer manuellement la modal
         },
 
         // supprimer post par user

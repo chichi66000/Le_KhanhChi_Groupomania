@@ -11,23 +11,15 @@ const models = association(sequelize);
 // ===> route pour créer 1 post <===
 exports.createPost = (req, res) => {
     let file_url = "";
-    let regex = /[@&"()_$*€£`+=\/;#]+$/;
     
-    // valider les entrées du req 
-    if (validator.matches(req.body.title, regex)) {
-      return  res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
-    }
-    else {
-        // s'il y a req file, enregistrer son URL; 
+        // s'il y a req file, enregistrer son nom dans BDD; 
         if (req.file) {
-            
             file_url = req.file.filename
         }
         else { file_url = ""};
 
             // enregistrer dans table Posts
         const post = db.Posts.create({
-            title: xss(req.body.title),
             content: xss(req.body.content),
             img_url: file_url,
             userId: req.body.userId
@@ -36,8 +28,8 @@ exports.createPost = (req, res) => {
             .catch( err => {
                 console.log(err);
                 res.status(500).json("Créer post erreur")
-                })
-    }
+            })
+    
 }
 
 // ===> route pour récupérer tous les publications <===
@@ -77,18 +69,10 @@ exports.updatePost = (req, res) => {
             else {
                 // update sans file
                 if (!req.file) {
-                    // valider les informations entrée dans nouveau post
-                    let regex = /[<>{}|@&"'()_$*€£`+=\/;#]+$/;
-                    if (validator.matches(req.body.title, regex)) {
-                       return res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
-                    }
-                    // puis update post
-                    else {
+                    
                         db.Posts.update({
                             ...post,
-                            title: xss(req.body.title),
-                            content: xss(req.body.content),
-                        },
+                            content: xss(req.body.content),},
                         {where: {id: req.params.postId}})
                             .then( () => res.status(200).json("Update publication réussi"))
                             .catch( err => res.status(500).json({
@@ -97,7 +81,7 @@ exports.updatePost = (req, res) => {
                             }))
                     }
                 
-                }
+                
                 // update avec file
                 else {
                     console.log(req.file)
@@ -111,17 +95,9 @@ exports.updatePost = (req, res) => {
                         // puis récupérer nouveaux files
                             
                             newFile_url = (req.file.filename);
-                                // valider les informations entrée dans nouveau post
-                            let regex = /[@&"()_$*€£`+=\/;#]+$/;
-                            if (validator.matches(req.body.title, regex)) {
-                               return res.status(400).json("Veuillez ne pas utiliser les characters spéciaux")
-                                }
-
-                            //après validation, update post
-                            else {
+                            
                                 db.Posts.update({
                                     img_url: newFile_url,
-                                    title: xss(req.body.title),
                                     content: xss(req.body.content),
                                     },
                                     {where: {id: req.params.postId}})
@@ -130,7 +106,7 @@ exports.updatePost = (req, res) => {
                                         message: "Erreur en update publication",
                                         err: err
                                     }))
-                            }
+                            
                     }
                 }
             }
