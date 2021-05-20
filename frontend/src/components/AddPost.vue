@@ -27,31 +27,26 @@
                                 <!-- header modal -->
                                 <div class="modal-header" >
 
-                                    <!-- input titre -->
-                                    <!-- <div class="form-floating">
-                                        <input v-model="title" class="form-control fs-5" id="staticBackdropLabel" type="text" placeholder="Titre" max="50"/>
-                                        <label for="staticBackdropLabel">Titre</label>
-                                        <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
-                                    </div> -->
-
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
 
                                 </div>
 
                                 <!-- textarea pour contenu -->
                                 <div class="form-group">
-                                    <textarea v-model="content" class="form-control px-2" id="text " placeholder = "Votre message"></textarea>
                                     <label for="text">Message</label>
+                                    <textarea v-model="content" class="form-control px-2" id="text " placeholder = "Votre message" rows="8"></textarea>
                                 </div>
                                     
                                 <!-- input file upload -->
                                 <div class="input-group">
                                         
-                                    <input @change="onChangeFile" type="file" ref="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                    <input @change="onChangeFile" type="file" ref="file" class="form-control-file" id="inputGroupFile03" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .mp4, .wav, .mov">
                                             
-                                    <label class="form-group"  id="inputGroupFileAddon03"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
+                                    <label class="form-group"  id="inputGroupFileAddon03"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label> <br>
 
-                                    <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
+                                    <span id="error_file" class="text-center text-danger fw-bold"></span>
+
+                                    <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .mp4, .wav, .mov)</span>
 
                                 </div>
 
@@ -94,7 +89,21 @@ export default {
         // fonction pour upload photo dans avatar
         onChangeFile(e) {
             this.image = e.target.files[0];
-            console.log(this.image)
+            let filename = this.image.name
+            let error_file = document.getElementById('error_file')
+            let extensions = /(\.jpg|\.jpeg|\.png|\.mp4|\.mov|\.wav)$/i; 
+            if (!extensions.exec(filename)) {
+                Swal.fire({
+                            icon: 'error',
+                            text:'Format de fichier non valide'
+                        })
+                error_file.innerHTML = "Accepte seulement file .png, .jpg, .jpeg"
+                
+                return false; 
+                }
+            else {
+                error_file.innerHTML = ""
+            }
         },
 
         // fonction pour submit formulaire add post
@@ -119,8 +128,6 @@ export default {
                         this.$store.dispatch ('post/getAllPosts', response.data)
                         Swal.fire("Votre article a été enregistré")
 
-                        // fermer manuellement la modal 
-                        // document.querySelector('.modal').hide('modal')           // ne marche pas
                         this.error=""
                         // reload la page des publications
                         this.method()
@@ -128,6 +135,10 @@ export default {
                     .catch( err => {
                         console.log(err);
                         this.error = "Problème pour enregistrer votre article"
+                        Swal.fire({
+                            icon: 'error',
+                            text:"Problème pour enregistrer votre article"
+                        })
                     }) 
             }
         },

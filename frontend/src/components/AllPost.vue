@@ -203,7 +203,7 @@ export default {
         },
 
         // valider input upload file
-        onChangeFile(index, event) {
+        async onChangeFile(index, event) {
             let postId = this.posts[index].id           // récupérer id du post
             // Récupére le file d'image
             let inputFile = document.getElementById(`inputFile${postId}`).files[0]
@@ -213,7 +213,10 @@ export default {
             let error_file = document.getElementById(`error_file${postId}`)
             let extensions = /(\.jpg|\.jpeg|\.png|\.mp4|\.mov|\.wav)$/i; 
             if (event && !extensions.exec(inputFileName)) {
-                alert('Format de fichier non valide'); 
+                Swal.fire({
+                            icon: 'error',
+                            text:'Format de fichier non valide'
+                        }) 
                 error_file.innerHTML = "Accepte seulement file .png, .jpg, .jpeg, .mp4, .mov, .wav"
                 event.preventDefault()
                 event.stopPropagation()
@@ -242,7 +245,6 @@ export default {
             }
                 // envoyer formulaire par axios, recevoir la response
             await axiosInstance.put(`/api/post/${postId}/${this.currentUserId}/update`, form
-                
             )
                 .then( response => {
                     console.log(response);
@@ -256,6 +258,11 @@ export default {
                 .catch( err => {
                     console.log(err);
                     this.error = "Problème pour enregistrer votre article"
+                    Swal.fire({
+                            icon: 'error',
+                            text:"Problème pour enregistrer votre article"
+                        })
+
                     })
         },
         

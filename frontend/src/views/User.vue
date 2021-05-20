@@ -78,18 +78,7 @@
 
                                         <!-- body modal-->
                                         <div class="modal-body">
-                                            <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-
-                                                <!--Input Titre -->
-                                                <!-- <div class="mb-3">
-                                                    <label for="recipient-name" class="col-form-label">Titre</label>
-                                                    <input v-model="userPost.title" name="title" type="text" required pattern="[a-zA-z0-9]+" class="form-control" :id="`inputTitle${userPost.id}`" max="50" />
-                                                        <div :id="`errorTitle${userPost.id}`" class="invalid-feedback">
-                                                        No characters
-                                                        </div>
-                                                    <span class="text-danger">{{titleError}}</span>
-                                                    
-                                                </div> -->
+                                            <form  method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
 
                                                 <!--Textarea Contenu -->
                                                 <div class="mb-3">
@@ -99,14 +88,17 @@
 
                                                 <div class="input-group">
                                         
-                                                    <input v-on="userPost.img_url"  type="file" class="form-control-file" :id="`inputFile${userPost.id}`" aria-describedby = "inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                                    <input @change="onChangeFile(index, $event)" v-on="userPost.img_url"  type="file" class="form-control-file" :id="`inputFile${userPost.id}`" aria-describedby = "inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .mp4, .wav, .mov,">
 
                                                     <label class="form-group"  :for="`inputFile${userPost.id}`"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
-                                                    <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
+
+                                                    <span :id="`error_file${userPost.id}`" class="text-center text-danger fw-bold"></span>
+                                                    
+                                                    <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .mp4, .wav, .mov )</span>
                                                 </div>
 
                                                 <div class="text-center">
-                                                    <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary mx-auto my-5" data-bs-dismiss = "modal" >Enregistrer</button>
+                                                    <button @click.prevent="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary mx-auto my-5" data-bs-dismiss = "modal" >Enregistrer</button>
                                                 </div>
                                                 
                                         </form>    
@@ -114,14 +106,6 @@
                                         </div>
 
                                         <!-- footer modal -->
-                                        <div class="modal-footer">
-                                            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-
-
-                                            <!-- <button @click="modifyPost (index)" :id="`submitModify${userPost.id}`" type="submit" class="btn btn-primary" data-bs-dismiss = "modal">Enregistrer</button> -->
-
-                                        </div>
-                                    
 
                                     </div>
                                 </div>
@@ -134,18 +118,15 @@
                                 
                             </div>
 
-                            <!-- Les images -->
-                            <div v-if="userPost.img_url !='' "  class="">
+                            <!-- afficher image   -->
+                            <div v-if="userPost.img_url !='' && (userPost.img_url.includes('.jpg') || userPost.img_url.includes('.jpeg') || userPost.img_url.includes('.png') || userPost.img_url.includes('.gif') ) "  class="text-center">
+                                <img class="img img-fluid mx-auto" :src="getImage(index)" :alt="`photo illustration ${user.user.userPseudo}`" />
+                            </div>
 
-                                <!-- image -->
-                                <div v-if="userPost.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')">
-                                    <img class="img img-fluid" :src="getImage(index)" />
-                                </div>
-
-                                <!-- video -->
-                                <div v-else class="embed-responsive embed-responsive-16by9">
-                                    <iframe class="embed-responsive-item" :src="getImage (index)" allowfullscreen></iframe>
-                                </div>
+                            <!-- afficher vidéo/audio -->
+                            <div v-if="userPost.img_url !='' && ( userPost.img_url.includes('.mp4') || userPost.img_url.includes('.wav') || userPost.img_url.includes('.mov')) " class="embed-responsive embed-responsive-16by9 text-center">
+                                
+                                <video class="embed-responsive-item mx-auto" muted :src="getImage (index)" :alt="`video illustration ${user.user.userPseudo} `" allowfullscreen controls/>
                                 
                             </div>
 
@@ -202,11 +183,6 @@ import axios from '../axios'
 import Swal from 'sweetalert2'
 import Error from '../components/Error';
 import Logo from '../components/Logo'
-
-// pour valider formulaire
-// import {  useField, useForm } from 'vee-validate';
-// import { ref, } from 'vue'
-// import * as yup from 'yup';
 
 export default {
     name: "User",
@@ -307,6 +283,31 @@ export default {
             })
         },
 
+        // recuperer le file upload et valider avant envoyé
+        async onChangeFile(index, event) {
+            // récupérer id du post et le file de input
+            let postId = this.userPosts[index].id 
+            let inputFile = document.getElementById(`inputFile${postId}`).files[0];
+            let inputFileName = inputFile.name
+
+            // valider le mimetype du file upload
+            let error_file = document.getElementById(`error_file${postId}`)
+            let extensions = /(\.jpg|\.jpeg|\.png|\.mp4|\.mov|\.wav)$/i;
+            // sile MIME TYPE n'est pas correct, => alert, envyoer erreur
+            if (event && !extensions.exec(inputFileName)) {
+                Swal.fire({
+                            icon: 'error',
+                            text:'Format de fichier non valide'
+                        })
+                error_file.innerHTML = "Accepte seulement file .png, .jpg, .jpeg, .mp4, .mov, .wav"
+                event.preventDefault()
+                event.stopPropagation()
+                return false; 
+            }
+            else {
+                error_file.innerHTML = ""
+            } 
+        },
         // modify post par user
         async modifyPost (index) {
             
@@ -333,6 +334,10 @@ export default {
                     .catch( err => {
                         console.log(err);
                         this.error = "Problème pour enregistrer votre article"
+                        Swal.fire({
+                            icon: 'error',
+                            text:"Problème pour enregistrer votre article"
+                        })
                     })
         },
 
