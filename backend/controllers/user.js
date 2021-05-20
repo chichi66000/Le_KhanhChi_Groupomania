@@ -529,6 +529,7 @@ exports.updateUser = (req, res) => {
                 // crypter email entrée afin de comparer avec celui dans BDD
                 else {
                     let emailLogin = encrypt(req.body.email)
+                    console.log("emailLogin " + emailLogin)
                     db.Users.findOne({where: {email: emailLogin}})
                         .then( user => {
                             // si email est déjà utilisé, envoyer 400
@@ -576,6 +577,7 @@ exports.updateUser = (req, res) => {
 
             // si update avec fonction:
             if(req.body.fonction.length >0 && req.body.fonction !="undefined") {
+                if ( !validator.matches(req.body.fonction, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) { return res.status(400).json({message: " Fonction doit être en lettre et pas de charactèrs spéciaux"})}
                 newFonction = req.body.fonction;
                 console.log({newFonction});
                 // update user fonction
@@ -762,7 +764,9 @@ exports.resetPassword = async (req, res) => {
                     if ( !user ) {          // si pas user
                            return res.status(400).json({ message: "Token invalid, user non trouvé"})
                         }
-                    else {                  
+                    else {
+                        // valider password avec password-validator
+                        if(!schema.validate(req.body.password)) {return res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
                         // 3) Si user est présent, Update nouveau password
                         bcrypt.hash(req.body.password, 10)
                             .then( hash => {

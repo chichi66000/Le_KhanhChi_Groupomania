@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use (
         // originalRequest._retry = true;
         const status = error.response ? error.response.status : null;
         // si le status =401 et si c'est la route de login => demander login
-        if (status === 401 && originalRequest.url === "/login") {
+        if (status === 401 && originalRequest.url.includes("/login") ) {
                 router.push('/login');
                 return Promise.reject(error);
         }

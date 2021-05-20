@@ -71,9 +71,9 @@ export default {
             email: yup.string()
                 .email('Email invalide'),
             pseudo: yup.string()
-                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Ne pas utiliser les charactères spéciaux"),
+                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Ne pas utiliser les charactères spéciaux, minimum 2 lettres"),
             fonction: yup.string()
-                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux, minimum 2 lettres"),
 
         })
         // Create a form context with the validation schema
@@ -101,7 +101,15 @@ export default {
         }
     },
     methods: {
-     
+        // récupérer les informations de ce user
+        async getUser () {
+            axios.get(`api/auth/${this.id}`)
+                .then( response => {
+                    console.log(response)
+                    this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
+                })
+                .catch(error => console.log(error))
+        },
         // fonction pour upload photo dans avatar
         async onChangeFile(e) {
             this.avatar = e.target.files[0];
@@ -144,6 +152,7 @@ export default {
                     console.log(response);
                     this.$router.push('/user')
                     this.error = ""
+                    this.getUser()
                     Swal.fire("Votre profil a été modifié.")
                 })
                 .catch( err => {
