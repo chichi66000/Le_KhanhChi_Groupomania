@@ -33,7 +33,7 @@
 
                                 <!-- textarea pour contenu -->
                                 <div class="form-group">
-                                    <label for="text">Message</label>
+                                    <label for="text" class="font-weight-bold">Message</label>
                                     <textarea v-model="content" class="form-control px-2" id="text " placeholder = "Votre message" rows="8"></textarea>
                                 </div>
                                     
@@ -109,7 +109,7 @@ export default {
         // fonction pour submit formulaire add post
         async handleSubmit () {
             // s'il y a rien dans ensemble des champs, on fait rien...
-            if (this.content ==0 && this.$refs.file.files.length ==0) {
+            if (this.content =="" && this.$refs.file.files.length ==0) {
                 Swal.fire("Vous n'avez rien à nous dire ? ")
             }
             else {

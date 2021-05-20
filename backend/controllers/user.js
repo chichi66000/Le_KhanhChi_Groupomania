@@ -67,9 +67,13 @@ exports.signup = ((req, res) => {
 
         // Valider les données du email, nom, prénom, fonction avec validator
     if( !validator.isEmail(userData.email)) {return res.status(400).json({message: " Email invalid"})}
+
     if(!validator.matches(userData.nom, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Nom ne peut être que les lettres"})}
+
     if (!validator.matches(userData.prenom, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Prenom ne peut être que les lettres"})}
+
     if (!validator.matches(userData.pseudo, /^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Pseudo doit être en lettre ou chiffre"})}
+
     if (userData.fonction.length > 0 &&  (!validator.matches(userData.fonction, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) ) {return res.status(400).json({message: " veuillez entrer que les lettres"}) }   
     
         // valider password avec password-validator
@@ -130,16 +134,6 @@ exports.signup = ((req, res) => {
 //une route pour login
 exports.login = (req, res) => {
     // crypter email entrée afin de comparer avec celui dans BDD
-    // key and iv   
-    // var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
-    // var iv = "1234567890123456";
-    // create a aes256 cipher based on our key and iv
-    // var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-    // // update the cipher with our email
-    // cipher.update(req.body.email, "ascii");
-    // // save the encryption as base64-encoded
-    // var emailLogin = cipher.final("base64");
-
     let emailLogin = encrypt(req.body.email)
     db.Users.findOne( {
         // chercher user avec son email
@@ -530,32 +524,28 @@ exports.updateUser = (req, res) => {
             if (req.body.email.length >0 && req.body.email !="undefined") {
                 console.log("Il y a email dans update");
 
+                // valider email s'il est bon
+                if( !validator.isEmail(req.body.email)) {return res.status(400).json({message: " Email invalid"})}
                 // crypter email entrée afin de comparer avec celui dans BDD
-                // key and iv   
-                var key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
-                var iv = "1234567890123456";
-                // create a aes256 cipher based on our key and iv
-                var cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-                // update the cipher with our email
-                cipher.update(req.body.email, "ascii");
-                // save the encryption as base64-encoded
-                var emailLogin = cipher.final("base64");
+                else {
+                    let emailLogin = encrypt(req.body.email)
+                    db.Users.findOne({where: {email: emailLogin}})
+                        .then( user => {
+                            // si email est déjà utilisé, envoyer 400
+                            if (user) {return res.status(400).json({message: "Email déjà utilisé"})}
 
-                db.Users.findOne({where: {email: emailLogin}})
-                    .then( user => {
-                        // si email est déjà utilisé, envoyer 400
-                        if (user) {return res.status(400).json({message: "Email déjà utilisé"})}
-
-                        // si email n'est pas encore dans BDD, update user avec nouvel email
-                        
-                        db.Users.update({...user, email: emailLogin}, {where: {id:req.params.id}})
-                            .then( () => { console.log("Update email réussi")})
-                            .catch(err => {
-                                console.log(err);
-                                res.status(500).json( {message: "Problème pour update email"})
-                            })
-                    })
-                    .catch( err => { console.log(err); res.status(500).json("Problème chercher email");})
+                            // si email n'est pas encore dans BDD, update user avec nouvel email
+                            
+                            db.Users.update({...user, email: emailLogin}, {where: {id:req.params.id}})
+                                .then( () => { console.log("Update email réussi")})
+                                .catch(err => {
+                                    console.log(err);
+                                    res.status(500).json( {message: "Problème pour update email"})
+                                })
+                        })
+                        .catch( err => { console.log(err); res.status(500).json("Problème chercher email");})
+                }
+                
             }
 
             //si update avec pseudo: vérifier si pseudo est déjà présenté dans BDD?
@@ -566,14 +556,20 @@ exports.updateUser = (req, res) => {
                         // si pseudo est déjà utilisé, envoyer 400
                         if (user) {return res.status(400).json({message: "Pseudo déjà utilisé"})}
 
-                        // si pseudo n'est pas encore dans BDD, update user avec pseudo
-                        newPseudo = req.body.pseudo;
-                        db.Users.update( {...user, pseudo: newPseudo}, {where: {id:req.params.id}})
-                            .then( () => {console.log("Update pseudo réussi")})
-                            .catch(err => {
-                                console.log(err);
-                                res.status(500).json( {message: "Problème pour update pseudo"})
-                            })
+                        else {
+                            // si pseudo n'est pas dans BDD, valider le pseudo entrée
+                            if (!validator.matches(req.body.pseudo, /^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Pseudo doit être en lettre ou chiffre"})}
+                        
+                        // update user avec pseudo
+                            newPseudo = req.body.pseudo;
+                            db.Users.update( {...user, pseudo: newPseudo}, {where: {id:req.params.id}})
+                                .then( () => {console.log("Update pseudo réussi")})
+                                .catch(err => {
+                                    console.log(err);
+                                    res.status(500).json( {message: "Problème pour update pseudo"})
+                                })
+                        }
+                        
                     })
                     .catch( err => { console.log(err); res.status(500).json("Problème pour chercher pseudo")})
             }
@@ -640,7 +636,10 @@ exports.getAllUser = (req, res) => {
             else {
             // si user est admin, chercher tous les user, trier par id 
                 db.Users.findAll( {
-                    attributes: ["id", "email", "nom", "prenom", "createdAt", "pseudo", "isAdmin"]
+                    attributes: [
+                        "id", 
+                        "email",
+                        "nom", "prenom", "createdAt", "pseudo", "isAdmin"]
                 },
                 {order: ["id"] })
                     .then((users) => {
@@ -655,7 +654,12 @@ exports.getAllUser = (req, res) => {
                         //     allUser.push(oneUser)
                         //     return allUser
                         // }
-                        
+                        // users.forEach(function (user) {
+                        //     user.email += decrypt(user.email)
+                        //     console.log(user.email)
+                        // })
+                        // console.log(email, "user.email")
+                        // console.log(users)
                         // renvoyer liste des users
                             res.status(200).json({ users})
                     })

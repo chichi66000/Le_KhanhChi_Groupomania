@@ -2,28 +2,31 @@
     <div class="container-fluid">
         <Logo class="my-3"/>
 
+        <!-- afficher error -->
+        <error v-if="error" :error = "error"/>
+
         <!-- Formulaire pour modifier profil -->
         <form class="form-group  mt-5 mb-5 col col-sm-12 col-md-8 col-lg-6 mx-auto text-center" method="post" enctype="multipart/form-data"  @submit.prevent = "changeProfil">
 
             <!-- input pseudo -->
             <div class="form-floating my-3">
-                <input type="text" class="form-control col-sm-10" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo">
+                <input type="text" class="form-control col-sm-10" id="pseudo" name="pseudo" v-model="pseudo" placeholder="Votre pseudo" >
                 <label for="pseudo" class=" font-weight-bold form-group col-sm-2">Pseudo</label>
-                <span>{{pseudoError}}</span>
+                <span class="text-danger">{{pseudoError}}</span>
             </div>
 
             <!-- input fonction -->
             <div class="form-floating my-3">
-                <input type="text" class="form-control col-sm-10" id="fonction" name="fonction" v-model="fonction" placeholder="fonction" pattern="[A-Za-z][A-Za-z' -]+">
+                <input type="text" class="form-control col-sm-10" id="fonction" name="fonction" v-model="fonction" placeholder="fonction">
                 <label for="fonction" class="form-group col-sm-2 font-weight-bold">Fonction</label>
-                <span>{{fonctionError}}</span>
+                <span class="text-danger">{{fonctionError}}</span>
             </div>
 
             <!-- input email -->
-            <div class="form-floating my-3">
+            <div class="form-floating my-3 text-center">
                 <input type="email" class="form-control col-sm-10" id="email" name="email" v-model="email" placeholder="email">
                 <label for="email" class="form-group col-sm-2 font-weight-bold">Email</label>
-                <span>{{emailError}}</span>
+                <span class="text-danger">{{emailError}}</span>
             </div>
 
             <!-- input file upload -->
@@ -52,21 +55,25 @@ import * as yup from 'yup';
 import axios from '../axios';
 import Swal from 'sweetalert2'
 import Logo from './Logo'
+import Error from './Error'
 
 export default {
     name: "UpdateProfil",
     components: {
         Logo,
+        Error
+
     },
     setup(){
         // Define a validation schema
-        const error = ref([])
+        const errors = ref([])
         const schema = yup.object({ 
             email: yup.string()
-                .required('Veuillez remplir votre email')
-                .email('Email invalid'),
-            pseudo: yup.string(),
-            fonction: yup.string(),
+                .email('Email invalide'),
+            pseudo: yup.string()
+                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Ne pas utiliser les charactères spéciaux"),
+            fonction: yup.string()
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
 
         })
         // Create a form context with the validation schema
@@ -84,7 +91,7 @@ export default {
             pseudoError,
             email,
             emailError,
-            error
+            errors
         }
     },
     data () {
@@ -94,10 +101,27 @@ export default {
         }
     },
     methods: {
+     
         // fonction pour upload photo dans avatar
-        onChangeFile(e) {
+        async onChangeFile(e) {
             this.avatar = e.target.files[0];
             console.log(this.avatar);
+            let filename = this.avatar.name
+            let error_file = document.getElementById('error_file')
+            let extensions = /(\.jpg|\.jpeg|\.png)$/i; 
+            if (!extensions.exec(filename)) {
+                Swal.fire({
+                            icon: 'error',
+                            text:'Format de fichier non valide'
+                        }) 
+                filename = '';
+                error_file.innerHTML = "Accepte seulement file .png, .jpg, .jpeg"
+                
+                return false; 
+                }
+            else {
+                error_file.innerHTML = ""
+            }
         },
 
         // fonction pour changer le profil
@@ -106,7 +130,7 @@ export default {
             let email= this.email;
             let fonction = this.fonction;
             let pseudo = this.pseudo;
-
+            
             // mettre dans FormData 
             let form = new FormData();
             form.append("email", email);
@@ -118,19 +142,17 @@ export default {
             await axios.put(`/api/auth/updateUser/${this.id}`, form)
                 .then( response => {
                     console.log(response);
-                    Swal.fire("Votre profil a été modifié.")
-                    axios.get(`api/auth/${this.id}`)
-                        .then( response => {
-                            console.log("currentuser" + response.data.currentUser);
-                            // update user dans vuex
-                            this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
-                        })
-                        .catch(error => console.log(error))
                     this.$router.push('/user')
+                    this.error = ""
+                    Swal.fire("Votre profil a été modifié.")
                 })
                 .catch( err => {
                     console.log(err);
-                    this.error = "Problème pour update votre profil. Réessayer plus tard"
+                    this.error = "Problème pour update votre profil. Corriger les erreurs!";
+                    Swal.fire({
+                            icon: 'error',
+                            text:'Problème pour update votre profil. Corriger les erreurs!'
+                        })
                 })
         },
 

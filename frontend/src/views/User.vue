@@ -93,7 +93,7 @@
                                                     <label class="form-group"  :for="`inputFile${userPost.id}`"><i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video</label>
 
                                                     <span :id="`error_file${userPost.id}`" class="text-center text-danger fw-bold"></span>
-                                                    
+
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .mp4, .wav, .mov )</span>
                                                 </div>
 
@@ -209,8 +209,19 @@ export default {
     // récupérer les publications du user
     async created () {
         this.getUserPosts()
+        this.getUser()
     },
     methods: {
+        // récupérer les informations de ce user
+        async getUser () {
+            axios.get(`api/auth/${this.id}`)
+                .then( response => {
+                    console.log(response)
+                    this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
+                })
+                .catch(error => console.log(error))
+        },
+        
         // user supprimer son compte avec modèle sweatalert2
         async deleteUser () {
             console.log(this.id)        //OK

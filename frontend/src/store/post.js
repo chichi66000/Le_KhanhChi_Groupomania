@@ -2,7 +2,6 @@ export const post = ({
     namespaced: true,
     state: { 
         posts: {},
-        // currentUserPosts: {}
     }
 ,
     getter: {

@@ -181,7 +181,10 @@ export default {
             let error_file = document.getElementById('error_file')
             let extensions = /(\.jpg|\.jpeg|\.png)$/i; 
             if (!extensions.exec(filename)) {
-                alert('Format de fichier non valide'); 
+                Swal.fire({
+                            icon: 'error',
+                            text:'Format de fichier non valide'
+                        }) 
                 filename = '';
                 error_file.innerHTML = "Accepte seulement file .png, .jpg, .jpeg"
                 
