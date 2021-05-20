@@ -77,8 +77,11 @@ exports.signup = ((req, res) => {
     if (userData.fonction.length > 0 &&  (!validator.matches(userData.fonction, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) ) {return res.status(400).json({message: " veuillez entrer que les lettres"}) }   
     
         // valider password avec password-validator
-    if(!schema.validate(userData.password)) {return res.status(400).json({message: " Password doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
-       
+    if(!schema.validate(userData.password)) {return res.status(400).json({message: " Mot de passe doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
+    
+    // vérifier si password et passwordCheck soit le même
+    if ( userData.password !== userData.passwordCheck) { return res.status(400).json({message: "Mot de passe doit être le même pour le 2 champs"})}
+
         // après valider les donnée, chercher si email est déjà utilisé ; si non crée user
     else { db.Users.findOne ( {  where: { email: emailHash }})
         .then( user => { 

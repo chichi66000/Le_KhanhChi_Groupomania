@@ -42,7 +42,7 @@ export default {
                 await axios.post('api/auth/forgot', { email: this.email })
                     .then( (response) => {console.log(response);
                     Swal.fire("Email envoyé, veuillez suivre les instructions!")
-                    // alert ("")
+                    
                     })
                     .catch( (err) => {
                         console.log(err);

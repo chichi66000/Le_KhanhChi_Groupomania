@@ -74,8 +74,6 @@ export default {
             let token = this.$route.params.token
             let submit = document.getElementById('submit')
             if ( this.password !== this.passwordConfirm) {
-                // event.preventDefault()
-                // event.stopPropagation()
                 submit.disabled= false
             }
             else {
@@ -97,7 +95,7 @@ export default {
                                 icon: 'error',
                                 text:"Mot de passe doit avoir au minimum 8 charactères dont 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial"
                             })
-                        this.error = "Mot de passe doit avoir au minimum 8 charactères dont 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial"
+                        
                         })
             }
             

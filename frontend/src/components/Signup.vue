@@ -12,7 +12,7 @@
             <!-- formulaire de Signup -->
                 <h5 class="pink pb-5 fw-bold fs-3 mx-auto text-center">Inscription</h5>
 
-                <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="/signup" @submit.prevent = "inscriptionSubmit">
+                <form class="form-group  mt-5 mb-5 col col-sm-8 col-md-6 col-lg-4 m-auto text-center" method="post" enctype="multipart/form-data" action="/signup" @submit.prevent = "inscriptionSubmit()" disabled id="submit">
 
                     <!-- input nom -->
                     <div class="form-floating mb-3">
@@ -198,14 +198,27 @@ export default {
 
         // fonction pour envoyer le formulaire et signup
         async inscriptionSubmit () {
-            
-            try {
+            // vérify que passeword et confirm password soit le même
+            let submit = document.getElementById('submit')
+            if ( this.password !== this.passwordCheck) {
+                Swal.fire({
+                                icon: 'error',
+                                text:"Mot de passe doit être le même pour les 2 champs"
+                            })
+                submit.disabled= false
+            }
+            else {
+                submit.disabled= true
+                
+                // envoyer le formulaire
+                
                 // créer utilisateur
                 
                 let nom = this.nom;
                 let prenom= this.prenom
                 let email= this.email;
                 let password= this.password;
+                let passwordCheck = this.passwordCheck
                 let fonction = this.fonction
                 let pseudo = this.pseudo
                 
@@ -214,6 +227,8 @@ export default {
                 form.append("prenom", prenom);
                 form.append("email", email);
                 form.append("password", password);
+                form.append("passwordCheck", passwordCheck);
+
                 form.append("fonction", fonction);
                 form.append("pseudo", pseudo);
                 form.append("image", this.avatar)
@@ -229,7 +244,9 @@ export default {
                     .catch((e) => { 
                         console.log(e);
                         this.error = "Veuillez corriger les erreurs" })
-            }catch (err) { console.log("error" + err) }     
+             
+            }
+               
         },
         
     }
