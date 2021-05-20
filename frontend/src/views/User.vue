@@ -317,9 +317,8 @@ export default {
             // mettre dans FormData et envoyer au server
             let form = new FormData();
             
-                form.append('image', inputFile)
-                // form.append('title', this.userPosts[index].title)
-                form.append('content', this.userPosts[index].content)
+            form.append('image', inputFile)
+            form.append('content', this.userPosts[index].content)
 
                 // envoyer formulaire par axios, recevoir la response
                 await axios.put(`/api/post/${postId}/${this.id}/update`, form)
@@ -355,14 +354,8 @@ export default {
         // Récupérer le lien de l'images 
         getImage(index) {
             let url = this.userPosts[index].img_url
+            return `http://localhost:5000/images/${url}`
             
-            if (url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')) {
-                
-                return `http://localhost:5000/images/${url}`
-            }
-            else {
-                return `http://localhost:5000/images/${url}`
-            }
         },
 
             

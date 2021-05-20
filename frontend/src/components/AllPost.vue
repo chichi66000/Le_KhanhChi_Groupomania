@@ -58,14 +58,6 @@
 
                                             <form @submit.prevent="modifyPost (index)" method="POST" enctype="multipart/form-data">
 
-                                                <!-- input titre -->
-                                                <!-- <div class="mb-3">
-                                                    <label for="recipient-name" class="col-form-label">Titre</label>
-                                                    <input v-model="post.title" type="text" class="form-control" :id="`titre${post.id}`" max="50" />
-
-                                                    <p class="flou"> Ne pas utiliser les caracters spéciaux, max 50 characters</p>
-                                                </div> -->
-
                                                 <!-- textarea contenu -->
                                                 <div class="mb-3">
                                                     <label for="message-text" class="col-form-label">Message</label>
@@ -75,13 +67,13 @@
                                             <!-- input pour modifier image et video -->
                                                 <div class="input-group">
                                         
-                                                    <input v-on="post.img_url" ref="file" type="file" class="form-control-file " :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie">
+                                                    <input v-on="post.img_url" ref="file" type="file" class="form-control-file " :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .mp4, .wav, .mov">
 
                                                     <label class="form-group"  :for="`inputFile${post.id}`">
                                                         <i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video
                                                     </label>
 
-                                                    <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .avi, .mp4, .wav, .flv, .mov, .wmv, .movie; taille: 15Mo )</span>
+                                                    <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .mp4, .wav, .mov)</span>
 
                                                 </div>
 
@@ -104,18 +96,16 @@
                         <p >{{post.content}}</p>
                     </div>
 
-                    <!-- afficher image et vidéo    -->
-                    <div v-if="post.img_url !='' "  class="">
+                    <!-- afficher image   -->
+                    <div v-if="post.img_url !='' && (post.img_url.includes('.jpg') || post.img_url.includes('.jpeg') || post.img_url.includes('.png') || post.img_url.includes('.gif') ) "  class="">
 
-                        <!-- image -->
-                        <div v-if="post.img_url.split('.')[1] == ('jpg' || 'png' || 'jpeg' || 'gif')" class="text-center">
-                            <img class="img img-fluid mx-auto" :src="getImage(index)" :alt="`photo illustration ${post.title}`" />
-                        </div>
-
-                        <!-- video -->
-                        <div v-else class="embed-responsive embed-responsive-16by9 text-center">
-                            <iframe class="embed-responsive-item mx-auto" :src="getImage (index)" :alt="`video illustration ${post.title}`" allowfullscreen></iframe>
-                        </div>
+                            <img class="img img-fluid mx-auto" :src="getImage(index)" :alt="`photo illustration ${post.User.pseudo}`" />
+                    </div>
+                    
+                    <!-- afficher vidéo/audio -->
+                    <div v-if="post.img_url !='' && ( post.img_url.includes('.mp4') || post.img_url.includes('.wav') || post.img_url.includes('.mov')) " class="embed-responsive embed-responsive-16by9 text-center">
+                        
+                        <video class="embed-responsive-item mx-auto" muted :src="getImage (index)" :alt="`video illustration ${post.User.pseudo} `" allowfullscreen controls/>
                         
                     </div>
 
@@ -246,9 +236,6 @@ export default {
                     console.log(err);
                     this.error = "Problème pour enregistrer votre article"
                     })
-                
-                    // fermer manuellement la modal
-                    // document.getElementById(`modify${postId}`).modal('hide')
         },
         
         // ajouter/ delete like du post
