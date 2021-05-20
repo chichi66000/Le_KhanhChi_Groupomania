@@ -105,10 +105,6 @@ export default {
     },
     data() {
         return {
-            // nom:'',
-            // prenom:'',
-            // pseudo:'',
-            // fonction:'',
             avatar:'',
             error: '',
             accept: false
@@ -181,11 +177,25 @@ export default {
         // fonction pour upload photo dans avatar
         onChangeFile(e) {
             this.avatar = e.target.files[0];
-
+            let filename = this.avatar.name
+            let error_file = document.getElementById('error_file')
+            let extensions = /(\.jpg|\.jpeg|\.png)$/i; 
+            if (!extensions.exec(filename)) {
+                alert('Format de fichier non valide'); 
+                filename = '';
+                error_file.innerHTML = "Accepte seulement file .png, .jpg, .jpeg"
+                
+                return false; 
+                }
+            else {
+                error_file.innerHTML = ""
+            }
+	
         },
 
         // fonction pour envoyer le formulaire et signup
         async inscriptionSubmit () {
+            
             try {
                 // créer utilisateur
                 
@@ -215,7 +225,7 @@ export default {
                         })
                     .catch((e) => { 
                         console.log(e);
-                        this.error = "Email/pseudo déjà utilisé" })
+                        this.error = "Veuillez corriger les erreurs" })
             }catch (err) { console.log("error" + err) }     
         },
         

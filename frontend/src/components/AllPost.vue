@@ -67,18 +67,18 @@
                                             <!-- input pour modifier image et video -->
                                                 <div class="input-group">
                                         
-                                                    <input v-on="post.img_url" ref="file" type="file" class="form-control-file " :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .mp4, .wav, .mov">
+                                                    <input @change.stop="onChangeFile(index, $event)" v-on="post.img_url" ref="file" type="file" class="form-control-file " :id="`inputFile${post.id}`" aria-describedby="inputGroupFileAddon04" name="image" aria-label="UploadPhoto" accept=".jpg, .png, .jpeg, .gif, .mp4, .wav, .mov">
 
                                                     <label class="form-group"  :for="`inputFile${post.id}`">
                                                         <i class="bi bi-card-image"></i> Photo <i class="bi bi-camera-reels-fill"></i> Video
                                                     </label>
-
+                                                    <span :id="`error_file${post.id}`" class="text-center text-danger fw-bold"></span>
                                                     <span class="flou">( Format accepté: .jpeg, .jpg, .png, .gif, .mp4, .wav, .mov)</span>
 
                                                 </div>
 
                                                 <div class="text-center my-3">
-                                                    <button @click="modifyPost (index)" :id="`submitModify${post.id}`" type="submit" data-bs-dismiss="modal" class="btn btn-primary">Enregistrer</button>
+                                                    <button @click.prevent="modifyPost (index)" :id="`submitModify${post.id}`" type="submit" data-bs-dismiss="modal" class="btn btn-primary">Enregistrer</button>
                                                 </div>
 
                                             </form>
@@ -202,12 +202,33 @@ export default {
                 })
         },
 
+        // valider input upload file
+        onChangeFile(index, event) {
+            let postId = this.posts[index].id           // récupérer id du post
+            // Récupére le file d'image
+            let inputFile = document.getElementById(`inputFile${postId}`).files[0]
+            let inputFileName = inputFile.name
+
+            // valider le mimetype du file upload
+            let error_file = document.getElementById(`error_file${postId}`)
+            let extensions = /(\.jpg|\.jpeg|\.png|\.mp4|\.mov|\.wav)$/i; 
+            if (event && !extensions.exec(inputFileName)) {
+                alert('Format de fichier non valide'); 
+                error_file.innerHTML = "Accepte seulement file .png, .jpg, .jpeg, .mp4, .mov, .wav"
+                event.preventDefault()
+                event.stopPropagation()
+                return false; 
+            }
+            else {
+                error_file.innerHTML = ""
+            }
+        },
         // modify post par user
         async modifyPost (index) {
             let postId = this.posts[index].id           // récupérer id du post
             // Récupére le file d'image
             let inputFile = document.getElementById(`inputFile${postId}`).files[0]
-
+	
             // envoyer tous les informations par FormData
             let form = new FormData();
             if ( inputFile != "undefined" || inputFile !="") {
