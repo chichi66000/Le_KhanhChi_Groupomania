@@ -117,15 +117,15 @@ export default {
         const schema = yup.object({
         nom: yup.string()
                 .required("Veuillez remplir votre nom")
-                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactères spéciaux"),
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactères spéciaux, minimum 2 charactères"),
         prenom: yup.string()
                 .required("Veuillez remplir votre prénom")
-                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactères spéciaux"),
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactères spéciaux, minimum 2 charactères"),
         pseudo: yup.string()
                 .required("Veuillez choisir votre pseudo")
-                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Ne pas utiliser les charactères spéciaux"),
+                .matches(/^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i, "Ne pas utiliser les charactères spéciaux, minimum 2 charactères"),
         fonction: yup.string()
-                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux"),
+                .matches(/^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i, "Ne pas utiliser les chiffres et les charactèrs spéciaux, minimum 2 charactères"),
         email: yup.string()
                 .required('Veuillez remplir votre email')
                 .email('Email invalid'),
@@ -134,7 +134,7 @@ export default {
                 .max(20, 'Mot de passe doit avoir au maximum 20 characters')
                 .required('Mot de passe est demandé')
                 .matches(
-                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$/, "Password doit avoir au minimum 1 majuscule, 1 minucule, 1 chiffre, 1 charactère spécial")
+                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$/, " Mot de passe doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 charactère spécial")
                 ,
         passwordCheck: yup.string()
                 .oneOf([yup.ref('password'), null], 'Mot de passe doit être le même ')

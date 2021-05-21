@@ -77,7 +77,7 @@ exports.signup = ((req, res) => {
     if (userData.fonction.length > 0 &&  (!validator.matches(userData.fonction, /^[a-zéèàùûêâôë][a-zéèàùûêâôë '-]+$/i)) ) {return res.status(400).json({message: " veuillez entrer que les lettres"}) }   
     
         // valider password avec password-validator
-    if(!schema.validate(userData.password)) {return res.status(400).json({message: " Mot de passe doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 symbol"})}
+    if(!schema.validate(userData.password)) {return res.status(400).json({message: " Mot de passe doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 charactère spécial"})}
     
     // vérifier si password et passwordCheck soit le même
     if ( userData.password !== userData.passwordCheck) { return res.status(400).json({message: "Mot de passe doit être le même pour le 2 champs"})}
@@ -512,15 +512,36 @@ exports.updateUser = (req, res) => {
                     })
                 }
                 // Puis update avatar dans BDD
+                
                 db.Users.update( {
                     ...user,
                     avatar: req.file.filename},
                     {where: {id:req.params.id}})
-                    .then( () => { console.log("Update avatar réussi")})
+                    .then( () => { console.log("Update avatar réussi dans la table Users")})
                     .catch(err => {
                         console.log(err);
                         res.status(500).json( {message: "Problème pour update avatar"})
                     })
+                
+                // Puis update avatar dans BDD de commentaires
+                db.commentaires.findOne( {where:{userId: req.params.id} })
+                    .then( commentaire => {
+                        db.commentaires.update( {
+                            ...commentaire,
+                            userAvatar: req.file.filename},
+                            { where: {userId: req.params.id}})
+                            .then( () => {console.log("Update avatar réussi dans la table commentaires")})
+                            .catch( err => { 
+                                console.log(err);
+                                res.status(500).json("Problème update avatar dans la table commentaires")
+                            })
+                    })
+                    .catch( err => {
+                        console.log(err);
+                        res.status(500).json("Problème chercher ce user dans la table commentaires")
+                    })
+                
+                
             }
             
             //si update avec email: vérifier si email est déjà utilisé dans BDD?
@@ -564,16 +585,30 @@ exports.updateUser = (req, res) => {
                             // si pseudo n'est pas dans BDD, valider le pseudo entrée
                             if (!validator.matches(req.body.pseudo, /^[a-z0-9éèàùûêâôë][a-z0-9éèàùûêâôë '-]+$/i)) {return res.status(400).json({message: " Pseudo doit être en lettre ou chiffre"})}
                         
-                        // update user avec pseudo
+                            // update user avec pseudo dans la table Users
                             newPseudo = req.body.pseudo;
                             db.Users.update( {...user, pseudo: newPseudo}, {where: {id:req.params.id}})
                                 .then( () => {console.log("Update pseudo réussi")})
                                 .catch(err => {
                                     console.log(err);
-                                    res.status(500).json( {message: "Problème pour update pseudo"})
+                                    res.status(500).json( {message: "Problème pour update pseudo dans la table Users"})
                                 })
+                            // update nouveau pseudo dans la table commentaires
+                            db.commentaires.findOne({where: {userId:req.params.id}} )
+                                .then( commentaire => {
+                                    db.commentaires.update( {...commentaire, userPseudo: newPseudo}, {where: {userId:req.params.id}})
+                                    .then( () => { console.log("Update pseudo dans la table commentaires")})
+                                    .catch(err => {
+                                        console.log(err);
+                                        res.status(500).json( {message: "Problème pour update pseudo dans la table commentaires"})
+                                    })
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                    res.status(500).json( {message: "Problème pour chercher pseudo dans la table commentaires"})
+                                })
+                            
                         }
-                        
                     })
                     .catch( err => { console.log(err); res.status(500).json("Problème pour chercher pseudo")})
             }

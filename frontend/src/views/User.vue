@@ -208,11 +208,20 @@ export default {
     
     // récupérer les publications du user
     async created () {
+        this.getUser()
         this.getUserPosts()
-        // this.getUser()
     },
     methods: {
-
+        // récupérer les informations de ce user
+        async getUser () {
+            axios.get(`api/auth/${this.id}`)
+                .then( response => {
+                    console.log(response)
+                    this.$store.dispatch ('user/setCurrentUser', response.data.currentUser)
+                })
+                .catch(error => console.log(error))
+        },
+        
         // user supprimer son compte avec modèle sweatalert2
         async deleteUser () {
             console.log(this.id)        //OK

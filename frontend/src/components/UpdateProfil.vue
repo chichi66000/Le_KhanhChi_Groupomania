@@ -150,10 +150,10 @@ export default {
             await axios.put(`/api/auth/updateUser/${this.id}`, form)
                 .then( response => {
                     console.log(response);
-                    this.$router.push('/user')
                     this.error = ""
-                    this.getUser()
+                    // this.getUser()
                     Swal.fire("Votre profil a été modifié.")
+                    this.$router.push('/user')
                 })
                 .catch( err => {
                     console.log(err);
