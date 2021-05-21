@@ -38,7 +38,7 @@ schema
 // key et iv pour crypto
 let key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
 let iv = "1234567890123456";
-algorithm = 'aes-256-ctr'
+let algorithm = 'aes-256-ctr'
 
 //function pour encrypter
 function encrypt(text){
@@ -701,6 +701,7 @@ exports.getAllUser = (req, res) => {
                         // console.log(email, "user.email")
                         // console.log(users)
                         // renvoyer liste des users
+                        console.log(users[0].email)
                             res.status(200).json({ users})
                     })
                     .catch((error) => res.status(404).json({error}))
