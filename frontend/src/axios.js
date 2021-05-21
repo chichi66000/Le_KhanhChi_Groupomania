@@ -22,19 +22,19 @@ axiosInstance.interceptors.response.use (
     },
     // si error dans la response
     (error) => {         
-       
+        console.log("error ", error)
         const id = localStorage.getItem('id')
         const originalRequest = error.config;
         // originalRequest._retry = true;
         const status = error.response ? error.response.status : null;
         // si le status =401 et si c'est la route de login => demander login
-        if (status === 401 && originalRequest.url == "http://localhost:5000/api/auth/login" ) {
+        if (status === 401 && originalRequest.url === "http://localhost:5000/api/auth/refresh/${id}" ) {
                 router.push('/login');
                 return Promise.reject(error);
         }
 
         // si le status = 401 , unauthorization (pour tous les autres routes)
-        if (status === 401) {
+        if (status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             // envoyer au server le cookie refreshToken pour demander 1 nouveau token
             return axiosInstance.post(`http://localhost:5000/api/auth/refresh/${id}`, { withCredentials: true, credentials: 'include'}
