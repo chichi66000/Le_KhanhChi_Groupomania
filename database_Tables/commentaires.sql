@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 15 mai 2021 à 10:34
+-- Généré le : sam. 22 mai 2021 à 15:28
 -- Version du serveur :  5.7.31
 -- Version de PHP : 7.3.21
 
@@ -40,14 +40,16 @@ CREATE TABLE IF NOT EXISTS `commentaires` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`) USING BTREE,
   KEY `postId` (`postId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `commentaires`
 --
 
 INSERT INTO `commentaires` (`id`, `userId`, `userAvatar`, `userPseudo`, `postId`, `commentaires`, `createdAt`, `updatedAt`) VALUES
-(56, 17, '16099275250171621006448919.jpg', 'christine', 91, 'une musique douce pour se détendre', '2021-05-15', '2021-05-15');
+(1, 4, '16057782466381621694154914.jpeg', 'lele', 1, 'hahaha', '2021-05-22', '2021-05-22'),
+(2, 4, '16057782466381621694154914.jpeg', 'lele', 2, 'Jolie non?', '2021-05-22', '2021-05-22'),
+(4, 7, 'cap21621697046989.jpeg', 'toto', 3, 'c\'est en lycée', '2021-05-22', '2021-05-22');
 
 --
 -- Contraintes pour les tables déchargées

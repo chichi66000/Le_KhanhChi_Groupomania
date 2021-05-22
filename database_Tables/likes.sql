@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 15 mai 2021 à 10:35
+-- Généré le : sam. 22 mai 2021 à 15:27
 -- Version du serveur :  5.7.31
 -- Version de PHP : 7.3.21
 
@@ -37,17 +37,17 @@ CREATE TABLE IF NOT EXISTS `likes` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`) USING BTREE,
   KEY `postId` (`postId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `likes`
 --
 
 INSERT INTO `likes` (`id`, `userId`, `postId`, `createdAt`, `updatedAt`) VALUES
-(2, 8, 1, '2021-04-23', '2021-04-23'),
-(15, 17, 1, '2021-05-08', '2021-05-08'),
-(17, 8, 38, '2021-05-08', '2021-05-08'),
-(24, 17, 91, '2021-05-15', '2021-05-15');
+(1, 4, 1, '2021-05-22', '2021-05-22'),
+(2, 4, 2, '2021-05-22', '2021-05-22'),
+(4, 7, 3, '2021-05-22', '2021-05-22'),
+(5, 7, 2, '2021-05-22', '2021-05-22');
 
 --
 -- Contraintes pour les tables déchargées

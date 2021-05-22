@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 15 mai 2021 à 10:36
+-- Généré le : sam. 22 mai 2021 à 15:27
 -- Version du serveur :  5.7.31
 -- Version de PHP : 7.3.21
 
@@ -38,27 +38,16 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `updatedAt` date NOT NULL,
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `posts`
 --
 
 INSERT INTO `posts` (`id`, `title`, `content`, `userId`, `img_url`, `createdAt`, `updatedAt`) VALUES
-(1, 'this is 1 er article', 'this is my first article', 17, 'sauce-piquante-gingembre-et-combava1620504136934.jpg', '2021-04-19', '2021-05-14'),
-(9, '', 'Voici 1 photo de moi', 8, '16122863153401618927308831.jpg', '2021-04-20', '2021-04-20'),
-(38, '', 'J\'adore cette blague', 17, '16057782466381619897749332.jpg', '2021-04-21', '2021-05-01'),
-(61, '', '', 8, 'sauce-piquante-fraises-whiskey1620550652298.jpg', '2021-05-09', '2021-05-09'),
-(62, '', '', 8, 'maxresdefault1620550573011.jpg', '2021-05-09', '2021-05-09'),
-(64, '', '', 8, 'sauce-piquante-137030201620550666170.jpg', '2021-05-09', '2021-05-09'),
-(66, '', '', 8, 'index1620550861330.jpg', '2021-05-09', '2021-05-09'),
-(67, '', '', 8, 'sriracha1620550883350.jpg', '2021-05-09', '2021-05-09'),
-(73, '', '', 8, '21620551296389.jpg', '2021-05-09', '2021-05-09'),
-(74, '', '', 8, '16099275250171620551408062.jpg', '2021-05-09', '2021-05-09'),
-(75, '', '', 8, '11620551423141.jpg', '2021-05-09', '2021-05-09'),
-(76, '', '', 8, '16104799687591620551503085.jpg', '2021-05-09', '2021-05-09'),
-(85, '', '', 17, '16127835456551621007373953.jpg', '2021-05-14', '2021-05-14'),
-(91, '', 'une video de musique', 17, 'Music_Box_-_115431621023156323.mp4', '2021-05-14', '2021-05-14');
+(1, NULL, '', 4, '16099275250171621694105643.jpeg', '2021-05-22', '2021-05-22'),
+(2, NULL, 'une vidéo', 4, 'Music_Box_-_115431621696619970.mp4', '2021-05-22', '2021-05-22'),
+(3, NULL, 'photo de class', 7, 'lop12PTNK1621696981341.jpeg', '2021-05-22', '2021-05-22');
 
 --
 -- Contraintes pour les tables déchargées
