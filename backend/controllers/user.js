@@ -226,7 +226,7 @@ exports.refreshToken = (req, res) => {
 exports.logout = (req, res) => {
     res.clearCookie('refreshtoken')         //supprimer le cookie refreshtoken
     res.send('supprimer cookie')
-    res.redirect('/');                      // redirect sur home
+                        
 };
 
 //route pour user supprimer son compte
@@ -676,33 +676,13 @@ exports.getAllUser = (req, res) => {
             else {
             // si user est admin, chercher tous les user, trier par id 
                 db.Users.findAll( {
-                    attributes: [
-                        "id", 
-                        "email",
-                        "nom", "prenom", "createdAt", "pseudo", "isAdmin"]
+                    attributes: ["id","nom", "prenom", "pseudo", "createdAt", "isAdmin"]
                 },
                 {order: ["id"] })
                     .then((users) => {
                         if (! users) {return res.status(404).json({ message:"Utilisateur non trouvé" })}
-                        //decrypter email avant d'envoyer au frontend
-                        // for ( let i=0; i< users.length; i++ ) {
-                        //     let allUser = [];
-                        //     let oneUser = {
-                        //         id: users[i].id,
-                        //         email: decrypt(users[i].email) 
-                        //     }
-                        //     allUser.push(oneUser)
-                        //     return allUser
-                        // }
-                        // users.forEach(function (user) {
-                        //     user.email += decrypt(user.email)
-                        //     console.log(user.email)
-                        // })
-                        // console.log(email, "user.email")
-                        // console.log(users)
-                        // renvoyer liste des users
-                        console.log(users[0].email)
-                            res.status(200).json({ users})
+                        
+                        res.status(200).json({ users})
                     })
                     .catch((error) => res.status(404).json({error}))
             }

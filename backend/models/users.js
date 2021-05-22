@@ -47,13 +47,13 @@ module.exports = function (sequelize, DataTypes) {
           allowNull: false,
           type: DataTypes.STRING,
           primaryKey: true,
-          get() {
-            var decipher = crypto.createDecipheriv(algorithm,key, iv)
-            let emailEncrypt = this.getDataValue("email")
-            var dec = decipher.update(emailEncrypt,'hex','utf8')
-            dec += decipher.final('utf8');
-            return dec;
-          },
+          // get() {
+          //   var decipher = crypto.createDecipheriv(algorithm,key, iv)
+          //   let emailEncrypt = this.getDataValue("email")
+          //   var dec = decipher.update(emailEncrypt,'hex','utf8')
+          //   dec += decipher.final('utf8');
+          //   return dec;
+          // },
           // set: encrypt()
         },
         password: {

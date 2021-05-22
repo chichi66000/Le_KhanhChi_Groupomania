@@ -1,39 +1,44 @@
 <template>
-    <div>
+    <div class="text-center">
         <error v-if="error" :error = "error"/>
 
         <!-- tableau liste des utilisateurs -->
         <h3 class="text-center pink my-5">Liste les utilitasateurs du site</h3>
-        <table class="table table-striped table-responsive  mx-auto my-5">
-            <thead>
-                <tr class="text-center text-primary font-weight-bold mx-auto px-auto" >
-                    <td scope="col" class="col" >Id</td>
-                    <td scope="col" class="col">Nom</td>
-                    <td scope="col" class="col">Prénom</td>
-                    <td scope="col" class="col">Pseudo</td>
-                    <td scope="col" class="col-2">Email</td>
-                    <td scope="col" class="col-3">Date entrée</td>
-                    <td scope="col" class="col">Admin</td>
-                    <td scope="col" class="col-2">Delete</td>
-                </tr>
-    
-            </thead>
+        <div class="table-responsive">
 
-            <tbody>
+            <table class="table table-bordered table-striped mx-auto">
+                <thead>
+                    <tr class="text-center text-primary font-weight-bold" >
+                        <th scope="col" class="" >Id</th>
+                        <th scope="col" class="">Nom</th>
+                        <th scope="col" class="">Prénom</th>
+                        <th scope="col" class="">Pseudo</th>
+                        <th scope="col" class="">Date entrée</th>
+                        <th scope="col" class="">Admin</th>
+                        <th scope="col" class="">Delete</th>
+                    </tr>
         
-                <tr :key="user" v-for="(user, index) in users"  class="text-center  ">
-                    <td  class="col">{{user.id}}</td>
-                    <td  class="col">{{user.nom}}</td>
-                    <td  class="col">{{user.prenom}}</td>
-                    <td  class="col">{{user.pseudo}}</td>
-                    <td class="col-2">{{user.email}}</td>
-                    <td  class="col-3">{{user.createdAt}}</td>
-                    <td  class="col btn-danger" @click = "adminChange(index)">{{user.isAdmin}}</td>
-                    <td  class="col-2 btn-danger" @click = "adminDelete(index)">Supprimer</td>
+                </thead>
 
-                </tr>
-            </tbody>
-        </table>
+                <tbody>
+            
+                    <tr :key="user" v-for="(user, index) in users"  class="text-center  ">
+                        <th scope="col" class="">{{user.id}}</th>
+                        <th scope="col" class="">{{user.nom}}</th>
+                        <th scope="col" class="">{{user.prenom}}</th>
+                        <th scope="col" class="">{{user.pseudo}}</th>
+                        <th scope="col" class="">{{user.createdAt}}</th>
+                        <th scope="col">
+                            <button class="btn btn-primary" @click = "adminChange(index)">{{user.isAdmin}}</button>
+                        </th> 
+                        <th scope="col">
+                            <button class="btn btn-danger" @click = "adminDelete(index)">Supprimer </button>
+                        </th>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
