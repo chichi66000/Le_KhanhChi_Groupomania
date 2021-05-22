@@ -92,18 +92,18 @@
                     </div>
 
                     <!-- afficher le corps de l'article -->
-                    <div class=" p-3">
+                    <div class=" p-3 mx-auto">
                         <p >{{post.content}}</p>
                     </div>
 
                     <!-- afficher image   -->
-                    <div v-if="post.img_url !='' && (post.img_url.includes('.jpg') || post.img_url.includes('.jpeg') || post.img_url.includes('.png') || post.img_url.includes('.gif') ) "  class="">
+                    <div v-if="post.img_url !='' && (post.img_url.includes('.jpg') || post.img_url.includes('.jpeg') || post.img_url.includes('.png') || post.img_url.includes('.gif') ) "  class="mx-auto text-center">
 
                             <img class="img img-fluid mx-auto" :src="getImage(index)" :alt="`photo illustration ${post.User.pseudo}`" />
                     </div>
                     
                     <!-- afficher vidéo/audio -->
-                    <div v-if="post.img_url !='' && ( post.img_url.includes('.mp4') || post.img_url.includes('.wav') || post.img_url.includes('.mov')) " class="embed-responsive embed-responsive-16by9 text-center">
+                    <div v-if="post.img_url !='' && ( post.img_url.includes('.mp4') || post.img_url.includes('.wav') || post.img_url.includes('.mov')) " class="mx-auto embed-responsive embed-responsive-16by9 text-center">
                         
                         <video class="embed-responsive-item mx-auto" muted :src="getImage (index)" :alt="`video illustration ${post.User.pseudo} `" allowfullscreen controls/>
                         
