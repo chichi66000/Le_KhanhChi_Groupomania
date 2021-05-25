@@ -4,12 +4,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-// sequelize pour base de donnée
-// const sequelize = require('sequelize');
-// const db = require('../models');
-// const Op = require( 'sequelize');
-// const { Sequelize } = require('sequelize');
-
 const db = require('../models')
 const Sequelize = require('sequelize');
 const association = require('../models/association').association
@@ -37,12 +31,12 @@ schema
 // function pour crypter et decrypter email
 // key et iv pour crypto
 let key = crypto.createHash("sha256").update("OMGCAT!", "ascii").digest();
-let iv = "1234567890123456";
+let iv = "1234567890123456"
 let algorithm = 'aes-256-ctr'
 
 //function pour encrypter
 function encrypt(text){
-var cipher = crypto.createCipheriv(algorithm,key, iv)
+var cipher = crypto.createCipheriv(algorithm, key, iv)
 var crypted = cipher.update(text,'utf8','hex')
 crypted += cipher.final('hex');
 return crypted;
@@ -50,7 +44,7 @@ return crypted;
 
 // function pour decrypter
 function decrypt(text){
-var decipher = crypto.createDecipheriv(algorithm,key, iv)
+var decipher = crypto.createDecipheriv(algorithm, key, iv)
 var dec = decipher.update(text,'hex','utf8')
 dec += decipher.final('utf8');
 return dec;
