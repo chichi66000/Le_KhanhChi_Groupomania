@@ -134,7 +134,7 @@ export default {
                 .max(20, 'Mot de passe doit avoir au maximum 20 characters')
                 .required('Mot de passe est demandé')
                 .matches(
-                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$/, " Mot de passe doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 charactère spécial")
+                    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.])[A-Za-z\d@$!%*#?&.]{8,}$/, " Mot de passe doit avoir 8 et 20 characters, 1 majuscule, 1 minuscule, 1 charactère spécial (@$!%*#?&.)")
                 ,
         passwordCheck: yup.string()
                 .oneOf([yup.ref('password'), null], 'Mot de passe doit être le même ')

@@ -278,8 +278,6 @@ export default {
         async getUserPosts () {
             await axios.get(`api/post/${this.id}`)      //demander les posts du server
             .then( response => {
-                // console.log(response.data);
-                // this.$store.dispatch('post/setCurrentUserPosts', response.data)     //pas OK
                 this.error=""
                 this.userPosts = response.data;         //mettre la reponse du server dans data
                 
@@ -304,7 +302,7 @@ export default {
             // valider le mimetype du file upload
             let error_file = document.getElementById(`error_file${postId}`)
             let extensions = /(\.jpg|\.jpeg|\.png|\.mp4|\.mov|\.wav)$/i;
-            // sile MIME TYPE n'est pas correct, => alert, envyoer erreur
+            // sile MIME TYPE n'est pas correct, => alert, envoyer erreur
             if (event && !extensions.exec(inputFileName)) {
                 Swal.fire({
                             icon: 'error',

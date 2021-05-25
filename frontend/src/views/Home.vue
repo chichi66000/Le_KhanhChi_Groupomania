@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <!-- I user est connecté -->
+        <!-- Si user est connecté -->
       <div v-if="user.user">
           <div class="">
             <Logo class="text-left  my-5"/>

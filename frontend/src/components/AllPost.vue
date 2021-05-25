@@ -237,11 +237,9 @@ export default {
             if ( inputFile != "undefined" || inputFile !="") {
                 form.append('image', inputFile)
                 form.append('content', this.posts[index].content)
-                console.log(form)
             }
             else {
                 form.append('content', this.posts[index].content)
-                console.log(form)
             }
                 // envoyer formulaire par axios, recevoir la response
             await axiosInstance.put(`/api/post/${postId}/${this.currentUserId}/update`, form
@@ -249,11 +247,10 @@ export default {
                 .then( response => {
                     console.log(response);
                         // envoyer 1 message OK pour utilisateur
-                    // this.$store.dispatch ('post/getAllPosts', response.data)
                     Swal.fire("Votre article a été modifié")
                     this.error=""
+                    // reload les publications
                     this.getAllPosts()
-                        
                 })
                 .catch( err => {
                     console.log(err);
@@ -261,9 +258,9 @@ export default {
                     Swal.fire({
                             icon: 'error',
                             text:"Problème pour enregistrer votre article"
-                        })
-
                     })
+
+                })
         },
         
         // ajouter/ delete like du post
@@ -332,7 +329,6 @@ export default {
     computed: {
       ...mapState ( {
             user: state => state.user,
-            // post: state => state.all_posts
       } ),
 
     },

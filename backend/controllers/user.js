@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
+// Model Sequelize
 const db = require('../models')
 const Sequelize = require('sequelize');
 const association = require('../models/association').association
@@ -25,7 +26,7 @@ schema
     .has().digits(1)                                // Doit contenir au moins 1 chiffres
     .has().not().spaces()                           // Doit contenir aucun espace
     .is().not().oneOf(["Passw0rd", "Password123"])  // Mot de passes blacklistés
-    .has(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$/)  // regex pour password fort
+    .has(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.])[A-Za-z\d@$!%*#?&.]{8,}$/)  // regex pour password fort
 
 
 // function pour crypter et decrypter email
@@ -91,35 +92,32 @@ exports.signup = ((req, res) => {
                        return res.status(400).json({ message: " pseudo deja utilisé"});
                          
                     }
-                    else {          // pas de pseudo
+                    else {          // pas de pseudo dans BDD
                         
-                            bcrypt.hash(userData.password,10)   // hash password, puis créer user
-                                .then( hash => {
+                        bcrypt.hash(userData.password,10)   // hash password, puis créer user
+                            .then( hash => {
                                 // s'il n'y a pas photo, prendre nom de l'image avatar default,
                                 //  si non prendre le nom de requete file
-                                    let avatarName = "";
-                                    if ( req.file) { avatarName = req.file.filename}
-                                    else { avatarName = "avatar_default.png"} 
+                                let avatarName = "";
+                                if ( req.file) { avatarName = req.file.filename}
+                                else { avatarName = "avatar_default.png"} 
 
                                     // créer user
-                                    const newUser = db.Users.create({
-                                        email: emailHash,
-                                        nom: userData.nom,
-                                        prenom: userData.prenom,
-                                        password: hash,
-                                        fonction: userData.fonction,
-                                        pseudo: userData.pseudo,
-                                        isAdmin: 0, 
-                                        avatar: avatarName
-                                    });
-                                    res.status(201).json( { message: "Utilisateur crée avec succès"})
-                                })
-                                .catch( () => { 
+                                const newUser = db.Users.create({
+                                    email: emailHash,
+                                    nom: userData.nom,
+                                    prenom: userData.prenom,
+                                    password: hash,
+                                    fonction: userData.fonction,
+                                    pseudo: userData.pseudo,
+                                    isAdmin: 0, 
+                                    avatar: avatarName
+                                });
+                                res.status(201).json( { message: "Utilisateur crée avec succès"})
+                            })
+                            .catch( () => { 
                                     res.status(400).json( {messsage: " Problème pour crée utilisateur" });   
-                                } )
-                        
-                        
-                        
+                            } )
                     }
                 })  
             }
@@ -167,7 +165,7 @@ exports.login = (req, res) => {
                             maxAge: "86400000"    // 24h en milisecond
                         })
 
-                        res.status(200).json({ // si mdp correct, envoyer user, token                       
+                        res.status(200).json({ // si mdp correct, envoyer user, token, refreshtoken                       
                             currentUser: {
                             userNom: user.nom,
                             email: req.body.email, 
@@ -190,7 +188,7 @@ exports.login = (req, res) => {
 // route pour refresh un token expires
 exports.refreshToken = (req, res) => {
     let refreshtoken = req.cookies.refreshtoken;
-    
+    // s'il y a pas cookie de refreshtoken, demander login
     if (!refreshtoken){
         return res.status(403).send("veuillez connecter")
     }
@@ -209,7 +207,7 @@ exports.refreshToken = (req, res) => {
         let newToken = jwt.sign(            
             {userId: req.params.id },
             process.env.SECRET_TOKEN, 
-            {expiresIn: "2h",})
+            {expiresIn: "2m",})
         // envoyer au client nouveau token
         res.status(201).json(newToken)
     
@@ -225,7 +223,7 @@ exports.logout = (req, res) => {
 
 //route pour user supprimer son compte
 exports.deleteUser = (req, res) => {
-
+    // chercher user dans BBD
     db.Users.findOne({where: {id: req.params.id}})
         .then( user => {
             console.log("user" + user);      //OK
