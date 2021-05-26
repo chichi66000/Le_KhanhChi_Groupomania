@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 22 mai 2021 à 15:27
+-- Généré le : mer. 26 mai 2021 à 21:01
 -- Version du serveur :  5.7.31
 -- Version de PHP : 7.3.21
 
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `updatedAt` date NOT NULL,
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `posts`
@@ -46,8 +46,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
 
 INSERT INTO `posts` (`id`, `title`, `content`, `userId`, `img_url`, `createdAt`, `updatedAt`) VALUES
 (1, NULL, '', 4, '16099275250171621694105643.jpeg', '2021-05-22', '2021-05-22'),
-(2, NULL, 'une vidéo', 4, 'Music_Box_-_115431621696619970.mp4', '2021-05-22', '2021-05-22'),
-(3, NULL, 'photo de class', 7, 'lop12PTNK1621696981341.jpeg', '2021-05-22', '2021-05-22');
+(2, NULL, 'une vidéo', 4, 'Music_Box_-_115431621696619970.mp4', '2021-05-22', '2021-05-22');
 
 --
 -- Contraintes pour les tables déchargées
@@ -57,7 +56,7 @@ INSERT INTO `posts` (`id`, `title`, `content`, `userId`, `img_url`, `createdAt`,
 -- Contraintes pour la table `posts`
 --
 ALTER TABLE `posts`
-  ADD CONSTRAINT `fk_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `fk_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

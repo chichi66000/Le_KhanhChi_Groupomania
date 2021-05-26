@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 22 mai 2021 à 15:28
+-- Généré le : mer. 26 mai 2021 à 21:02
 -- Version du serveur :  5.7.31
 -- Version de PHP : 7.3.21
 
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `pseudo` (`pseudo`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `users`
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`id`, `nom`, `prenom`, `email`, `password`, `fonction`, `pseudo`, `avatar`, `isAdmin`, `createdAt`, `updatedAt`, `createPasswordResetToken`) VALUES
 (4, 'testpho', 'hel', 'e9c0c4168d8282aa57ed577d1d', '$2b$10$w7EjYo2msKqe/uwzh4I8c.mr2k9R6Ir5/gCJazZkTHcMOotU5JbeC', 'admin', 'lele', '16057782466381621694154914.jpeg', 1, '2021-05-22', '2021-05-22', NULL),
-(5, 'testpho', 'hel', 'e6cdc133b49a8bad57ac1f69', '$2b$10$tkGWqT8UtXOduwErektD8ucuelLECzc05zWH/CDJd.PePARi.Rgg.', 'fontionnaire', 'chi', 'avatar_default.png', 1, '2021-05-22', '2021-05-22', NULL),
-(7, 'tommy', 'tommy', 'f1cac51eb4bb9aa350ed1635092b', '$2b$10$r9HMUIW1iEf6LX1bWQpcPOeASqVs1JMt0pb.UEf7nd60IA8h1Z7bO', 'admin', 'toto', 'cap21621697046989.jpeg', 0, '2021-05-22', '2021-05-22', NULL);
+(11, 'mas', 'mà', 'e8c4db33b49a8bad57ac1f69', '$2b$10$uVQLWFFEUUrPfwmfT.XMHezK1cQrcest1LPBBemea2rkSo47P5m3u', 'undefined', 'mas', 'avatar_default.png', 0, '2021-05-25', '2021-05-25', NULL),
+(13, 'math', 'math', 'e8c4dc1b8d8282aa57ed577d1d', '$2b$10$OWcnRVfhtXZt8y3jmoVZk.Wpc2sZYevSZXIjD0/IN4tTntTR3u.aG', 'fontionnaire', 'math', 'avatar_default.png', 0, '2021-05-26', '2021-05-26', NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
