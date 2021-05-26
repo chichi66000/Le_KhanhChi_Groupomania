@@ -263,7 +263,9 @@ exports.deleteUser = (req, res) => {
                     if (!likes) { console.log("User n'a pas like")}
                     // si user a des likes, supprimer ses likes
                     else {
-                        db.likes.destroy({ where: { userId: req.params.id } });
+                        db.likes.destroy({ where: { userId: req.params.id } })
+                            .then( () => {console.log("Supprimer likes du utilisateur")})
+                            .catch( err => console.log(err))
                     }
                 })
 
@@ -274,7 +276,9 @@ exports.deleteUser = (req, res) => {
                     if (! commentaires) { console.log("Pas de commentaire de ce user")}
                     // commentaires trouvé
                     else {
-                        db.commentaires.destroy({ where: { userId: req.params.id } });
+                        db.commentaires.destroy({ where: { userId: req.params.id } })
+                            .then( () => console.log("Supprimer commentaires d'utilisateur"))
+                            .catch( err => console.log(err))
                     }
                 })
             
@@ -295,7 +299,9 @@ exports.deleteUser = (req, res) => {
                         }
                             //supprimer les publications
                         db.Posts.destroy({ where: { userId: req.params.id } })
-                        
+                            .then(() => console.log("Supprimer les publications d'utilisateur")
+                            )
+                            .catch( err => console.log(err))
                     }     
                 })
 
@@ -303,6 +309,7 @@ exports.deleteUser = (req, res) => {
         .then( () => {
             db.Users.destroy ({where: {id:req.params.id}})
             .then( () => res.status(200).json("utilisateur supprimé"))
+            .catch( err=> console.log(err))
         })
                
         .catch(error => { 
@@ -333,7 +340,9 @@ exports.adminDelete = (req, res) => {
                     if (!likes) { console.log("User n'a pas like")}
                     // si user a des likes, supprimer ses likes
                     else {
-                        db.likes.destroy({ where: { userId: req.params.id } });
+                        db.likes.destroy({ where: { userId: req.params.id } })
+                            .then( () => console.log("Supprimer likes d'utilisateur"))
+                            .catch (err => console.log(err))
                     }
                 })
 
@@ -344,7 +353,9 @@ exports.adminDelete = (req, res) => {
                     if (! commentaires) { console.log("Pas de commentaire de ce user")}
                     // commentaires trouvé
                     else {
-                        db.commentaires.destroy({ where: { userId: req.params.id } });
+                        db.commentaires.destroy({ where: { userId: req.params.id } })
+                            .then( () => console.log("Supprimer les commentaires d'utilisateur"))
+                            .catch( err => console.log(err)) 
                     }
                 })
             
@@ -365,14 +376,16 @@ exports.adminDelete = (req, res) => {
                         }
                         
                         db.Posts.destroy({ where: { userId: req.params.id } })
+                            .then( () => console.log("Supprimer les publications d'utilisateur"))
+                            .catch( err => console.log(err))
                     }     
-                    
                 })
         
         // supprimer ce user
         .then( () => {
             db.Users.destroy ({where: {id:req.params.id}})
             .then( () => res.status(200).json("utilisateur supprimé par admin"))
+            .catch( err => console.log(err))
         })
         .catch ( err => { console.log(err); res.status(500).json("User non trouvé")})
 }
