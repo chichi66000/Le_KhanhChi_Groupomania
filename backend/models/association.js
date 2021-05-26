@@ -12,23 +12,43 @@ function association (sequelize) {
     var commentaires = _commentaires(sequelize, DataTypes);
 
     // relation entre user et posts
-    posts.belongsTo(users, { foreignKey: "userId"});
+    posts.belongsTo(users, { 
+        foreignKey: "userId",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    });
     users.hasMany(posts, { foreignKey: "userId"});
 
     // relation entre user et commentaires
-    commentaires.belongsTo(users, { foreignKey: "userId"});
+    commentaires.belongsTo(users, { 
+        foreignKey: "userId",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    });
     users.hasMany(commentaires, { foreignKey: "userId"});
     
     // relation entre user et likes
-    likes.belongsTo(users, { foreignKey: "userId"});
+    likes.belongsTo(users, { 
+        foreignKey: "userId",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    });
     users.hasMany(likes, { foreignKey: "userId"});
 
     // relation entre post et commentaires
-    commentaires.belongsTo(posts, { foreignKey: "postId"});
+    commentaires.belongsTo(posts, { 
+        foreignKey: "postId",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    });
     posts.hasMany(commentaires, { foreignKey: "postId"});
 
     // relation entre post et likes
-    likes.belongsTo(posts, { foreignKey: "postId"});
+    likes.belongsTo(posts, { 
+        foreignKey: "postId",
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    });
     posts.hasMany(likes, { foreignKey: "postId"});
 
     return {
